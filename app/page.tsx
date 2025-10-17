@@ -1,7 +1,8 @@
-import prisma from '@/lib/prisma';
+import { getAllUsers } from './lib/data';
 
 export default async function Home() {
-  const users = await prisma.user.findMany();
+  const users = await getAllUsers();
+  console.log(users);
   return (
     <div className="-mt-16 flex min-h-screen flex-col items-center justify-center bg-gray-50">
       <h1 className="mb-8 font-[family-name:var(--font-geist-sans)] text-4xl font-bold text-[#333333]">
