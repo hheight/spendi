@@ -1,4 +1,4 @@
-import { getAllUsers } from '@/app/lib/data';
+import { getAllUsers } from '@/lib/data';
 
 export default async function Home() {
   const users = await getAllUsers();

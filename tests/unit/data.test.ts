@@ -1,8 +1,8 @@
 import { expect, test, vi } from 'vitest';
-import { getAllUsers } from '@/app/lib/data';
-import prisma from '@/app/lib/__mocks__/prisma';
+import { getAllUsers } from '@/lib/data';
+import prisma from '@/lib/__mocks__/prisma';
 
-vi.mock('@/app/lib/prisma');
+vi.mock('@/lib/prisma');
 
 const dateMock = new Date('01/01/01');
 
