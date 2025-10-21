@@ -1,10 +1,22 @@
 import { describe, expect, it } from 'vitest';
-import request from 'supertest';
+import prisma from '../helpers/prisma';
+import { signup } from '@/app/actions/auth';
 
-describe('/auth', async () => {
-  describe('[POST] /auth/signup', () => {
-    it('should respond with a `200` status code and user details', async () => {
-      // test logic will go here
+describe('Auth actions', async () => {
+  describe('#signup', () => {
+    it('should create a new user with valid data', async () => {
+      const result = await signup({
+        email: 'test@example.com',
+        password: 'Password123'
+      });
+
+      expect(result.success).toBe(true);
+
+      const user = await prisma.user.findUnique({
+        where: { email: 'test@example.com' }
+      });
+
+      expect(user).toBeDefined();
     });
   });
 });
