@@ -14,17 +14,17 @@ import {
 } from '@/components/ui/card';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { signupSchema, type SignupInput } from '@/lib/auth/schemas';
-import { signup } from '@/app/actions/auth';
+import { SigninInput, signinSchema } from '@/lib/auth/schemas';
+import { login } from '@/app/actions/auth';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useState } from 'react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 
-export default function SignupForm() {
+export default function LoginForm() {
   const [serverError, setServerError] = useState<string | null>(null);
-  const form = useForm<SignupInput>({
-    resolver: zodResolver(signupSchema),
+  const form = useForm<SigninInput>({
+    resolver: zodResolver(signinSchema),
     defaultValues: {
       email: '',
       password: ''
@@ -32,22 +32,22 @@ export default function SignupForm() {
   });
   const { isSubmitting } = form.formState;
 
-  const onSubmit = async (data: SignupInput) => {
+  const onSubmit = async (data: SigninInput) => {
     setServerError(null);
-    const result = await signup(data);
+    const result = await login(data);
 
     if (result.success) {
       redirect('/dashboard');
     } else {
-      setServerError(result.message || 'An error occurred while creating your account');
+      setServerError(result.message || 'An error occurred during login');
     }
   };
 
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Create an account</CardTitle>
-        <CardDescription>Sign Up to get started</CardDescription>
+        <CardTitle>Log in</CardTitle>
+        <CardDescription>Enter your email and password</CardDescription>
       </CardHeader>
       <CardContent>
         {serverError && (
@@ -56,18 +56,18 @@ export default function SignupForm() {
             <AlertDescription>{serverError}</AlertDescription>
           </Alert>
         )}
-        <form id="signup-form" onSubmit={form.handleSubmit(onSubmit)}>
+        <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
               name="email"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="signup-form-email">Email</FieldLabel>
+                  <FieldLabel htmlFor="login-form-email">Email</FieldLabel>
                   <Input
                     {...field}
                     type="email"
-                    id="signup-form-email"
+                    id="login-form-email"
                     aria-invalid={fieldState.invalid}
                     autoComplete="off"
                   />
@@ -80,11 +80,11 @@ export default function SignupForm() {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="signup-form-password">Password</FieldLabel>
+                  <FieldLabel htmlFor="login-form-password">Password</FieldLabel>
                   <Input
                     {...field}
                     type="password"
-                    id="signup-form-password"
+                    id="login-form-password"
                     aria-invalid={fieldState.invalid}
                     autoComplete="off"
                   />
@@ -99,20 +99,20 @@ export default function SignupForm() {
         <Field orientation="horizontal">
           <Button
             type="submit"
-            form="signup-form"
+            form="login-form"
             disabled={isSubmitting}
             className="w-full"
           >
-            Create an account
+            Log in
           </Button>
         </Field>
         <div className="mt-4 text-sm">
-          Already have an account?{' '}
+          Don't have an account?{' '}
           <Link
-            href="/login"
+            href="/signup"
             className="hover:text-primary font-medium underline underline-offset-4"
           >
-            Log in
+            Create one
           </Link>
         </div>
       </CardFooter>

@@ -1,6 +1,11 @@
 'use server';
 
-import { signupSchema, type SignupInput } from '@/lib/auth/schemas';
+import {
+  signupSchema,
+  signinSchema,
+  type SignupInput,
+  SigninInput
+} from '@/lib/auth/schemas';
 import { createSession } from '@/lib/auth/session';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
@@ -56,5 +61,45 @@ export async function signup(data: SignupInput): Promise<ActionResponse> {
       success: false,
       message: 'An error occurred while creating your account'
     };
+  }
+}
+
+export async function login(data: SigninInput): Promise<ActionResponse> {
+  const validatedFields = signinSchema.safeParse(data);
+
+  if (!validatedFields.success) {
+    return { success: false };
+  }
+
+  const { email, password } = validatedFields.data;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      include: { password: true }
+    });
+
+    if (!user || !user.password?.hash) {
+      return {
+        success: false,
+        message: 'Invalid email or password'
+      };
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password.hash);
+
+    if (!isMatch) {
+      return {
+        success: false,
+        message: 'Invalid email or password'
+      };
+    }
+
+    await createSession(user.id);
+
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: 'An error occured during login' };
   }
 }
