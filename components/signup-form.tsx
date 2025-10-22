@@ -19,6 +19,7 @@ import { signup } from '@/app/actions/auth';
 import { Alert, AlertTitle } from '@/components/ui/alert';
 import { useState } from 'react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 export default function SignupForm() {
   const [serverError, setServerError] = useState<string | null>(null);
@@ -36,7 +37,7 @@ export default function SignupForm() {
     const result = await signup(data);
 
     if (result.success) {
-      // redirect to /dashboard
+      redirect('/dashboard');
     } else {
       setServerError(result.message || 'An error occurred while creating your account');
     }

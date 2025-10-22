@@ -1,6 +1,7 @@
 'use server';
 
 import { signupSchema, type SignupInput } from '@/lib/auth/schemas';
+import { createSession } from '@/lib/auth/session';
 import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
 
@@ -35,7 +36,7 @@ export async function signup(data: SignupInput): Promise<ActionResponse> {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         email,
         password: {
@@ -46,7 +47,9 @@ export async function signup(data: SignupInput): Promise<ActionResponse> {
       }
     });
 
-    // session logic
+    await createSession(user.id);
+
+    return { success: true };
   } catch (error) {
     console.error('Signup error:', error);
     return {
@@ -54,6 +57,4 @@ export async function signup(data: SignupInput): Promise<ActionResponse> {
       message: 'An error occurred while creating your account'
     };
   }
-
-  return { success: true };
 }
