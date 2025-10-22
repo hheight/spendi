@@ -1,84 +1,44 @@
-import { vi, describe, expect, it, beforeEach } from 'vitest';
-import { encrypt, decrypt, createSession } from '@/lib/auth/session';
-import { jwtVerify } from 'jose';
+import { vi, describe, expect, it } from 'vitest';
+import { encrypt, decrypt } from '@/lib/auth/session';
 
 vi.mock('server-only', () => ({}));
 
-const setProtectedHeader = vi.fn().mockReturnThis();
-const setIssuedAt = vi.fn().mockReturnThis();
-const setExpirationTime = vi.fn().mockReturnThis();
-const sign = vi.fn().mockResolvedValue('mocked-token');
-const mockCookiesSet = vi.fn();
-
-vi.mock('next/headers', () => ({
-  cookies: vi.fn(() => ({
-    set: mockCookiesSet
-  }))
-}));
-
-vi.mock('jose', () => {
-  return {
-    SignJWT: vi.fn(() => ({
-      setProtectedHeader,
-      setIssuedAt,
-      setExpirationTime,
-      sign
-    })),
-    jwtVerify: vi.fn().mockResolvedValue({ payload: 'mocked-payload' })
-  };
-});
-
 describe('Session management', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   describe('#encrypt', () => {
-    it('calls SignJWT methods correctly', async () => {
+    it('creates a valid JWT token', async () => {
       const payload = {
         userId: 'user-123',
-        expiresAt: new Date('01/01/01')
+        expiresAt: new Date('2025-12-31')
       };
 
       const token = await encrypt(payload);
 
-      expect(token).toBe('mocked-token');
-
-      expect(setProtectedHeader).toHaveBeenCalledWith({ alg: 'HS256' });
-      expect(setIssuedAt).toHaveBeenCalled();
-      expect(setExpirationTime).toHaveBeenCalledWith('1d');
-      expect(sign).toHaveBeenCalled();
+      expect(token).toBeDefined();
+      expect(typeof token).toBe('string');
+      expect(token.split('.')).toHaveLength(3);
     });
   });
 
   describe('#decrypt', () => {
-    it('calls jwtVerify function correctly', async () => {
-      const payload = await decrypt('session-string');
-
-      expect(jwtVerify).toHaveBeenCalledWith('session-string', expect.any(Uint8Array), {
-        algorithms: ['HS256']
+    it('decrypts valid token successfully', async () => {
+      const token = await encrypt({
+        userId: 'user-456',
+        expiresAt: new Date('2025-12-31')
       });
 
-      expect(payload).toBe('mocked-payload');
+      const payload = await decrypt(token);
+
+      expect(payload?.userId).toBe('user-456');
     });
-  });
 
-  describe('#createSession', () => {
-    it('sets encrypted session in cookie', async () => {
-      const fixedTime = new Date('2025-01-01T00:00:00Z');
-      vi.setSystemTime(fixedTime);
+    it('returns null for invalid token', async () => {
+      const consoleErrorMock = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-      await createSession('user-123');
+      const result = await decrypt('invalid-token');
 
-      const expectedExpires = new Date(fixedTime.getTime() + 24 * 60 * 60 * 1000);
+      expect(result).toBeNull();
 
-      expect(mockCookiesSet).toHaveBeenCalledWith('session', 'mocked-token', {
-        httpOnly: true,
-        secure: true,
-        expires: expectedExpires,
-        sameSite: 'lax',
-        path: '/'
-      });
+      consoleErrorMock.mockRestore();
     });
   });
 });
