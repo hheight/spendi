@@ -21,7 +21,6 @@ export async function decrypt(session: string | undefined = '') {
 
     return payload;
   } catch (error) {
-    console.error('Failed to verify session', error);
     return null;
   }
 }
@@ -38,4 +37,9 @@ export async function createSession(userId: string) {
     sameSite: 'lax',
     path: '/'
   });
+}
+
+export async function deleteSession() {
+  const cookieStore = await cookies();
+  cookieStore.delete('session');
 }

@@ -1,7 +1,5 @@
-import { vi, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { encrypt, decrypt } from '@/lib/auth/session';
-
-vi.mock('server-only', () => ({}));
 
 describe('Session management', () => {
   describe('#encrypt', () => {
@@ -32,13 +30,9 @@ describe('Session management', () => {
     });
 
     it('returns null for invalid token', async () => {
-      const consoleErrorMock = vi.spyOn(console, 'error').mockImplementation(() => {});
-
       const result = await decrypt('invalid-token');
 
       expect(result).toBeNull();
-
-      consoleErrorMock.mockRestore();
     });
   });
 });

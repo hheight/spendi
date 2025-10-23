@@ -9,7 +9,7 @@ export default defineConfig({
   },
   test: {
     include: ['tests/integration/**/*.test.ts'],
-    setupFiles: ['tests/helpers/setup.ts'],
+    setupFiles: ['tests/helpers/setup-integration.ts'],
     poolOptions: {
       forks: {
         singleFork: true

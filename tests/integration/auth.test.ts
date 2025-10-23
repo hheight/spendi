@@ -1,5 +1,5 @@
 import { vi, describe, expect, it, beforeEach } from 'vitest';
-import prisma from '../helpers/prisma';
+import prisma from '@/tests/helpers/prisma';
 import { signup, login } from '@/app/actions/auth';
 import bcrypt from 'bcryptjs';
 
@@ -7,9 +7,7 @@ vi.mock('@/lib/auth/session', () => ({
   createSession: vi.fn()
 }));
 
-vi.mock('server-only', () => ({}));
-
-describe('Auth actions', async () => {
+describe('Auth actions', () => {
   describe('#signup', () => {
     it('should create a new user with valid data', async () => {
       const result = await signup({

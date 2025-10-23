@@ -1,5 +1,7 @@
 import resetDb from './reset-db';
-import { beforeEach } from 'vitest';
+import { vi, beforeEach } from 'vitest';
+
+vi.mock('server-only', () => ({}));
 
 beforeEach(async () => {
   await resetDb();
