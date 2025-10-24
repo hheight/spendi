@@ -8,7 +8,7 @@ async function seed() {
 
   await prisma.user.delete({ where: { email } }).catch(() => {});
 
-  const hashedPassword = await bcrypt.hash('test123', 10);
+  const hashedPassword = await bcrypt.hash('test1234', 10);
 
   const user = await prisma.user.create({
     data: {
