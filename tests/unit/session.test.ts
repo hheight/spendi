@@ -1,5 +1,11 @@
-import { vi, describe, expect, it, beforeAll, afterAll } from 'vitest';
-import { encrypt, decrypt, createSession, deleteSession } from '@/lib/auth/session';
+import { vi, describe, expect, it, beforeEach, beforeAll, afterAll } from 'vitest';
+import {
+  encrypt,
+  decrypt,
+  createSession,
+  deleteSession,
+  updateSession
+} from '@/lib/auth/session';
 
 const mockSet = vi.fn();
 const mockGet = vi.fn();
@@ -24,6 +30,10 @@ describe('Session management', () => {
     vi.setSystemTime(fixedTime);
   });
 
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   afterAll(() => {
     vi.useRealTimers();
   });
@@ -40,6 +50,13 @@ describe('Session management', () => {
       expect(token).toBeDefined();
       expect(typeof token).toBe('string');
       expect(token.split('.')).toHaveLength(3);
+    });
+
+    it('creates different tokens for different users', async () => {
+      const token1 = await encrypt({ userId: 'user-123', expiresAt });
+      const token2 = await encrypt({ userId: 'user-456', expiresAt });
+
+      expect(token1).not.toBe(token2);
     });
   });
 
@@ -72,6 +89,50 @@ describe('Session management', () => {
         path: '/',
         sameSite: 'lax',
         secure: true
+      });
+    });
+  });
+
+  describe('#updateSession', () => {
+    describe('when have valid session', () => {
+      it('should update session cookie with encrypted token', async () => {
+        const token = await encrypt({
+          userId: 'user-456',
+          expiresAt: new Date(fixedTime.getTime() + 1 * 24 * 60 * 60 * 1000)
+        });
+
+        mockGet.mockReturnValue({ value: token });
+
+        await updateSession();
+
+        expect(mockGet).toHaveBeenCalledWith('session');
+        expect(mockSet).toHaveBeenCalledWith('session', expect.stringMatching(/^ey/), {
+          expires: expiresAt,
+          httpOnly: true,
+          path: '/',
+          sameSite: 'lax',
+          secure: true
+        });
+      });
+    });
+
+    describe('when session cookie is empty', () => {
+      it('should return null', async () => {
+        mockGet.mockReturnValue({ value: '' });
+
+        const result = await updateSession();
+
+        expect(result).toBeNull();
+      });
+    });
+
+    describe('when session cookie is invalid token', () => {
+      it('should return null', async () => {
+        mockGet.mockReturnValue({ value: 'invalid-token' });
+
+        const result = await updateSession();
+
+        expect(result).toBeNull();
       });
     });
   });
