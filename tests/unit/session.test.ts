@@ -1,12 +1,38 @@
-import { describe, expect, it } from 'vitest';
-import { encrypt, decrypt } from '@/lib/auth/session';
+import { vi, describe, expect, it, beforeAll, afterAll } from 'vitest';
+import { encrypt, decrypt, createSession, deleteSession } from '@/lib/auth/session';
+
+const mockSet = vi.fn();
+const mockGet = vi.fn();
+const mockDelete = vi.fn();
+
+vi.mock('next/headers', () => ({
+  cookies: vi.fn(() =>
+    Promise.resolve({
+      set: mockSet,
+      get: mockGet,
+      delete: mockDelete
+    })
+  )
+}));
 
 describe('Session management', () => {
+  const fixedTime = new Date('2025-01-01T00:00:00Z');
+  const expiresAt = new Date(fixedTime.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+  beforeAll(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(fixedTime);
+  });
+
+  afterAll(() => {
+    vi.useRealTimers();
+  });
+
   describe('#encrypt', () => {
     it('creates a valid JWT token', async () => {
       const payload = {
         userId: 'user-123',
-        expiresAt: new Date('2025-12-31')
+        expiresAt
       };
 
       const token = await encrypt(payload);
@@ -21,7 +47,7 @@ describe('Session management', () => {
     it('decrypts valid token successfully', async () => {
       const token = await encrypt({
         userId: 'user-456',
-        expiresAt: new Date('2025-12-31')
+        expiresAt
       });
 
       const payload = await decrypt(token);
@@ -33,6 +59,28 @@ describe('Session management', () => {
       const result = await decrypt('invalid-token');
 
       expect(result).toBeNull();
+    });
+  });
+
+  describe('#createSession', () => {
+    it('should set session cookie with encrypted token', async () => {
+      await createSession('user-123');
+
+      expect(mockSet).toHaveBeenCalledWith('session', expect.stringMatching(/^ey/), {
+        expires: expiresAt,
+        httpOnly: true,
+        path: '/',
+        sameSite: 'lax',
+        secure: true
+      });
+    });
+  });
+
+  describe('#deleteSession', () => {
+    it('should delete the session cookie', async () => {
+      await deleteSession();
+
+      expect(mockDelete).toHaveBeenCalledWith('session');
     });
   });
 });

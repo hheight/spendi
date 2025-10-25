@@ -43,7 +43,7 @@ describe('Middleware', () => {
             }
           });
 
-          const date = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
+          const date = new Date(Date.now() + 8 * 24 * 60 * 60 * 1000);
           vi.setSystemTime(date);
 
           const response = await middleware(request);
