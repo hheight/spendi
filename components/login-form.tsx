@@ -4,6 +4,7 @@ import { AlertCircleIcon } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
+import { PasswordInput } from '@/components/password-input';
 import {
   Card,
   CardContent,
@@ -81,9 +82,8 @@ export default function LoginForm() {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="login-form-password">Password</FieldLabel>
-                  <Input
+                  <PasswordInput
                     {...field}
-                    type="password"
                     id="login-form-password"
                     aria-invalid={fieldState.invalid}
                     autoComplete="off"
@@ -107,7 +107,7 @@ export default function LoginForm() {
           </Button>
         </Field>
         <div className="mt-4 text-sm">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link
             href="/signup"
             className="hover:text-primary font-medium underline underline-offset-4"

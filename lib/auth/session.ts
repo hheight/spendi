@@ -20,9 +20,17 @@ export async function decrypt(session: string | undefined = '') {
     });
 
     return payload;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return null;
   }
+}
+
+export async function getSession() {
+  const cookie = (await cookies()).get('session')?.value;
+  const session = await decrypt(cookie);
+
+  return session;
 }
 
 export async function createSession(userId: string) {

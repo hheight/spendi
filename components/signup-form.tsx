@@ -1,9 +1,12 @@
 'use client';
 
+import { useState } from 'react';
+import { redirect } from 'next/navigation';
 import { AlertCircleIcon } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
+import { PasswordInput } from '@/components/password-input';
 import {
   Card,
   CardContent,
@@ -17,9 +20,7 @@ import { Input } from '@/components/ui/input';
 import { signupSchema, type SignupInput } from '@/lib/auth/schemas';
 import { signup } from '@/app/actions/auth';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useState } from 'react';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 
 export default function SignupForm() {
   const [serverError, setServerError] = useState<string | null>(null);
@@ -27,7 +28,8 @@ export default function SignupForm() {
     resolver: zodResolver(signupSchema),
     defaultValues: {
       email: '',
-      password: ''
+      password: '',
+      confirm: ''
     }
   });
   const { isSubmitting } = form.formState;
@@ -46,8 +48,8 @@ export default function SignupForm() {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle>Create an account</CardTitle>
-        <CardDescription>Sign Up to get started</CardDescription>
+        <CardTitle>Sign up</CardTitle>
+        <CardDescription>Create an account to get started</CardDescription>
       </CardHeader>
       <CardContent>
         {serverError && (
@@ -81,10 +83,25 @@ export default function SignupForm() {
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor="signup-form-password">Password</FieldLabel>
-                  <Input
+                  <PasswordInput
                     {...field}
-                    type="password"
                     id="signup-form-password"
+                    aria-invalid={fieldState.invalid}
+                    autoComplete="off"
+                  />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
+            <Controller
+              name="confirm"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="signup-form-password">Confirm Password</FieldLabel>
+                  <PasswordInput
+                    {...field}
+                    id="signup-form-confirm"
                     aria-invalid={fieldState.invalid}
                     autoComplete="off"
                   />
