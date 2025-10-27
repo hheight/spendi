@@ -1,5 +1,7 @@
 import prisma from './prisma';
 
-export default async () => {
+const resetDb = async () => {
   await prisma.user.deleteMany();
 };
+
+export default resetDb;
