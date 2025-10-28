@@ -12,7 +12,8 @@ describe('Auth actions', () => {
     it('should create a new user with valid data', async () => {
       const result = await signup({
         email: 'test@example.com',
-        password: 'Password123'
+        password: 'Password123',
+        confirm: 'Password123'
       });
 
       expect(result.success).toBe(true);
@@ -40,17 +41,19 @@ describe('Auth actions', () => {
 
       const result = await signup({
         email: 'test@example.com',
-        password: 'Password123'
+        password: 'Password123',
+        confirm: 'Password123'
       });
 
       expect(result.success).toBe(false);
-      expect(result.message).toContain('already exists');
+      expect(result.message).toContain('An account with this email already exists');
     });
 
     it('should validate password requirements', async () => {
       const result = await signup({
         email: 'test@example.com',
-        password: 'weakpass'
+        password: 'weakpass',
+        confirm: 'weakpass'
       });
 
       expect(result.success).toBe(false);

@@ -12,6 +12,6 @@ export default defineConfig({
   },
   test: {
     include: ['tests/unit/**/*.test.ts'],
-    setupFiles: ['tests/helpers/setup-integration.ts']
+    setupFiles: ['tests/helpers/setup-unit.ts']
   }
 });
