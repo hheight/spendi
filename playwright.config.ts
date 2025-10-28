@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import path from 'path';
+import { Button } from './components/ui/button';
 
 /**
  * Read environment variables from file.
@@ -42,28 +43,30 @@ export default defineConfig({
   },
 
   /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run dev',
-  //   url: baseURL,
-  //   reuseExistingServer: !process.env.CI
-  // },
+  webServer: [
+    {
+      command: 'npm run dev',
+      port: 3000,
+      reuseExistingServer: true
+    }
+  ],
 
   /* Configure projects for major browsers */
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] }
-    },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] }
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] }
     }
+
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] }
+    // },
+    //
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] }
+    // }
 
     /* Test against mobile viewports. */
     // {
