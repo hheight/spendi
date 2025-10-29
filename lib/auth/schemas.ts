@@ -1,24 +1,24 @@
-import * as z from 'zod';
+import * as z from "zod";
 
 export const signinSchema = z.object({
-  email: z.email({ message: 'Please enter a valid email' }).trim(),
-  password: z.string().min(1, { message: 'Password is required' }).trim()
+  email: z.email({ message: "Please enter a valid email" }).trim(),
+  password: z.string().min(1, { message: "Password is required" }).trim()
 });
 
 export const signupSchema = z
   .object({
-    email: z.email({ message: 'Please enter a valid email' }).trim(),
+    email: z.email({ message: "Please enter a valid email" }).trim(),
     password: z
       .string()
-      .min(8, { message: 'Must be at least 8 characters long' })
-      .regex(/[a-zA-Z]/, { message: 'Must contain at least one letter' })
-      .regex(/[0-9]/, { message: 'Must contain at least one number' })
+      .min(8, { message: "Must be at least 8 characters long" })
+      .regex(/[a-zA-Z]/, { message: "Must contain at least one letter" })
+      .regex(/[0-9]/, { message: "Must contain at least one number" })
       .trim(),
     confirm: z.string().trim()
   })
   .refine(data => data.password === data.confirm, {
-    message: 'Passwords do not match',
-    path: ['confirm']
+    message: "Passwords do not match",
+    path: ["confirm"]
   });
 
 export type SignupInput = z.infer<typeof signupSchema>;

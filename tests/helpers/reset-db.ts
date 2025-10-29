@@ -1,4 +1,4 @@
-import prisma from './prisma';
+import prisma from "./prisma";
 
 const resetDb = async () => {
   await prisma.user.deleteMany();

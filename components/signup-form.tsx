@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { redirect } from 'next/navigation';
-import { AlertCircleIcon } from 'lucide-react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, Controller } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import { PasswordInput } from '@/components/password-input';
+import { useState } from "react";
+import { redirect } from "next/navigation";
+import { AlertCircleIcon } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, Controller } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { PasswordInput } from "@/components/password-input";
 import {
   Card,
   CardContent,
@@ -14,22 +14,22 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '@/components/ui/card';
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
-import { signupSchema, type SignupInput } from '@/lib/auth/schemas';
-import { signup } from '@/app/actions/auth';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import Link from 'next/link';
+} from "@/components/ui/card";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { signupSchema, type SignupInput } from "@/lib/auth/schemas";
+import { signup } from "@/app/actions/auth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import Link from "next/link";
 
 export default function SignupForm() {
   const [serverError, setServerError] = useState<string | null>(null);
   const form = useForm<SignupInput>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      email: '',
-      password: '',
-      confirm: ''
+      email: "",
+      password: "",
+      confirm: ""
     }
   });
   const { isSubmitting } = form.formState;
@@ -39,9 +39,9 @@ export default function SignupForm() {
     const result = await signup(data);
 
     if (result.success) {
-      redirect('/dashboard');
+      redirect("/dashboard");
     } else {
-      setServerError(result.message || 'An error occurred while creating your account');
+      setServerError(result.message || "An error occurred while creating your account");
     }
   };
 
@@ -124,7 +124,7 @@ export default function SignupForm() {
           </Button>
         </Field>
         <div className="mt-4 text-sm">
-          Already have an account?{' '}
+          Already have an account?{" "}
           <Link
             href="/login"
             className="hover:text-primary font-medium underline underline-offset-4"

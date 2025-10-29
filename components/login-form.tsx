@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { AlertCircleIcon } from 'lucide-react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm, Controller } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import { PasswordInput } from '@/components/password-input';
+import { AlertCircleIcon } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, Controller } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { PasswordInput } from "@/components/password-input";
 import {
   Card,
   CardContent,
@@ -12,23 +12,23 @@ import {
   CardFooter,
   CardHeader,
   CardTitle
-} from '@/components/ui/card';
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { Input } from '@/components/ui/input';
-import { SigninInput, signinSchema } from '@/lib/auth/schemas';
-import { login } from '@/app/actions/auth';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useState } from 'react';
-import Link from 'next/link';
-import { redirect } from 'next/navigation';
+} from "@/components/ui/card";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { SigninInput, signinSchema } from "@/lib/auth/schemas";
+import { login } from "@/app/actions/auth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useState } from "react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default function LoginForm() {
   const [serverError, setServerError] = useState<string | null>(null);
   const form = useForm<SigninInput>({
     resolver: zodResolver(signinSchema),
     defaultValues: {
-      email: '',
-      password: ''
+      email: "",
+      password: ""
     }
   });
   const { isSubmitting } = form.formState;
@@ -38,9 +38,9 @@ export default function LoginForm() {
     const result = await login(data);
 
     if (result.success) {
-      redirect('/dashboard');
+      redirect("/dashboard");
     } else {
-      setServerError(result.message || 'An error occurred during login');
+      setServerError(result.message || "An error occurred during login");
     }
   };
 
@@ -107,7 +107,7 @@ export default function LoginForm() {
           </Button>
         </Field>
         <div className="mt-4 text-sm">
-          Don&apos;t have an account?{' '}
+          Don&apos;t have an account?{" "}
           <Link
             href="/signup"
             className="hover:text-primary font-medium underline underline-offset-4"

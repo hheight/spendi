@@ -1,22 +1,22 @@
-import 'server-only';
-import { type JWTPayload, SignJWT, jwtVerify } from 'jose';
-import { cookies } from 'next/headers';
+import "server-only";
+import { type JWTPayload, SignJWT, jwtVerify } from "jose";
+import { cookies } from "next/headers";
 
 const secretKey = process.env.SESSION_SECRET;
 const encodedKey = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload: JWTPayload) {
   return new SignJWT(payload)
-    .setProtectedHeader({ alg: 'HS256' })
+    .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime('7d')
+    .setExpirationTime("7d")
     .sign(encodedKey);
 }
 
-export async function decrypt(session: string | undefined = '') {
+export async function decrypt(session: string | undefined = "") {
   try {
     const { payload } = await jwtVerify(session, encodedKey, {
-      algorithms: ['HS256']
+      algorithms: ["HS256"]
     });
 
     return payload;
@@ -27,7 +27,7 @@ export async function decrypt(session: string | undefined = '') {
 }
 
 export async function getSession() {
-  const cookie = (await cookies()).get('session')?.value;
+  const cookie = (await cookies()).get("session")?.value;
   const session = await decrypt(cookie);
 
   return session;
@@ -38,17 +38,17 @@ export async function createSession(userId: string) {
   const session = await encrypt({ userId, expiresAt });
   const cookieStore = await cookies();
 
-  cookieStore.set('session', session, {
+  cookieStore.set("session", session, {
     httpOnly: true,
     secure: true,
     expires: expiresAt,
-    sameSite: 'lax',
-    path: '/'
+    sameSite: "lax",
+    path: "/"
   });
 }
 
 export async function updateSession() {
-  const session = (await cookies()).get('session')?.value;
+  const session = (await cookies()).get("session")?.value;
   const payload = await decrypt(session);
 
   if (!session || !payload) {
@@ -58,16 +58,16 @@ export async function updateSession() {
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
   const cookieStore = await cookies();
-  cookieStore.set('session', session, {
+  cookieStore.set("session", session, {
     httpOnly: true,
     secure: true,
     expires: expiresAt,
-    sameSite: 'lax',
-    path: '/'
+    sameSite: "lax",
+    path: "/"
   });
 }
 
 export async function deleteSession() {
   const cookieStore = await cookies();
-  cookieStore.delete('session');
+  cookieStore.delete("session");
 }

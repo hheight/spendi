@@ -1,14 +1,14 @@
-import { PrismaClient } from '../app/generated/prisma';
-import bcrypt from 'bcryptjs';
+import { PrismaClient } from "../app/generated/prisma";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 async function seed() {
-  const email = 'test@spendi.com';
+  const email = "test@spendi.com";
 
   await prisma.user.delete({ where: { email } }).catch(() => {});
 
-  const hashedPassword = await bcrypt.hash('test1234', 10);
+  const hashedPassword = await bcrypt.hash("test1234", 10);
 
   const user = await prisma.user.create({
     data: {
@@ -23,46 +23,44 @@ async function seed() {
 
   const housing = await prisma.category.create({
     data: {
-      name: 'Housing',
-      color: '#c0ffee',
+      name: "Housing",
+      color: "#c0ffee",
       userId: user.id
     }
   });
 
   await prisma.category.create({
     data: {
-      name: 'Transportation',
-      color: '#bada55',
+      name: "Transportation",
+      color: "#bada55",
       userId: user.id
     }
   });
 
   await prisma.category.create({
     data: {
-      name: 'Food',
-      color: '#00ff00',
+      name: "Food",
+      color: "#00ff00",
       userId: user.id
     }
   });
 
   await prisma.category.create({
     data: {
-      name: 'Utilities',
-      color: '#aaaaff',
+      name: "Utilities",
+      color: "#aaaaff",
       userId: user.id
     }
   });
 
   await prisma.expense.create({
     data: {
-      item: 'Rent',
+      item: "Rent",
       value: 1200,
       userId: user.id,
       categoryId: housing.id
     }
   });
-
-  console.log('Database has been seeded');
 }
 
 seed();

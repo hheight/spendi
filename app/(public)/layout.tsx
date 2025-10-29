@@ -3,8 +3,8 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList
-} from '@/components/ui/navigation-menu';
-import Link from 'next/link';
+} from "@/components/ui/navigation-menu";
+import Link from "next/link";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (

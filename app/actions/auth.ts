@@ -1,14 +1,14 @@
-'use server';
+"use server";
 
 import {
   signupSchema,
   signinSchema,
   type SignupInput,
   SigninInput
-} from '@/lib/auth/schemas';
-import { createSession } from '@/lib/auth/session';
-import prisma from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
+} from "@/lib/auth/schemas";
+import { createSession } from "@/lib/auth/session";
+import prisma from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 
 type ActionResponse = {
   success: boolean;
@@ -35,7 +35,7 @@ export async function signup(data: SignupInput): Promise<ActionResponse> {
     if (existingUser) {
       return {
         success: false,
-        message: 'An account with this email already exists'
+        message: "An account with this email already exists"
       };
     }
 
@@ -56,10 +56,10 @@ export async function signup(data: SignupInput): Promise<ActionResponse> {
 
     return { success: true };
   } catch (error) {
-    console.error('Signup error:', error);
+    console.error("Signup error:", error);
     return {
       success: false,
-      message: 'An error occurred while creating your account'
+      message: "An error occurred while creating your account"
     };
   }
 }
@@ -82,7 +82,7 @@ export async function login(data: SigninInput): Promise<ActionResponse> {
     if (!user || !user.password?.hash) {
       return {
         success: false,
-        message: 'Invalid email or password'
+        message: "Invalid email or password"
       };
     }
 
@@ -91,7 +91,7 @@ export async function login(data: SigninInput): Promise<ActionResponse> {
     if (!isMatch) {
       return {
         success: false,
-        message: 'Invalid email or password'
+        message: "Invalid email or password"
       };
     }
 
@@ -100,6 +100,6 @@ export async function login(data: SigninInput): Promise<ActionResponse> {
     return { success: true };
   } catch (error) {
     console.error(error);
-    return { success: false, message: 'An error occured during login' };
+    return { success: false, message: "An error occured during login" };
   }
 }

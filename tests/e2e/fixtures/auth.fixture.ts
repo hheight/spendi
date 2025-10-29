@@ -1,8 +1,8 @@
-import { test as base } from '@playwright/test';
-import { LoginPage } from '../pages/login.page';
-import { SignupPage } from '../pages/signup.page';
-import prisma from '../../helpers/prisma';
-import { faker } from '@faker-js/faker';
+import { test as base } from "@playwright/test";
+import { LoginPage } from "../pages/login.page";
+import { SignupPage } from "../pages/signup.page";
+import prisma from "../../helpers/prisma";
+import { faker } from "@faker-js/faker";
 
 type UserDetails = {
   email: string;
@@ -29,7 +29,7 @@ export const test = base.extend<AuthFixtures>({
   },
   user_credentials: async ({}, use) => {
     const email = faker.internet.email();
-    const password = faker.internet.password({ prefix: '1' });
+    const password = faker.internet.password({ prefix: "1" });
 
     await use({
       email,
@@ -44,11 +44,11 @@ export const test = base.extend<AuthFixtures>({
 
     await signupPage.goto();
     await signupPage.populateForm(user_credentials.email, user_credentials.password);
-    await page.click('button[type=submit]');
-    await page.waitForLoadState('networkidle');
+    await page.click("button[type=submit]");
+    await page.waitForLoadState("networkidle");
     await page.close();
     await use(user_credentials);
   }
 });
 
-export { expect } from '@playwright/test';
+export { expect } from "@playwright/test";
