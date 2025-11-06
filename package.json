@@ -11,7 +11,12 @@
     "test:int": "./scripts/run-integration.sh",
     "test:e2e": "./scripts/run-e2e.sh",
     "test:e2e:headed": "./scripts/run-e2e.sh --headed",
-    "prepare": "husky"
+    "prepare": "husky",
+    "docker:dev:start": "docker compose -f compose.yaml -f compose.dev.yaml up -d",
+    "docker:dev:stop": "docker compose -f compose.yaml -f compose.dev.yaml down",
+    "docker:test:stop": "docker compose -f compose.yaml -f compose.test.yaml down",
+    "migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev --name init",
+    "db:dev:seed": "dotenv -e .env.development -- npx prisma db seed"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -50,7 +55,7 @@
     "@types/react": "19",
     "@types/react-dom": "19",
     "@types/supertest": "6.0.3",
-    "dotenv": "^17.2.3",
+    "dotenv": "17.2.3",
     "eslint": "9",
     "eslint-config-next": "15.5.4",
     "eslint-config-prettier": "10.1.8",
