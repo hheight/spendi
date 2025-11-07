@@ -1,13 +1,17 @@
-import Link from "next/link";
 import ThemeToggle from "@/components/theme-toggle";
 import { Separator } from "@/components/ui/separator";
+import Logo from "@/components/logo";
 
-export default function Header({ actions }: { actions: React.ReactNode }) {
+export default function Header({
+  withLogo = true,
+  actions
+}: {
+  withLogo?: boolean;
+  actions: React.ReactNode;
+}) {
   return (
-    <header className="bg-background flex items-center justify-between border-b px-6 py-4">
-      <Link href="/">
-        <span className="text-xl font-bold">Spendi</span>
-      </Link>
+    <header className="h-(--header-height) bg-background sticky top-0 flex items-center justify-between overscroll-none border-b px-6">
+      {withLogo && <Logo />}
       <div className="ml-auto flex items-center gap-2 md:flex-1 md:justify-end">
         {actions}
         <div className="ml-2 h-5">
