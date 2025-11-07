@@ -6,9 +6,10 @@ import {
   type SignupInput,
   SigninInput
 } from "@/lib/auth/schemas";
-import { createSession } from "@/lib/auth/session";
+import { createSession, deleteSession } from "@/lib/auth/session";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { redirect } from "next/navigation";
 
 type ActionResponse = {
   success: boolean;
@@ -102,4 +103,9 @@ export async function login(data: SigninInput): Promise<ActionResponse> {
     console.error(error);
     return { success: false, message: "An error occured during login" };
   }
+}
+
+export async function logout() {
+  await deleteSession();
+  redirect("/login");
 }

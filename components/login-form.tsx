@@ -67,6 +67,7 @@ export default function LoginForm() {
                   <FieldLabel htmlFor="login-form-email">Email</FieldLabel>
                   <Input
                     {...field}
+                    autoFocus
                     type="email"
                     id="login-form-email"
                     aria-invalid={fieldState.invalid}

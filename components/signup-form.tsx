@@ -68,6 +68,7 @@ export default function SignupForm() {
                   <FieldLabel htmlFor="signup-form-email">Email</FieldLabel>
                   <Input
                     {...field}
+                    autoFocus
                     type="email"
                     id="signup-form-email"
                     aria-invalid={fieldState.invalid}

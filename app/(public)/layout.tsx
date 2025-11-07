@@ -1,3 +1,4 @@
+import Header from "@/components/header";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -9,10 +10,7 @@ import Link from "next/link";
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="bg-muted flex min-h-screen flex-col">
-      <header className="bg-background flex items-center justify-between border-b px-6 py-4">
-        <Link href="/">
-          <span className="text-xl font-bold">Spendi</span>
-        </Link>
+      <Header>
         <div className="space-x-3">
           <NavigationMenu>
             <NavigationMenuList>
@@ -36,7 +34,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             </NavigationMenuList>
           </NavigationMenu>
         </div>
-      </header>
+      </Header>
 
       <main className="flex grow flex-col items-center justify-center px-6">
         {children}

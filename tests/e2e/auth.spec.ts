@@ -44,4 +44,19 @@ test.describe("auth", () => {
 
     await expect(page).toHaveURL(/\/dashboard$/);
   });
+
+  test("should redirect to the login page after logging out", async ({
+    account,
+    loginPage,
+    page
+  }) => {
+    await loginPage.populateForm(account.email, account.password);
+    await page.click("button[type=submit]");
+    await page.waitForLoadState("networkidle");
+
+    await page.click("header span[data-slot=dropdown-menu-trigger]");
+    await page.getByText("Log Out").click();
+
+    await expect(page).toHaveURL(/\/login$/);
+  });
 });
