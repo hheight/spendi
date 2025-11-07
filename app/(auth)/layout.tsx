@@ -1,4 +1,4 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import AccountMenu from "@/components/account-menu";
 import Header from "@/components/header";
@@ -6,11 +6,12 @@ import Header from "@/components/header";
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
-      <Header withLogo={false} actions={<AccountMenu />} />
       <SidebarProvider>
         <AppSidebar />
-        <SidebarTrigger />
-        <main className="flex grow flex-col px-6">{children}</main>
+        <SidebarInset className="bg-muted">
+          <Header withLogo={false} actions={<AccountMenu />} />
+          <div className="flex grow flex-col px-6">{children}</div>
+        </SidebarInset>
       </SidebarProvider>
     </div>
   );
