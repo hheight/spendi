@@ -16,7 +16,7 @@ export default function AccountMenu() {
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer">
           <AvatarFallback>
-            <User />
+            <User size={20} />
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
