@@ -20,9 +20,10 @@ import { login } from "@/app/actions/auth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useState } from "react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() {
+  const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const form = useForm<SigninInput>({
     resolver: zodResolver(signinSchema),
@@ -38,7 +39,7 @@ export default function LoginForm() {
     const result = await login(data);
 
     if (result.success) {
-      redirect("/dashboard");
+      router.push("/dashboard");
     } else {
       setServerError(result.message || "An error occurred during login");
     }

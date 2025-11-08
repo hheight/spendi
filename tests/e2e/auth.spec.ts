@@ -15,8 +15,8 @@ test.describe("auth", () => {
 
   test("should warn if login is invalid", async ({ page, loginPage }) => {
     await loginPage.populateForm("invalid@test.com", "password123");
+
     await page.click("button[type=submit]");
-    await page.waitForLoadState("networkidle");
 
     await expect(page.getByText("Invalid email or password")).toBeVisible();
   });
@@ -28,7 +28,6 @@ test.describe("auth", () => {
   }) => {
     await signupPage.populateForm(user_credentials.email, user_credentials.password);
     await page.click("button[type=submit]");
-    await page.waitForLoadState("networkidle");
 
     await expect(page).toHaveURL(/\/dashboard$/);
   });
@@ -40,7 +39,6 @@ test.describe("auth", () => {
   }) => {
     await loginPage.populateForm(account.email, account.password);
     await page.click("button[type=submit]");
-    await page.waitForLoadState("networkidle");
 
     await expect(page).toHaveURL(/\/dashboard$/);
   });
@@ -52,7 +50,6 @@ test.describe("auth", () => {
   }) => {
     await loginPage.populateForm(account.email, account.password);
     await page.click("button[type=submit]");
-    await page.waitForLoadState("networkidle");
 
     await page.click("header span[data-slot=dropdown-menu-trigger]");
     await page.getByText("Log Out").click();

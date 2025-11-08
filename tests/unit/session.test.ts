@@ -88,7 +88,7 @@ describe("Session management", () => {
         httpOnly: true,
         path: "/",
         sameSite: "lax",
-        secure: true
+        secure: process.env.NODE_ENV === "production"
       });
     });
   });
@@ -111,7 +111,7 @@ describe("Session management", () => {
           httpOnly: true,
           path: "/",
           sameSite: "lax",
-          secure: true
+          secure: process.env.NODE_ENV === "production"
         });
       });
     });

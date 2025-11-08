@@ -3,6 +3,8 @@ import { type JWTPayload, SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
 const secretKey = process.env.SESSION_SECRET;
+const isProd =
+  process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production";
 const encodedKey = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload: JWTPayload) {
@@ -40,7 +42,7 @@ export async function createSession(userId: string) {
 
   cookieStore.set("session", session, {
     httpOnly: true,
-    secure: true,
+    secure: isProd,
     expires: expiresAt,
     sameSite: "lax",
     path: "/"
@@ -60,7 +62,7 @@ export async function updateSession() {
   const cookieStore = await cookies();
   cookieStore.set("session", session, {
     httpOnly: true,
-    secure: true,
+    secure: isProd,
     expires: expiresAt,
     sameSite: "lax",
     path: "/"

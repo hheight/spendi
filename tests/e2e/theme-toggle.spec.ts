@@ -7,8 +7,7 @@ test.describe("Theme Toggle", () => {
     await expect(html).toHaveClass(/light/);
 
     const themeToggle = page.getByTitle("Toggle theme");
-    // For some reason playwright ignores first click
-    await themeToggle.dblclick();
+    await themeToggle.click();
 
     await expect(html).toHaveClass(/dark/);
 
@@ -19,7 +18,7 @@ test.describe("Theme Toggle", () => {
 
   test("should persist theme preference", async ({ page }) => {
     await page.goto("/");
-    await page.getByTitle("Toggle theme").dblclick();
+    await page.getByTitle("Toggle theme").click();
 
     await expect(page.locator("html")).toHaveClass(/dark/);
 

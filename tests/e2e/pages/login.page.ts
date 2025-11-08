@@ -13,6 +13,7 @@ export class LoginPage {
   }
 
   async populateForm(email: string, password: string) {
+    await this.page.waitForLoadState("networkidle");
     await this.page.fill("#login-form-email", email);
     await this.page.fill("#login-form-password", password);
   }

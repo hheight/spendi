@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { AlertCircleIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
@@ -23,6 +23,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
 
 export default function SignupForm() {
+  const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const form = useForm<SignupInput>({
     resolver: zodResolver(signupSchema),
@@ -39,7 +40,7 @@ export default function SignupForm() {
     const result = await signup(data);
 
     if (result.success) {
-      redirect("/dashboard");
+      router.push("/dashboard");
     } else {
       setServerError(result.message || "An error occurred while creating your account");
     }

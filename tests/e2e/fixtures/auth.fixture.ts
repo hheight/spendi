@@ -45,7 +45,7 @@ export const test = base.extend<AuthFixtures>({
     await signupPage.goto();
     await signupPage.populateForm(user_credentials.email, user_credentials.password);
     await page.click("button[type=submit]");
-    await page.waitForLoadState("networkidle");
+    await page.waitForURL("/dashboard");
     await page.close();
     await use(user_credentials);
   }
