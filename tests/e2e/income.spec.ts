@@ -1,7 +1,7 @@
 import { test, expect } from "./fixtures/auth.fixture";
 
 test.describe("income", () => {
-  test.only("should allow to save income", async ({ authenticatedPage: page }) => {
+  test("should allow to save income", async ({ authenticatedPage: page }) => {
     await page.getByText("Income").click();
 
     const input = page.locator("input[name=income]");
