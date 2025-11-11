@@ -1,5 +1,5 @@
 import { vi, describe, it, beforeEach, expect } from "vitest";
-import { verifySession } from "@/lib/auth/dal";
+import { verifySession } from "@/lib/dal";
 import { redirect } from "next/navigation";
 import { encrypt } from "@/lib/auth/session";
 

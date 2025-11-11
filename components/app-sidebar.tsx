@@ -1,3 +1,5 @@
+"use client";
+
 import { LayoutDashboard, DollarSign, CreditCard } from "lucide-react";
 import Link from "next/link";
 
@@ -11,6 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from "@/components/ui/sidebar";
+import { useSelectedLayoutSegment } from "next/navigation";
 
 import Logo from "@/components/logo";
 
@@ -33,6 +36,8 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const segment = useSelectedLayoutSegment();
+
   return (
     <Sidebar>
       <SidebarHeader className="border-b px-6 py-5">
@@ -44,7 +49,10 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map(item => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    isActive={segment === item.title.toLowerCase()}
+                    asChild
+                  >
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>

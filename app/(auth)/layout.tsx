@@ -10,7 +10,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <AppSidebar />
         <SidebarInset className="bg-muted">
           <Header withLogo={false} actions={<AccountMenu />} />
-          <div className="flex grow flex-col px-6">{children}</div>
+          <div className="flex grow flex-col p-6">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </div>
