@@ -56,3 +56,22 @@ export const getExpensesByCategory = cache(async () => {
     return null;
   }
 });
+
+export const getUserIncome = cache(async () => {
+  const session = await verifySession();
+  if (!session) return null;
+
+  try {
+    const data = prisma.user.findUnique({
+      where: { id: session.userId },
+      select: {
+        income: true
+      }
+    });
+
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch user:", error);
+    return null;
+  }
+});

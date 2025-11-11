@@ -1,13 +1,18 @@
 import "server-only";
 import { type JWTPayload, SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { User } from "@/app/generated/prisma";
 
 const secretKey = process.env.SESSION_SECRET;
 const isProd =
   process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production";
 const encodedKey = new TextEncoder().encode(secretKey);
 
-export async function encrypt(payload: JWTPayload) {
+interface SessionPayload extends JWTPayload {
+  userId: User["id"];
+}
+
+export async function encrypt(payload: SessionPayload) {
   return new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -15,13 +20,15 @@ export async function encrypt(payload: JWTPayload) {
     .sign(encodedKey);
 }
 
-export async function decrypt(session: string | undefined = "") {
+export async function decrypt(
+  session: string | undefined = ""
+): Promise<SessionPayload | null> {
   try {
     const { payload } = await jwtVerify(session, encodedKey, {
       algorithms: ["HS256"]
     });
 
-    return payload;
+    return payload as SessionPayload;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return null;

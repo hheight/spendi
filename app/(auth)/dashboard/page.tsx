@@ -15,7 +15,7 @@ import { BanknoteX } from "lucide-react";
 
 function CardContainer({ children }: { children: React.ReactNode }) {
   return (
-    <Card className="flex flex-col rounded-none">
+    <Card className="mx-auto flex w-full max-w-prose flex-col">
       <CardContent className="flex-1 pb-0">{children}</CardContent>
     </Card>
   );

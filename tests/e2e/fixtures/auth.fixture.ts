@@ -1,4 +1,4 @@
-import { test as base } from "@playwright/test";
+import { test as base, Page } from "@playwright/test";
 import { LoginPage } from "../pages/login.page";
 import { SignupPage } from "../pages/signup.page";
 import prisma from "../../helpers/prisma";
@@ -14,6 +14,7 @@ type AuthFixtures = {
   signupPage: SignupPage;
   user_credentials: UserDetails;
   account: UserDetails;
+  authenticatedPage: Page;
 };
 
 export const test = base.extend<AuthFixtures>({
@@ -48,6 +49,14 @@ export const test = base.extend<AuthFixtures>({
     await page.waitForURL("/dashboard");
     await page.close();
     await use(user_credentials);
+  },
+  authenticatedPage: async ({ page, loginPage, account }, use) => {
+    await loginPage.goto();
+    await loginPage.populateForm(account.email, account.password);
+    await page.click("button[type=submit]");
+    await page.waitForURL("/dashboard");
+
+    await use(page);
   }
 });
 

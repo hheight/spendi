@@ -9,14 +9,14 @@ import {
   ChartTooltipContent
 } from "@/components/ui/chart";
 
-interface Props {
+type Props = {
   chartData: {
     name: string;
     value: number;
     fill: string;
   }[];
   chartConfig: ChartConfig;
-}
+};
 
 export default function RoundedPieChart({ chartData, chartConfig }: Props) {
   return (
@@ -33,7 +33,6 @@ export default function RoundedPieChart({ chartData, chartConfig }: Props) {
           radius={10}
           cornerRadius={8}
           paddingAngle={4}
-          isAnimationActive={false}
         >
           <LabelList
             dataKey="value"

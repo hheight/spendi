@@ -1,3 +1,8 @@
+import IncomeForm from "@/components/income-form";
+import { getUserIncome } from "@/lib/dal";
+
 export default async function Page() {
-  return <h1>Income page</h1>;
+  const data = await getUserIncome();
+
+  return <IncomeForm defaultValue={data?.income.toString() || "0"} />;
 }
