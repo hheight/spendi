@@ -12,6 +12,11 @@ export default defineConfig({
   },
   test: {
     include: ["tests/unit/**/*.test.ts"],
-    setupFiles: ["tests/helpers/setup-unit.ts"]
+    setupFiles: ["tests/helpers/setup-unit.ts"],
+    poolOptions: {
+      forks: {
+        singleFork: true
+      }
+    }
   }
 });
