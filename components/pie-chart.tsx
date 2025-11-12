@@ -1,6 +1,6 @@
 "use client";
 
-import { LabelList, Pie, PieChart } from "recharts";
+import { Legend, LabelList, Pie, PieChart as RoundedPieChart } from "recharts";
 
 import {
   ChartConfig,
@@ -18,13 +18,13 @@ type Props = {
   chartConfig: ChartConfig;
 };
 
-export default function RoundedPieChart({ chartData, chartConfig }: Props) {
+export default function PieChart({ chartData, chartConfig }: Props) {
   return (
     <ChartContainer
       config={chartConfig}
       className="[&_.recharts-text]:fill-background mx-auto aspect-square max-h-[250px]"
     >
-      <PieChart>
+      <RoundedPieChart>
         <ChartTooltip content={<ChartTooltipContent nameKey="name" hideLabel />} />
         <Pie
           data={chartData}
@@ -43,7 +43,8 @@ export default function RoundedPieChart({ chartData, chartConfig }: Props) {
             formatter={(value: number) => value.toString()}
           />
         </Pie>
-      </PieChart>
+        <Legend />
+      </RoundedPieChart>
     </ChartContainer>
   );
 }

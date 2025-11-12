@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { decrypt } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import { cache } from "react";
+import type { CategoryPreview, ExpenseByCategory, UserIncome } from "@/types";
 
 export const verifySession = cache(async () => {
   const cookie = (await cookies()).get("session")?.value;
@@ -17,7 +18,7 @@ export const verifySession = cache(async () => {
   return { isAuth: true, userId: session.userId };
 });
 
-export const getCategories = cache(async () => {
+export const getCategories = cache(async (): Promise<CategoryPreview[] | null> => {
   const session = await verifySession();
   if (!session) return null;
 
@@ -39,30 +40,32 @@ export const getCategories = cache(async () => {
   }
 });
 
-export const getExpensesByCategory = cache(async () => {
-  const session = await verifySession();
-  if (!session) return null;
+export const getExpensesByCategory = cache(
+  async (): Promise<ExpenseByCategory[] | null> => {
+    const session = await verifySession();
+    if (!session) return null;
 
-  try {
-    const data = prisma.expense.groupBy({
-      by: ["categoryId"],
-      where: { userId: session.userId },
-      _sum: { value: true }
-    });
+    try {
+      const data = await prisma.expense.groupBy({
+        by: ["categoryId"],
+        where: { userId: session.userId },
+        _sum: { value: true }
+      });
 
-    return data;
-  } catch (error) {
-    console.error("Failed to fetch expenses by category:", error);
-    return null;
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch expenses by category:", error);
+      return null;
+    }
   }
-});
+);
 
-export const getUserIncome = cache(async () => {
+export const getUserIncome = cache(async (): Promise<UserIncome | null> => {
   const session = await verifySession();
   if (!session) return null;
 
   try {
-    const data = prisma.user.findUnique({
+    const data = await prisma.user.findUnique({
       where: { id: session.userId },
       select: {
         income: true

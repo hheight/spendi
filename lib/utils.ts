@@ -1,26 +1,17 @@
-import type { ChartConfig } from "@/components/ui/chart";
+import type { ChartConfig, ChartItem } from "@/components/ui/chart";
+import type { CategoryPreview, ExpenseByCategory, UserIncome } from "@/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-
-type Category = {
-  id: string;
-  name: string;
-  color: string;
-};
-
-type ExpenseByCategory = {
-  categoryId: string;
-  _sum: {
-    value: number | null;
-  };
-};
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function buildChartData(categories: Category[], expenses: ExpenseByCategory[]) {
-  const expenseMap = new Map(expenses.map(e => [e.categoryId, e._sum.value ?? 0]));
+export function buildChartData(
+  categories: CategoryPreview[],
+  expenses: ExpenseByCategory[]
+): { chartData: ChartItem[]; chartConfig: ChartConfig } {
+  const expenseMap = new Map(expenses.map(e => [e.categoryId, e._sum?.value ?? 0]));
 
   const chartData = categories
     .map(category => ({
@@ -40,4 +31,11 @@ export function buildChartData(categories: Category[], expenses: ExpenseByCatego
   }, {} as ChartConfig);
 
   return { chartData, chartConfig };
+}
+
+export function getBalance(chartData: ChartItem[], userIncome: UserIncome) {
+  const expenseSum = chartData.reduce((sum, { value }) => sum + value, 0);
+  const balance = userIncome.income - expenseSum;
+
+  return { balance, expenseSum };
 }

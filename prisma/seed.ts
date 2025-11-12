@@ -24,7 +24,7 @@ async function seed() {
   const housing = await prisma.category.create({
     data: {
       name: "Housing",
-      color: "#c0ffee",
+      color: "#719e91",
       userId: user.id
     }
   });

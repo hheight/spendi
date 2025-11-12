@@ -8,24 +8,32 @@ import {
 } from "@/components/ui/empty";
 import { Card, CardContent } from "@/components/ui/card";
 
-import RoundedPieChart from "@/components/rounded-pie-chart";
-import { getCategories, getExpensesByCategory } from "@/lib/dal";
-import { buildChartData } from "@/lib/utils";
+import PieChart from "@/components/pie-chart";
+import { getCategories, getExpensesByCategory, getUserIncome } from "@/lib/dal";
+import { buildChartData, getBalance } from "@/lib/utils";
 import { BanknoteX } from "lucide-react";
+import BalanceCard from "@/components/balance-card";
 
 function CardContainer({ children }: { children: React.ReactNode }) {
   return (
-    <Card className="mx-auto flex w-full max-w-prose flex-col">
+    <Card className="mx-auto flex w-full flex-col">
       <CardContent className="flex-1 pb-0">{children}</CardContent>
     </Card>
   );
 }
 
 export default async function Page() {
-  const categories = await getCategories();
-  const expenses = await getExpensesByCategory();
+  const [categories, expenses, userIncome] = await Promise.all([
+    getCategories(),
+    getExpensesByCategory(),
+    getUserIncome()
+  ]);
 
-  if (!categories || !expenses) {
+  if (!categories || !expenses || !userIncome) {
+    return null;
+  }
+
+  if (expenses.length === 0) {
     return (
       <CardContainer>
         <Empty>
@@ -43,10 +51,16 @@ export default async function Page() {
   }
 
   const { chartData, chartConfig } = buildChartData(categories, expenses);
+  const { balance, expenseSum } = getBalance(chartData, userIncome);
 
   return (
-    <CardContainer>
-      <RoundedPieChart chartData={chartData} chartConfig={chartConfig} />
-    </CardContainer>
+    <>
+      <div className="mb-4">
+        <BalanceCard balance={balance} expenses={expenseSum} income={userIncome.income} />
+      </div>
+      <CardContainer>
+        <PieChart chartData={chartData} chartConfig={chartConfig} />
+      </CardContainer>
+    </>
   );
 }

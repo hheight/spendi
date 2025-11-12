@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertCircleIcon } from "lucide-react";
+import { AlertCircleIcon, DollarSignIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -44,7 +44,7 @@ export default function IncomeForm({ defaultValue }: Props) {
   return (
     <Card className="mx-auto w-full max-w-prose">
       <CardHeader>
-        <CardTitle>Income</CardTitle>
+        <CardTitle className="text-lg font-medium">Income</CardTitle>
       </CardHeader>
       <CardContent>
         {serverError && (
@@ -59,16 +59,21 @@ export default function IncomeForm({ defaultValue }: Props) {
               name="income"
               control={form.control}
               render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <Input
-                    {...field}
-                    type="number"
-                    id="income-form-input"
-                    aria-invalid={fieldState.invalid}
-                    autoComplete="off"
-                  />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                </Field>
+                <div className="relative">
+                  <DollarSignIcon className="text-muted-foreground absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
+
+                  <Field data-invalid={fieldState.invalid}>
+                    <Input
+                      {...field}
+                      className="pl-8"
+                      type="number"
+                      id="income-form-input"
+                      aria-invalid={fieldState.invalid}
+                      autoComplete="off"
+                    />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                </div>
               )}
             />
           </FieldGroup>
