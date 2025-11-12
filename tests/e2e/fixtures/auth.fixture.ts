@@ -1,4 +1,4 @@
-import { test as base, Page } from "@playwright/test";
+import { test as base, type Page } from "@playwright/test";
 import { LoginPage } from "../pages/login.page";
 import { SignupPage } from "../pages/signup.page";
 import prisma from "../../helpers/prisma";

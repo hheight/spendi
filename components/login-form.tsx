@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { SigninInput, signinSchema } from "@/lib/auth/schemas";
+import { type SigninInput, signinSchema } from "@/lib/auth/schemas";
 import { login } from "@/app/actions/auth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useState } from "react";

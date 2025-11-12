@@ -3,7 +3,7 @@
 import { Legend, LabelList, Pie, PieChart as RoundedPieChart } from "recharts";
 
 import {
-  ChartConfig,
+  type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent

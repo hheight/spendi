@@ -2,8 +2,8 @@
 
 import prisma from "@/lib/prisma";
 import { verifySession } from "@/lib/dal";
-import { IncomeInput, incomeSchema } from "@/lib/income/schemas";
-import { ActionResponse } from "@/app/actions/types";
+import { type IncomeInput, incomeSchema } from "@/lib/income/schemas";
+import type { ActionResponse } from "@/app/actions/types";
 
 export async function updateUserIncome(data: IncomeInput): Promise<ActionResponse> {
   const session = await verifySession();

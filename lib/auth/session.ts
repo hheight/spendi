@@ -1,7 +1,7 @@
 import "server-only";
 import { type JWTPayload, SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { User } from "@/app/generated/prisma";
+import type { User } from "@/app/generated/prisma";
 
 const secretKey = process.env.SESSION_SECRET;
 const isProd =
