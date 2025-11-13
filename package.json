@@ -16,8 +16,7 @@
     "docker:dev:stop": "docker compose -f compose.yaml -f compose.dev.yaml down",
     "docker:test:stop": "docker compose -f compose.yaml -f compose.test.yaml down",
     "migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev --name init",
-    "db:dev:seed": "dotenv -e .env.development -- npx prisma db seed",
-    "postinstall": "prisma generate --no-engine"
+    "db:dev:seed": "dotenv -e .env.development -- npx prisma db seed"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
