@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, DollarSign, CreditCard } from "lucide-react";
+import { LayoutDashboard, CreditCard, BadgeEuro } from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -26,7 +26,7 @@ const items = [
   {
     title: "Income",
     url: "/income",
-    icon: DollarSign
+    icon: BadgeEuro
   },
   {
     title: "Expenses",

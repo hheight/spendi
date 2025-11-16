@@ -4,3 +4,7 @@ export type ExpenseByCategory = Pick<
   Prisma.ExpenseGroupByOutputType,
   "categoryId" | "_sum"
 >;
+
+export type ExpenseWithCategory = Prisma.ExpenseGetPayload<{
+  select: { id: true; item: true; value: true; category: true };
+}>;

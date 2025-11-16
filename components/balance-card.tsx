@@ -19,7 +19,7 @@ export default function BalanceCard({ balance, expenses, income }: Props) {
       <CardContent>
         <div className="space-y-4">
           <div className="text-4xl font-bold">
-            $
+            €
             {balance.toLocaleString("en-US", {
               minimumFractionDigits: 2,
               maximumFractionDigits: 2
@@ -33,7 +33,7 @@ export default function BalanceCard({ balance, expenses, income }: Props) {
                 <span>Income</span>
               </div>
               <div className="text-xl font-semibold">
-                $
+                €
                 {income.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2
@@ -47,7 +47,7 @@ export default function BalanceCard({ balance, expenses, income }: Props) {
                 <span>Expenses</span>
               </div>
               <div className="text-xl font-semibold">
-                $
+                €
                 {expenses.toLocaleString("en-US", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2

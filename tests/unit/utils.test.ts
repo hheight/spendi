@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildChartData, getBalance } from "@/lib/utils";
+import { buildChartData, getBalance, getTextColorClass } from "@/lib/utils";
 
 describe("#buildChartData", () => {
   it("should build chart data and config", () => {
@@ -138,5 +138,36 @@ describe("#getBalance", () => {
 
     expect(result.expenseSum).toBe(425);
     expect(result.balance).toBe(575);
+  });
+});
+
+describe("#getTextColorClass", () => {
+  it("should return text-black for light colors", () => {
+    expect(getTextColorClass("#ffffff")).toBe("text-black");
+    expect(getTextColorClass("#ffff00")).toBe("text-black");
+    expect(getTextColorClass("#00ff00")).toBe("text-black");
+    expect(getTextColorClass("#00ffff")).toBe("text-black");
+  });
+
+  it("should return text-white for dark colors", () => {
+    expect(getTextColorClass("#000000")).toBe("text-white");
+    expect(getTextColorClass("#0000ff")).toBe("text-white");
+    expect(getTextColorClass("#ff0000")).toBe("text-white");
+    expect(getTextColorClass("#800080")).toBe("text-white");
+  });
+
+  it("should handle lowercase hex values", () => {
+    expect(getTextColorClass("#ffffff")).toBe("text-black");
+    expect(getTextColorClass("#abcdef")).toBe("text-black");
+  });
+
+  it("should handle uppercase hex values", () => {
+    expect(getTextColorClass("#FFFFFF")).toBe("text-black");
+    expect(getTextColorClass("#ABCDEF")).toBe("text-black");
+  });
+
+  it("should handle mixed case hex values", () => {
+    expect(getTextColorClass("#FfFfFf")).toBe("text-black");
+    expect(getTextColorClass("#aBcDeF")).toBe("text-black");
   });
 });

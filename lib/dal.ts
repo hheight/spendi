@@ -5,7 +5,12 @@ import { cookies } from "next/headers";
 import { decrypt } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import type { CategoryPreview, ExpenseByCategory, UserIncome } from "@/types";
+import type {
+  CategoryPreview,
+  ExpenseByCategory,
+  ExpenseWithCategory,
+  UserIncome
+} from "@/types";
 
 export const verifySession = cache(async () => {
   const cookie = (await cookies()).get("session")?.value;
@@ -36,6 +41,29 @@ export const getCategories = cache(async (): Promise<CategoryPreview[] | null> =
     return data;
   } catch (error) {
     console.error("Failed to fetch categories:", error);
+    return null;
+  }
+});
+
+export const getExpenses = cache(async (): Promise<ExpenseWithCategory[] | null> => {
+  const session = await verifySession();
+  if (!session) return null;
+
+  try {
+    const data = await prisma.expense.findMany({
+      where: { userId: session.userId },
+      select: {
+        id: true,
+        item: true,
+        value: true,
+        category: true
+      },
+      orderBy: { createdAt: "asc" }
+    });
+
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch expenses:", error);
     return null;
   }
 });
