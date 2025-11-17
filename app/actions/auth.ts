@@ -10,7 +10,7 @@ import { createSession, deleteSession } from "@/lib/auth/session";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
-import type { ActionResponse } from "@/app/actions/types";
+import type { ActionResponse } from "@/types";
 
 export async function signup(data: SignupInput): Promise<ActionResponse> {
   const validatedFields = signupSchema.safeParse(data);

@@ -1,18 +1,10 @@
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle
-} from "@/components/ui/empty";
 import { Card, CardContent } from "@/components/ui/card";
 
 import PieChart from "@/components/pie-chart";
 import { getCategories, getExpensesByCategory, getUserIncome } from "@/lib/dal";
 import { buildChartData, getBalance } from "@/lib/utils";
-import { BanknoteX } from "lucide-react";
 import BalanceCard from "@/components/balance-card";
+import EmptyList from "@/components/empty-list";
 
 function CardContainer({ children }: { children: React.ReactNode }) {
   return (
@@ -36,16 +28,7 @@ export default async function Page() {
   if (expenses.length === 0) {
     return (
       <CardContainer>
-        <Empty>
-          <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <BanknoteX />
-            </EmptyMedia>
-            <EmptyTitle>No Data</EmptyTitle>
-            <EmptyDescription>Get started by adding expenses.</EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent></EmptyContent>
-        </Empty>
+        <EmptyList />
       </CardContainer>
     );
   }
@@ -54,13 +37,11 @@ export default async function Page() {
   const { balance, expenseSum } = getBalance(chartData, userIncome);
 
   return (
-    <>
-      <div className="mb-4">
-        <BalanceCard balance={balance} expenses={expenseSum} income={userIncome.income} />
-      </div>
+    <div className="flex flex-col gap-4">
+      <BalanceCard balance={balance} expenses={expenseSum} income={userIncome.income} />
       <CardContainer>
         <PieChart chartData={chartData} chartConfig={chartConfig} />
       </CardContainer>
-    </>
+    </div>
   );
 }

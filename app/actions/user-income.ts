@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { verifySession } from "@/lib/dal";
 import { type IncomeInput, incomeSchema } from "@/lib/income/schemas";
-import type { ActionResponse } from "@/app/actions/types";
+import type { ActionResponse } from "@/types";
 
 export async function updateUserIncome(data: IncomeInput): Promise<ActionResponse> {
   const session = await verifySession();

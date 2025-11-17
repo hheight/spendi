@@ -1,3 +1,8 @@
+import ExpenseForm from "@/components/expense/form";
+import { getCategories } from "@/lib/dal";
+
 export default async function Page() {
-  return <h1>Expenses add page</h1>;
+  const categories = await getCategories();
+
+  return <ExpenseForm categories={categories} />;
 }
