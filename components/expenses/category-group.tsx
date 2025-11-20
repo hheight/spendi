@@ -2,14 +2,17 @@
 
 import { Field, FieldLabel } from "@/components/ui/field";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useController } from "react-hook-form";
+import { useController, type Control } from "react-hook-form";
 import { NameField, IdField, ColorField } from "./category-fields";
-import type { CategoryFormGroupProps } from "@/types";
+import type { CategoryPreview } from "@/types";
+import type { ExpenseInput } from "@/lib/expense/schemas";
 
-export default function CategoryGroup({
-  formControl,
-  categories
-}: CategoryFormGroupProps) {
+type Props = {
+  formControl: Control<ExpenseInput>;
+  categories: CategoryPreview[] | null;
+};
+
+export default function CategoryGroup({ formControl, categories }: Props) {
   const { field: typeField } = useController({
     name: "type",
     control: formControl

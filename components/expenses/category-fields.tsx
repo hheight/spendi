@@ -1,9 +1,9 @@
 "use client";
 
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { useController } from "react-hook-form";
+import { useController, type Control } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import type { CategoryFormGroupProps, FormControlProps } from "@/types";
+import type { CategoryPreview } from "@/types";
 import {
   Select,
   SelectContent,
@@ -11,6 +11,15 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import type { ExpenseInput } from "@/lib/expense/schemas";
+
+type FormControlProps = {
+  formControl: Control<ExpenseInput>;
+};
+
+type FormGroupProps = FormControlProps & {
+  categories: CategoryPreview[] | null;
+};
 
 function NameField({ formControl }: FormControlProps) {
   const { field, fieldState } = useController({
@@ -34,7 +43,7 @@ function NameField({ formControl }: FormControlProps) {
   );
 }
 
-function IdField({ formControl, categories }: CategoryFormGroupProps) {
+function IdField({ formControl, categories }: FormGroupProps) {
   const { field, fieldState } = useController({
     name: "categoryId",
     control: formControl

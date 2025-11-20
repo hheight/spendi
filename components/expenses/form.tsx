@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AlertCircleIcon, EuroIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, type Control } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,6 +22,7 @@ import { createExpense } from "@/app/actions/expense";
 import { useRouter } from "next/navigation";
 
 type Props = {
+  formControl: Control<ExpenseInput>;
   categories: CategoryPreview[] | null;
 };
 
