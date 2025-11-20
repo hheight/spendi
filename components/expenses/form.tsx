@@ -16,7 +16,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field
 import { Input } from "@/components/ui/input";
 import { expenseSchema, type ExpenseInput } from "@/lib/expense/schemas";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import CategoryGroup from "@/components/expense/category-group";
+import CategoryGroup from "./category-group";
 import type { CategoryPreview } from "@/types";
 import { createExpense } from "@/app/actions/expense";
 import { useRouter } from "next/navigation";
