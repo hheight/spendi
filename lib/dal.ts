@@ -56,9 +56,10 @@ export const getExpenses = cache(async (): Promise<ExpenseWithCategory[] | null>
         id: true,
         item: true,
         value: true,
-        category: true
+        category: true,
+        createdAt: true
       },
-      orderBy: { createdAt: "asc" }
+      orderBy: { createdAt: "desc" }
     });
 
     return data;

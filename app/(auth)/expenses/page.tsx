@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { getExpenses } from "@/lib/dal";
 import Link from "next/link";
-import ExpensesTable from "@/components/expenses/table";
+import ExpensesList from "@/components/expenses/list";
 import EmptyList from "@/components/empty-list";
 import ContentWrapper from "@/components/expenses/content-wrapper";
 
@@ -22,9 +22,9 @@ export default async function Page() {
 
   return (
     <ContentWrapper className="gap-8">
-      <ExpensesTable expenses={expenses} />
+      <ExpensesList expenses={expenses} />
       <Button variant="outline" asChild>
-        <Link href="/expenses/add">Add new expense</Link>
+        <Link href="/expenses/new">Add new expense</Link>
       </Button>
     </ContentWrapper>
   );

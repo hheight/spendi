@@ -7,7 +7,7 @@ export default function ContentWrapper({
   return (
     <div
       className={cn(
-        "bg-background text-foreground mx-auto flex w-full flex-col gap-4 rounded-xl border px-4 py-6 shadow-sm",
+        "bg-card text-foreground mx-auto flex w-full flex-col gap-4 rounded-xl border px-6 py-6 shadow-sm",
         className
       )}
     >

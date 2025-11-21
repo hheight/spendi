@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AlertCircleIcon, EuroIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, Controller, type Control } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,7 +22,6 @@ import { createExpense } from "@/app/actions/expense";
 import { useRouter } from "next/navigation";
 
 type Props = {
-  formControl: Control<ExpenseInput>;
   categories: CategoryPreview[] | null;
 };
 
@@ -120,7 +119,7 @@ export default function ExpenseForm({ categories }: Props) {
             Cancel
           </Button>
           <Button type="submit" form="expense-form" disabled={isSubmitting}>
-            Add
+            Save
           </Button>
         </Field>
       </CardFooter>

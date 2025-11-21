@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wallet, TrendingUp, TrendingDown } from "lucide-react";
+import FormattedAmount from "./formatted-amount";
 
 type Props = {
   balance: number;
@@ -18,27 +19,14 @@ export default function BalanceCard({ balance, expenses, income }: Props) {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="text-4xl font-bold">
-            €
-            {balance.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2
-            })}
-          </div>
-
+          <FormattedAmount amount={balance} className="block text-4xl font-bold" />
           <div className="grid grid-cols-2 gap-4 border-t pt-4">
             <div className="space-y-1">
               <div className="text-income flex items-center gap-1 text-sm">
                 <TrendingUp className="h-4 w-4" />
                 <span>Income</span>
               </div>
-              <div className="text-xl font-semibold">
-                €
-                {income.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })}
-              </div>
+              <FormattedAmount amount={income} className="text-xl font-semibold" />
             </div>
 
             <div className="space-y-1 justify-self-end">
@@ -46,13 +34,7 @@ export default function BalanceCard({ balance, expenses, income }: Props) {
                 <TrendingDown className="h-4 w-4" />
                 <span>Expenses</span>
               </div>
-              <div className="text-xl font-semibold">
-                €
-                {expenses.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2
-                })}
-              </div>
+              <FormattedAmount amount={expenses} className="text-xl font-semibold" />
             </div>
           </div>
         </div>

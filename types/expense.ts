@@ -6,5 +6,5 @@ export type ExpenseByCategory = Pick<
 >;
 
 export type ExpenseWithCategory = Prisma.ExpenseGetPayload<{
-  select: { id: true; item: true; value: true; category: true };
+  select: { id: true; item: true; value: true; category: true; createdAt: true };
 }>;
