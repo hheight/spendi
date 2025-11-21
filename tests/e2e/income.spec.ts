@@ -10,7 +10,7 @@ test.describe("income", () => {
 
     const saveButton = page.getByRole("button", { name: "Save" });
     await saveButton.click();
-    await expect(saveButton).not.toBeDisabled();
+    await expect(saveButton).toBeEnabled();
 
     await page.reload();
 

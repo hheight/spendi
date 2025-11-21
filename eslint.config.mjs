@@ -1,5 +1,6 @@
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+import playwright from "eslint-plugin-playwright";
 import { FlatCompat } from "@eslint/eslintrc";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -30,6 +31,13 @@ const eslintConfig = [
     files: ["tests/e2e/**/*.{js,mjs,cjs,ts,jsx,tsx}"],
     rules: {
       "react-hooks/rules-of-hooks": "off"
+    }
+  },
+  {
+    ...playwright.configs["flat/recommended"],
+    files: ["tests/e2e/**"],
+    rules: {
+      ...playwright.configs["flat/recommended"].rules
     }
   }
 ];

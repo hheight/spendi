@@ -21,9 +21,7 @@ test.describe("expenses", () => {
     await expect(page.getByText("10.00")).toBeAttached();
   });
 
-  test.only("should allow to edit existing expense", async ({
-    authenticatedPage: page
-  }) => {
+  test("should allow to edit existing expense", async ({ authenticatedPage: page }) => {
     await createExpense(page);
     await expect(page.getByText("Test expense")).toBeAttached();
 

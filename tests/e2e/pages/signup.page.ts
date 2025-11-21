@@ -13,7 +13,8 @@ export class SignupPage {
   }
 
   async populateForm(email: string, password: string) {
-    await this.page.waitForLoadState("networkidle");
+    await this.page.waitForSelector("#signup-form-email");
+
     await this.page.fill("#signup-form-email", email);
     await this.page.fill("#signup-form-password", password);
     await this.page.fill("#signup-form-confirm", password);
