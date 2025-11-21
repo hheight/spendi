@@ -17,43 +17,54 @@ import { Input } from "@/components/ui/input";
 import { expenseSchema, type ExpenseInput } from "@/lib/expense/schemas";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import CategoryGroup from "./category-group";
-import type { CategoryPreview } from "@/types";
-import { createExpense } from "@/app/actions/expense";
+import type { CategoryPreview, Expense } from "@/types";
+import { createExpense, updateExpense } from "@/app/actions/expense";
 import { useRouter } from "next/navigation";
 
 type Props = {
   categories: CategoryPreview[] | null;
+  expense?: Expense;
 };
 
-export default function ExpenseForm({ categories }: Props) {
+export default function ExpenseForm({ categories, expense }: Props) {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
+  const isEditMode = !!expense;
   const form = useForm<ExpenseInput>({
     resolver: zodResolver(expenseSchema),
     defaultValues: {
       type: "existing",
       description: "",
       amount: "",
-      categoryId: ""
+      categoryId: "",
+      ...(isEditMode && {
+        description: expense.item,
+        amount: expense.value.toString(),
+        categoryId: expense.categoryId
+      })
     }
   });
   const { isSubmitting } = form.formState;
 
   const onSubmit = async (data: ExpenseInput) => {
     setServerError(null);
-    const result = await createExpense(data);
+    const result = isEditMode
+      ? await updateExpense(data, expense.id)
+      : await createExpense(data);
 
     if (result.success) {
       router.push("/expenses");
     } else {
-      setServerError(result.message || "An error occured while adding expense");
+      setServerError(result.message || "An error occured while saving expense");
     }
   };
 
   return (
     <Card className="mx-auto w-full max-w-prose">
       <CardHeader>
-        <CardTitle className="text-lg font-medium">Add expense</CardTitle>
+        <CardTitle className="text-lg font-medium">
+          {isEditMode ? "Edit" : "Add"} expense
+        </CardTitle>
       </CardHeader>
       <CardContent>
         {serverError && (
@@ -119,7 +130,7 @@ export default function ExpenseForm({ categories }: Props) {
             Cancel
           </Button>
           <Button type="submit" form="expense-form" disabled={isSubmitting}>
-            Save
+            {isEditMode ? "Save" : "Add"}
           </Button>
         </Field>
       </CardFooter>

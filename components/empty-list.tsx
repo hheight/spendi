@@ -18,7 +18,7 @@ export default function EmptyList() {
         </EmptyMedia>
         <EmptyTitle>No Data</EmptyTitle>
         <EmptyDescription>
-          Get started by <Link href="/expenses/add">adding expenses</Link>.
+          Get started by <Link href="/expenses/new">adding expenses</Link>.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent></EmptyContent>

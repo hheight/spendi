@@ -9,7 +9,8 @@ import type {
   CategoryPreview,
   ExpenseByCategory,
   ExpenseWithCategory,
-  UserIncome
+  UserIncome,
+  Expense
 } from "@/types";
 
 export const verifySession = cache(async () => {
@@ -84,6 +85,30 @@ export const getExpensesByCategory = cache(
       return data;
     } catch (error) {
       console.error("Failed to fetch expenses by category:", error);
+      return null;
+    }
+  }
+);
+
+export const getExpenseById = cache(
+  async (id: Expense["id"]): Promise<Expense | null> => {
+    const session = await verifySession();
+    if (!session) return null;
+
+    try {
+      const data = await prisma.expense.findUnique({
+        where: { userId: session.userId, id },
+        select: {
+          id: true,
+          item: true,
+          value: true,
+          categoryId: true
+        }
+      });
+
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch expense by id:", error);
       return null;
     }
   }

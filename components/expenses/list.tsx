@@ -1,6 +1,7 @@
 import { Separator } from "@/components/ui/separator";
 import type { ExpenseWithCategory } from "@/types";
 import FormattedAmount from "@/components/formatted-amount";
+import Link from "next/link";
 
 type Props = {
   expenses: ExpenseWithCategory[];
@@ -36,22 +37,26 @@ export default function ExpensesList({ expenses }: Props) {
                 <Separator />
               </div>
             )}
-            <div key={id} className="flex items-center gap-3">
-              <div
-                style={{ backgroundColor: category.color }}
-                className="h-9 w-9 rounded-md"
-              ></div>
-              <div className="flex-1 leading-5">
-                <p className="font-medium">{item}</p>
-                <span className="text-muted-foreground text-sm">
-                  {createdAt.toLocaleTimeString("en-GB", {
-                    hour: "numeric",
-                    minute: "numeric"
-                  })}
-                </span>
+            <Link href={`/expenses/edit/${id}`} className="group block">
+              <div key={id} className="flex items-center gap-3">
+                <div
+                  style={{ backgroundColor: category.color }}
+                  className="h-9 w-9 rounded-md"
+                ></div>
+                <div className="flex-1 leading-5">
+                  <p className="group-hover:decoration-muted-foreground font-medium group-hover:underline">
+                    {item}
+                  </p>
+                  <span className="text-muted-foreground text-sm">
+                    {createdAt.toLocaleTimeString("en-GB", {
+                      hour: "numeric",
+                      minute: "numeric"
+                    })}
+                  </span>
+                </div>
+                <FormattedAmount amount={value} />
               </div>
-              <FormattedAmount amount={value} />
-            </div>
+            </Link>
           </li>
         );
       })}
