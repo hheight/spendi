@@ -14,20 +14,17 @@ test.describe("auth", () => {
   });
 
   test("should warn if login is invalid", async ({ page, loginPage }) => {
-    await loginPage.populateForm("invalid@test.com", "password123");
-
-    await page.click("button[type=submit]");
+    await loginPage.submitForm("invalid@test.com", "password123");
 
     await expect(page.getByText("Invalid email or password")).toBeVisible();
   });
 
   test("should redirect to the dashboard page when a new account is created", async ({
-    user_credentials,
+    page,
     signupPage,
-    page
+    user_credentials
   }) => {
-    await signupPage.populateForm(user_credentials.email, user_credentials.password);
-    await page.click("button[type=submit]");
+    await signupPage.submitForm(user_credentials.email, user_credentials.password);
 
     await expect(page).toHaveURL(/\/dashboard$/);
   });
@@ -37,8 +34,7 @@ test.describe("auth", () => {
     loginPage,
     page
   }) => {
-    await loginPage.populateForm(account.email, account.password);
-    await page.click("button[type=submit]");
+    await loginPage.submitForm(account.email, account.password);
 
     await expect(page).toHaveURL(/\/dashboard$/);
   });
@@ -48,8 +44,7 @@ test.describe("auth", () => {
     loginPage,
     page
   }) => {
-    await loginPage.populateForm(account.email, account.password);
-    await page.click("button[type=submit]");
+    await loginPage.submitForm(account.email, account.password);
 
     await page.click("header span[data-slot=dropdown-menu-trigger]");
     await page.getByText("Log Out").click();

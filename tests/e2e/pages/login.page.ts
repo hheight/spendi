@@ -1,21 +1,22 @@
-import type { Page } from "@playwright/test";
+import { type Locator, type Page } from "@playwright/test";
 
 export class LoginPage {
-  readonly page: Page;
+  private readonly emailField: Locator;
+  private readonly passwordField: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public readonly page: Page) {
+    this.emailField = this.page.locator("#login-form-email");
+    this.passwordField = this.page.locator("#login-form-password");
   }
 
   async goto() {
     await this.page.goto("/login");
-    await this.page.waitForURL("/login");
   }
 
-  async populateForm(email: string, password: string) {
-    await this.page.waitForSelector("#login-form-email");
-
-    await this.page.fill("#login-form-email", email);
-    await this.page.fill("#login-form-password", password);
+  async submitForm(email: string, password: string) {
+    await this.page.waitForLoadState("networkidle");
+    await this.emailField.fill(email);
+    await this.passwordField.fill(password);
+    await this.passwordField.press("Enter");
   }
 }

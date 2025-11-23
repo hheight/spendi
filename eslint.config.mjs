@@ -37,7 +37,8 @@ const eslintConfig = [
     ...playwright.configs["flat/recommended"],
     files: ["tests/e2e/**"],
     rules: {
-      ...playwright.configs["flat/recommended"].rules
+      ...playwright.configs["flat/recommended"].rules,
+      "playwright/no-networkidle": "off"
     }
   }
 ];

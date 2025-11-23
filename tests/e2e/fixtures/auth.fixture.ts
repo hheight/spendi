@@ -44,16 +44,14 @@ export const test = base.extend<AuthFixtures>({
     const signupPage = new SignupPage(page);
 
     await signupPage.goto();
-    await signupPage.populateForm(user_credentials.email, user_credentials.password);
-    await page.click("button[type=submit]");
+    await signupPage.submitForm(user_credentials.email, user_credentials.password);
     await page.waitForURL("/dashboard");
     await page.close();
     await use(user_credentials);
   },
   authenticatedPage: async ({ page, loginPage, account }, use) => {
     await loginPage.goto();
-    await loginPage.populateForm(account.email, account.password);
-    await page.click("button[type=submit]");
+    await loginPage.submitForm(account.email, account.password);
     await page.waitForURL("/dashboard");
 
     await use(page);

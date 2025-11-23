@@ -154,10 +154,6 @@ describe("Session management", () => {
   });
 
   describe("#verifySession", () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
-    });
-
     it("returns userId when session is valid", async () => {
       const token = await encrypt({
         userId: "user-123",
