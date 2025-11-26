@@ -1,25 +1,20 @@
 import {
   Empty,
   EmptyContent,
-  EmptyDescription,
   EmptyHeader,
   EmptyMedia,
   EmptyTitle
 } from "@/components/ui/empty";
-import { BanknoteX } from "lucide-react";
-import Link from "next/link";
+import { Inbox } from "lucide-react";
 
 export default function EmptyList() {
   return (
-    <Empty>
+    <Empty className="text-muted-foreground">
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <BanknoteX />
+          <Inbox className="text-muted-foreground" />
         </EmptyMedia>
-        <EmptyTitle>No Data</EmptyTitle>
-        <EmptyDescription>
-          Get started by <Link href="/expenses/new">adding expenses</Link>.
-        </EmptyDescription>
+        <EmptyTitle>No entries found.</EmptyTitle>
       </EmptyHeader>
       <EmptyContent></EmptyContent>
     </Empty>

@@ -7,10 +7,10 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import type {
   CategoryPreview,
-  ExpenseByCategory,
-  ExpenseWithCategory,
+  ExpenseWithColor,
   UserIncome,
-  Expense
+  Expense,
+  ExpenseByDateRange
 } from "@/types";
 
 export const verifySession = cache(async () => {
@@ -46,7 +46,44 @@ export const getCategories = cache(async (): Promise<CategoryPreview[] | null> =
   }
 });
 
-export const getExpenses = cache(async (): Promise<ExpenseWithCategory[] | null> => {
+export const getExpensesByDateRange = cache(
+  async (startDate: Date, endDate: Date): Promise<ExpenseByDateRange[] | null> => {
+    const session = await verifySession();
+    if (!session) return null;
+
+    try {
+      const data = await prisma.expense.findMany({
+        where: {
+          userId: session.userId,
+          createdAt: {
+            gte: startDate,
+            lte: endDate
+          }
+        },
+        select: {
+          id: true,
+          item: true,
+          value: true,
+          createdAt: true,
+          category: {
+            select: {
+              name: true,
+              color: true
+            }
+          }
+        },
+        orderBy: { createdAt: "desc" }
+      });
+
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch expenses:", error);
+      return null;
+    }
+  }
+);
+
+export const getExpenses = cache(async (): Promise<ExpenseWithColor[] | null> => {
   const session = await verifySession();
   if (!session) return null;
 
@@ -57,7 +94,11 @@ export const getExpenses = cache(async (): Promise<ExpenseWithCategory[] | null>
         id: true,
         item: true,
         value: true,
-        category: true,
+        category: {
+          select: {
+            color: true
+          }
+        },
         createdAt: true
       },
       orderBy: { createdAt: "desc" }
@@ -69,26 +110,6 @@ export const getExpenses = cache(async (): Promise<ExpenseWithCategory[] | null>
     return null;
   }
 });
-
-export const getExpensesByCategory = cache(
-  async (): Promise<ExpenseByCategory[] | null> => {
-    const session = await verifySession();
-    if (!session) return null;
-
-    try {
-      const data = await prisma.expense.groupBy({
-        by: ["categoryId"],
-        where: { userId: session.userId },
-        _sum: { value: true }
-      });
-
-      return data;
-    } catch (error) {
-      console.error("Failed to fetch expenses by category:", error);
-      return null;
-    }
-  }
-);
 
 export const getExpenseById = cache(
   async (id: Expense["id"]): Promise<Expense | null> => {

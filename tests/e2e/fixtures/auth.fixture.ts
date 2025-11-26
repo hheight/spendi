@@ -1,6 +1,8 @@
-import { test as base, type Page } from "@playwright/test";
+import { test as base } from "@playwright/test";
 import { LoginPage } from "../pages/login.page";
 import { SignupPage } from "../pages/signup.page";
+import { ExpensesPage } from "../pages/expenses.page";
+import { IncomePage } from "../pages/income.page";
 import prisma from "../../helpers/prisma";
 import { faker } from "@faker-js/faker";
 
@@ -12,9 +14,10 @@ type UserDetails = {
 type AuthFixtures = {
   loginPage: LoginPage;
   signupPage: SignupPage;
+  expensesPage: ExpensesPage;
+  incomePage: IncomePage;
   user_credentials: UserDetails;
   account: UserDetails;
-  authenticatedPage: Page;
 };
 
 export const test = base.extend<AuthFixtures>({
@@ -27,6 +30,24 @@ export const test = base.extend<AuthFixtures>({
     const signupPage = new SignupPage(page);
     await signupPage.goto();
     await use(signupPage);
+  },
+  expensesPage: async ({ page, loginPage, account }, use) => {
+    await loginPage.goto();
+    await loginPage.submitForm(account.email, account.password);
+    await page.waitForURL("/dashboard");
+
+    const expensesPage = new ExpensesPage(page);
+    await expensesPage.goto();
+    await use(expensesPage);
+  },
+  incomePage: async ({ page, loginPage, account }, use) => {
+    await loginPage.goto();
+    await loginPage.submitForm(account.email, account.password);
+    await page.waitForURL("/dashboard");
+
+    const incomePage = new IncomePage(page);
+    await incomePage.goto();
+    await use(incomePage);
   },
   user_credentials: async ({}, use) => {
     const email = faker.internet.email();
@@ -48,13 +69,6 @@ export const test = base.extend<AuthFixtures>({
     await page.waitForURL("/dashboard");
     await page.close();
     await use(user_credentials);
-  },
-  authenticatedPage: async ({ page, loginPage, account }, use) => {
-    await loginPage.goto();
-    await loginPage.submitForm(account.email, account.password);
-    await page.waitForURL("/dashboard");
-
-    await use(page);
   }
 });
 

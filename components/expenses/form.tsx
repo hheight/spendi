@@ -59,6 +59,14 @@ export default function ExpenseForm({ categories, expense }: Props) {
     }
   };
 
+  const handleCancel = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/expenses");
+    }
+  };
+
   return (
     <Card className="mx-auto w-full max-w-prose">
       <CardHeader>
@@ -121,12 +129,7 @@ export default function ExpenseForm({ categories, expense }: Props) {
       </CardContent>
       <CardFooter className="mt-2 flex-col">
         <Field orientation="horizontal">
-          <Button
-            type="submit"
-            variant="outline"
-            disabled={isSubmitting}
-            onClick={() => router.push("/expenses")}
-          >
+          <Button variant="outline" disabled={isSubmitting} onClick={handleCancel}>
             Cancel
           </Button>
           <Button type="submit" form="expense-form" disabled={isSubmitting}>

@@ -1,14 +1,39 @@
 import type { Prisma } from "@/app/generated/prisma";
 
-export type ExpenseByCategory = Pick<
-  Prisma.ExpenseGroupByOutputType,
-  "categoryId" | "_sum"
->;
-
-export type ExpenseWithCategory = Prisma.ExpenseGetPayload<{
-  select: { id: true; item: true; value: true; category: true; createdAt: true };
+export type ExpenseWithColor = Prisma.ExpenseGetPayload<{
+  select: {
+    id: true;
+    item: true;
+    value: true;
+    category: {
+      select: {
+        color: true;
+      };
+    };
+    createdAt: true;
+  };
 }>;
 
 export type Expense = Prisma.ExpenseGetPayload<{
   select: { id: true; item: true; value: true; categoryId: true };
 }>;
+
+export type ExpenseByDateRange = Prisma.ExpenseGetPayload<{
+  select: {
+    id: true;
+    item: true;
+    value: true;
+    createdAt: true;
+    category: {
+      select: {
+        name: true;
+        color: true;
+      };
+    };
+  };
+}>;
+
+export type ExpensesChartItem = {
+  day: number;
+  [key: string]: number;
+};

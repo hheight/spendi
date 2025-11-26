@@ -1,16 +1,11 @@
 import { test, expect } from "./fixtures/auth.fixture";
 
 test.describe("income", () => {
-  test("should allow to save income", async ({ authenticatedPage: page }) => {
-    await page.getByRole("link", { name: "Income" }).click();
-
-    const input = page.locator("input[name=income]");
+  test("should allow to save income", async ({ incomePage, page }) => {
+    const input = page.locator("#income-form-input");
     await expect(input).toHaveValue("0");
-    await input.fill("2000");
 
-    const saveButton = page.getByRole("button", { name: "Save" });
-    await saveButton.click();
-    await expect(saveButton).toBeEnabled();
+    await incomePage.editIncome("2000");
 
     await page.reload();
 

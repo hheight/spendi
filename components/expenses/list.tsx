@@ -1,10 +1,11 @@
 import { Separator } from "@/components/ui/separator";
-import type { ExpenseWithCategory } from "@/types";
+import type { ExpenseWithColor } from "@/types";
 import FormattedAmount from "@/components/formatted-amount";
 import Link from "next/link";
+import EmptyList from "../empty-list";
 
 type Props = {
-  expenses: ExpenseWithCategory[];
+  expenses: ExpenseWithColor[];
 };
 
 function formatDateShort(date: Date | undefined) {
@@ -20,16 +21,20 @@ function formatDateShort(date: Date | undefined) {
 }
 
 export default function ExpensesList({ expenses }: Props) {
+  if (expenses.length === 0) {
+    return <EmptyList />;
+  }
+
   return (
     <ul className="align-center flex flex-col gap-4">
       {expenses.map((expense, i) => {
         const { id, item, value, createdAt, category } = expense;
-        const nextDate = formatDateShort(expenses[i + 1]?.createdAt);
+        const prevDate = formatDateShort(expenses[i - 1]?.createdAt);
         const currentDate = formatDateShort(createdAt);
 
         return (
           <li key={id}>
-            {currentDate !== nextDate && (
+            {currentDate !== prevDate && (
               <div className="mb-4">
                 <p className="text-muted-foreground text-sm font-medium uppercase">
                   {currentDate}
@@ -54,7 +59,7 @@ export default function ExpensesList({ expenses }: Props) {
                     })}
                   </span>
                 </div>
-                <FormattedAmount amount={value} />
+                <FormattedAmount negativeValue amount={value} />
               </div>
             </Link>
           </li>
