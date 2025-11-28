@@ -1,19 +1,24 @@
 import { Button } from "@/components/ui/button";
-import { getExpenses } from "@/lib/dal";
+import { getCompletedExpenses, getUpcomingExpenses } from "@/lib/dal";
 import Link from "next/link";
-import ExpensesList from "@/components/expenses/list";
+import CompletedExpensesList from "@/components/expenses/completed-list";
 import ContentWrapper from "@/components/expenses/content-wrapper";
+import UpcomingExpensesList from "@/components/expenses/upcoming-list";
 
 export default async function Page() {
-  const expenses = await getExpenses();
+  const [completedExpenses, upcomingExpenses] = await Promise.all([
+    getCompletedExpenses(),
+    getUpcomingExpenses()
+  ]);
 
-  if (!expenses) {
+  if (!completedExpenses) {
     return null;
   }
 
   return (
     <ContentWrapper className="gap-8">
-      <ExpensesList expenses={expenses} />
+      {upcomingExpenses && <UpcomingExpensesList expenses={upcomingExpenses} />}
+      <CompletedExpensesList expenses={completedExpenses} />
       <Button variant="outline" asChild>
         <Link href="/expenses/new">Add new expense</Link>
       </Button>

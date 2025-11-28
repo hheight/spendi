@@ -11,14 +11,7 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useState, type ChangeEvent } from "react";
 import type { ExpenseInput } from "@/lib/expense/schemas";
-
-function getTimeFromDate(date: Date): string {
-  return date.toLocaleTimeString("en-GB", {
-    hour12: false,
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-}
+import { format } from "date-fns";
 
 type Props = {
   formControl: Control<ExpenseInput>;
@@ -33,8 +26,9 @@ export function DatePicker({ formControl }: Props) {
 
   const handleTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const [hours, minutes] = e.target.value.split(":");
-    field.value.setHours(parseInt(hours), parseInt(minutes));
-    field.onChange(field.value);
+    const newDate = new Date(field.value);
+    newDate.setHours(parseInt(hours), parseInt(minutes));
+    field.onChange(newDate);
   };
 
   const handleDateSelect = (selectedDate: Date | undefined) => {
@@ -58,13 +52,7 @@ export function DatePicker({ formControl }: Props) {
             className="w-32 justify-between font-normal"
             aria-invalid={fieldState.invalid}
           >
-            {field.value
-              ? field.value.toLocaleDateString("en-GB", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric"
-                })
-              : "Select date"}
+            {field.value ? format(field.value, "d MMM yyyy") : "Select date"}
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
@@ -78,7 +66,7 @@ export function DatePicker({ formControl }: Props) {
           <div className="flex justify-between gap-3 px-4 pb-3">
             <Label htmlFor="time-picker">Time</Label>
             <Input
-              value={getTimeFromDate(field.value)}
+              value={format(field.value, "kk:mm")}
               onChange={handleTimeChange}
               type="time"
               id="time-picker"

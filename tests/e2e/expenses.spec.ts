@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { test, expect } from "./fixtures/auth.fixture";
 
 test("should allow to add new expense", async ({ expensesPage, page }) => {
@@ -54,4 +55,24 @@ test("should allow to edit existing expense", async ({ expensesPage, page }) => 
   await expect(page.getByText("Edited test expense")).toBeAttached();
   await expect(page.getByText("20.00")).toBeAttached();
   await expect(page.getByText("Tue 30 Jun")).toBeAttached();
+});
+
+test("should allow to create future expense", async ({ expensesPage, page }) => {
+  const nextDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+  await expensesPage.createExpense({
+    description: "Future expense",
+    amount: "10",
+    categoryName: "Fun category",
+    date: {
+      year: format(nextDay, "yyyy"),
+      month: format(nextDay, "MMM"),
+      day: format(nextDay, "d")
+    }
+  });
+
+  await expect(page.getByText("Upcoming")).toBeAttached();
+  await expect(page.getByText("Future expense")).toBeAttached();
+  await expect(page.getByText("10.00")).toBeAttached();
+  await expect(page.getByText(format(nextDay, "d MMM"))).toBeAttached();
 });

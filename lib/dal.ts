@@ -83,13 +83,43 @@ export const getExpensesByDateRange = cache(
   }
 );
 
-export const getExpenses = cache(async (): Promise<ExpenseWithColor[] | null> => {
+export const getCompletedExpenses = cache(
+  async (): Promise<ExpenseWithColor[] | null> => {
+    const session = await verifySession();
+    if (!session) return null;
+
+    try {
+      const data = await prisma.expense.findMany({
+        where: { userId: session.userId, createdAt: { lte: new Date() } },
+        select: {
+          id: true,
+          item: true,
+          value: true,
+          category: {
+            select: {
+              color: true
+            }
+          },
+          createdAt: true
+        },
+        orderBy: { createdAt: "desc" }
+      });
+
+      return data;
+    } catch (error) {
+      console.error("Failed to fetch expenses:", error);
+      return null;
+    }
+  }
+);
+
+export const getUpcomingExpenses = cache(async (): Promise<ExpenseWithColor[] | null> => {
   const session = await verifySession();
   if (!session) return null;
 
   try {
     const data = await prisma.expense.findMany({
-      where: { userId: session.userId },
+      where: { userId: session.userId, createdAt: { gt: new Date() } },
       select: {
         id: true,
         item: true,

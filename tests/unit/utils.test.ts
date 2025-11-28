@@ -28,7 +28,7 @@ describe("#buildMonthlyChartData", () => {
         id: "1",
         item: "Fruits",
         value: 16,
-        createdAt: new Date(Date.UTC(2000, 1, 1)),
+        createdAt: new Date(2000, 1, 1),
         category: {
           name: "Food",
           color: "#00ff00"
@@ -38,7 +38,7 @@ describe("#buildMonthlyChartData", () => {
         id: "2",
         item: "Rent",
         value: 1200,
-        createdAt: new Date(Date.UTC(2000, 1, 2)),
+        createdAt: new Date(2000, 1, 2),
         category: {
           name: "Housing",
           color: "#c0ffee"
@@ -69,7 +69,7 @@ describe("#filterExpensesByDay", () => {
         id: "1",
         item: "Fruits",
         value: 16,
-        createdAt: new Date(Date.UTC(2000, 1, 1)),
+        createdAt: new Date(2000, 1, 1),
         category: {
           name: "Food",
           color: "#00ff00"
@@ -79,7 +79,7 @@ describe("#filterExpensesByDay", () => {
         id: "2",
         item: "Rent",
         value: 1200,
-        createdAt: new Date(Date.UTC(2000, 1, 2)),
+        createdAt: new Date(2000, 1, 2),
         category: {
           name: "Housing",
           color: "#c0ffee"
@@ -95,7 +95,7 @@ describe("#filterExpensesByDay", () => {
         id: "2",
         item: "Rent",
         value: 1200,
-        createdAt: new Date(Date.UTC(2000, 1, 2)),
+        createdAt: new Date(2000, 1, 2),
         category: {
           name: "Housing",
           color: "#c0ffee"
