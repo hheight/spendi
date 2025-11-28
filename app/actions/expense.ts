@@ -17,20 +17,21 @@ export async function createExpense(data: ExpenseInput): Promise<ActionResponse>
 
   try {
     if (data.type === "existing") {
-      const { description, amount, categoryId } = data;
+      const { description, amount, categoryId, date } = data;
 
       await prisma.expense.create({
         data: {
           item: description,
           value: Number(amount),
           userId: session.userId,
-          categoryId: categoryId
+          categoryId: categoryId,
+          createdAt: date
         }
       });
     }
 
     if (data.type === "new") {
-      const { description, amount, categoryColor, categoryName } = data;
+      const { description, amount, categoryColor, categoryName, date } = data;
 
       const newCategory = await prisma.category.create({
         data: {
@@ -45,7 +46,8 @@ export async function createExpense(data: ExpenseInput): Promise<ActionResponse>
           item: description,
           value: Number(amount),
           userId: session.userId,
-          categoryId: newCategory.id
+          categoryId: newCategory.id,
+          createdAt: date
         }
       });
     }
@@ -72,7 +74,7 @@ export async function updateExpense(
 
   try {
     if (data.type === "existing") {
-      const { description, amount, categoryId } = data;
+      const { description, amount, categoryId, date } = data;
 
       await prisma.expense.update({
         where: { id },
@@ -80,13 +82,14 @@ export async function updateExpense(
           item: description,
           value: Number(amount),
           userId: session.userId,
-          categoryId: categoryId
+          categoryId: categoryId,
+          createdAt: date
         }
       });
     }
 
     if (data.type === "new") {
-      const { description, amount, categoryColor, categoryName } = data;
+      const { description, amount, categoryColor, categoryName, date } = data;
 
       const newCategory = await prisma.category.create({
         data: {
@@ -102,7 +105,8 @@ export async function updateExpense(
           item: description,
           value: Number(amount),
           userId: session.userId,
-          categoryId: newCategory.id
+          categoryId: newCategory.id,
+          createdAt: date
         }
       });
     }

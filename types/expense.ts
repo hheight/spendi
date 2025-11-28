@@ -15,7 +15,7 @@ export type ExpenseWithColor = Prisma.ExpenseGetPayload<{
 }>;
 
 export type Expense = Prisma.ExpenseGetPayload<{
-  select: { id: true; item: true; value: true; categoryId: true };
+  select: { id: true; item: true; value: true; categoryId: true; createdAt: true };
 }>;
 
 export type ExpenseByDateRange = Prisma.ExpenseGetPayload<{

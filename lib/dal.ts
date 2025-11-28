@@ -123,7 +123,8 @@ export const getExpenseById = cache(
           id: true,
           item: true,
           value: true,
-          categoryId: true
+          categoryId: true,
+          createdAt: true
         }
       });
 

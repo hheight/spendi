@@ -1,6 +1,6 @@
 import { vi, describe, expect, it, beforeEach } from "vitest";
 import prisma from "@/tests/helpers/prisma";
-import { getExpenseById, getExpenses } from "@/lib/dal";
+import { getExpenseById, getExpenses, getExpensesByDateRange } from "@/lib/dal";
 import { encrypt } from "@/lib/auth/session";
 
 const mockGet = vi.fn();
@@ -196,6 +196,70 @@ describe("expenses", () => {
       mockGet.mockReturnValue(undefined);
 
       await expect(getExpenses()).rejects.toThrow();
+    });
+  });
+
+  describe("#getExpensesByDateRange", () => {
+    it("should return expenses within date range", async () => {
+      const user = await prisma.user.create({
+        data: {
+          email: "test@example.com",
+          password: { create: { hash: "hashed" } }
+        }
+      });
+
+      const category = await prisma.category.create({
+        data: { name: "Food", color: "#FF0000", userId: user.id }
+      });
+
+      const startDate = new Date("2025-01-01");
+      const endDate = new Date("2025-01-31");
+
+      await prisma.expense.createMany({
+        data: [
+          {
+            item: "Coffee",
+            value: 5,
+            userId: user.id,
+            categoryId: category.id,
+            createdAt: new Date("2025-01-10")
+          },
+          {
+            item: "Lunch",
+            value: 15,
+            userId: user.id,
+            categoryId: category.id,
+            createdAt: new Date("2025-01-15")
+          },
+          {
+            item: "Dinner",
+            value: 30,
+            userId: user.id,
+            categoryId: category.id,
+            createdAt: new Date("2025-02-05")
+          }
+        ]
+      });
+
+      const token = await encrypt({
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 1000000)
+      });
+      mockGet.mockReturnValue({ value: token });
+
+      const result = await getExpensesByDateRange(startDate, endDate);
+
+      expect(result).toHaveLength(2);
+      expect(result?.[0].item).toBe("Lunch");
+      expect(result?.[1].item).toBe("Coffee");
+    });
+
+    it("should throw when not authenticated", async () => {
+      mockGet.mockReturnValue(undefined);
+
+      await expect(
+        getExpensesByDateRange(new Date("2025-01-01"), new Date("2025-01-31"))
+      ).rejects.toThrow();
     });
   });
 });

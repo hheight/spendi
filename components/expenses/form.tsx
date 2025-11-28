@@ -20,6 +20,7 @@ import CategoryGroup from "./category-group";
 import type { CategoryPreview, Expense } from "@/types";
 import { createExpense, updateExpense } from "@/app/actions/expense";
 import { useRouter } from "next/navigation";
+import { DatePicker } from "@/components/date-picker";
 
 type Props = {
   categories: CategoryPreview[] | null;
@@ -37,10 +38,12 @@ export default function ExpenseForm({ categories, expense }: Props) {
       description: "",
       amount: "",
       categoryId: "",
+      date: new Date(),
       ...(isEditMode && {
         description: expense.item,
         amount: expense.value.toString(),
-        categoryId: expense.categoryId
+        categoryId: expense.categoryId,
+        date: expense.createdAt
       })
     }
   });
@@ -123,6 +126,7 @@ export default function ExpenseForm({ categories, expense }: Props) {
                 </Field>
               )}
             />
+            <DatePicker formControl={form.control} />
             <CategoryGroup formControl={form.control} categories={categories} />
           </FieldGroup>
         </form>

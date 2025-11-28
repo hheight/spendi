@@ -8,6 +8,10 @@ export class ExpensesPage {
   private readonly addNewExpenseLink: Locator;
   private readonly saveExpenseButton: Locator;
   private readonly addExpenseButton: Locator;
+  private readonly datePickerButton: Locator;
+  private readonly yearSelect: Locator;
+  private readonly monthSelect: Locator;
+  private readonly timeInput: Locator;
 
   constructor(public readonly page: Page) {
     this.descriptionField = this.page.getByLabel("Description");
@@ -17,24 +21,74 @@ export class ExpensesPage {
     this.addNewExpenseLink = this.page.getByRole("link", { name: "Add new expense" });
     this.saveExpenseButton = this.page.getByRole("button", { name: "Save" });
     this.addExpenseButton = this.page.getByRole("button", { name: "Add" });
+    this.datePickerButton = this.page.locator("#date-picker");
+    this.yearSelect = this.page.locator("select.rdp-years_dropdown");
+    this.monthSelect = this.page.locator("select.rdp-months_dropdown");
+    this.timeInput = this.page.locator("#time-picker");
   }
 
   async goto() {
     await this.page.goto("/expenses");
   }
 
-  async createExpense(description: string, amount: string, categoryName: string) {
+  async createExpense({
+    description,
+    amount,
+    categoryName,
+    date
+  }: {
+    description: string;
+    amount: string;
+    categoryName: string;
+    date?: { year: string; month: string; day: string; time?: string };
+  }) {
     await this.addNewExpenseLink.click();
     await this.descriptionField.fill(description);
     await this.amountField.fill(amount);
+    if (date) {
+      await this.datePickerButton.click();
+      await this.yearSelect.selectOption(date.year);
+      await this.monthSelect.selectOption(date.month);
+      await this.page
+        .locator(".rdp-day:not(.rdp-outside) button")
+        .getByText(date.day, { exact: true })
+        .click();
+
+      if (date.time) {
+        await this.timeInput.fill(date.time);
+      }
+    }
     await this.newCategoryRadioButton.click();
     await this.categoryNameField.fill(categoryName);
     await this.addExpenseButton.click();
   }
 
-  async editExpense(description: string, amount: string, categoryName?: string) {
+  async editExpense({
+    description,
+    amount,
+    categoryName,
+    date
+  }: {
+    description: string;
+    amount: string;
+    categoryName?: string;
+    date?: { year: string; month: string; day: string; time?: string };
+  }) {
     await this.descriptionField.fill(description);
     await this.amountField.fill(amount);
+    if (date) {
+      await this.datePickerButton.click();
+      await this.yearSelect.selectOption(date.year);
+      await this.monthSelect.selectOption(date.month);
+      await this.page
+        .locator(".rdp-day:not(.rdp-outside) button")
+        .getByText(date.day, { exact: true })
+        .click();
+
+      if (date.time) {
+        await this.timeInput.fill(date.time);
+      }
+    }
     if (categoryName) {
       await this.newCategoryRadioButton.click();
       await this.categoryNameField.fill(categoryName);
