@@ -11,13 +11,13 @@ export default async function Page() {
     getUpcomingExpenses()
   ]);
 
-  if (!completedExpenses) {
+  if (!completedExpenses || !upcomingExpenses) {
     return null;
   }
 
   return (
     <ContentWrapper className="gap-8">
-      {upcomingExpenses && <UpcomingExpensesList expenses={upcomingExpenses} />}
+      <UpcomingExpensesList expenses={upcomingExpenses} />
       <CompletedExpensesList expenses={completedExpenses} />
       <Button variant="outline" asChild>
         <Link href="/expenses/new">Add new expense</Link>

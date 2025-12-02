@@ -11,7 +11,7 @@ export default defineConfig({
     }
   },
   test: {
-    include: ["tests/unit/**/*.test.ts"],
+    include: ["tests/unit/**"],
     setupFiles: ["tests/helpers/setup-unit.ts"],
     poolOptions: {
       forks: {

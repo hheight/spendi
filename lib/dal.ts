@@ -141,6 +141,33 @@ export const getUpcomingExpenses = cache(async (): Promise<ExpenseWithColor[] | 
   }
 });
 
+export const getExpensesTotalByDateRange = cache(
+  async (startDate: Date, endDate: Date): Promise<number | null> => {
+    const session = await verifySession();
+    if (!session) return null;
+
+    try {
+      const data = await prisma.expense.aggregate({
+        where: {
+          userId: session.userId,
+          createdAt: {
+            gte: startDate,
+            lte: endDate
+          }
+        },
+        _sum: {
+          value: true
+        }
+      });
+
+      return data._sum.value;
+    } catch (error) {
+      console.error("Failed to fetch expenses total value:", error);
+      return null;
+    }
+  }
+);
+
 export const getExpenseById = cache(
   async (id: Expense["id"]): Promise<Expense | null> => {
     const session = await verifySession();

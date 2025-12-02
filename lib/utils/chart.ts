@@ -1,12 +1,6 @@
 import type { ChartConfig } from "@/components/ui/chart";
 import type { CategoryPreview, ExpenseByDateRange, ExpensesChartItem } from "@/types";
-import { clsx, type ClassValue } from "clsx";
 import { getDate } from "date-fns";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
 
 export function buildChartConfig(categories: CategoryPreview[]): ChartConfig {
   return categories.reduce((config, category) => {
@@ -19,7 +13,7 @@ export function buildChartConfig(categories: CategoryPreview[]): ChartConfig {
   }, {} as ChartConfig);
 }
 
-export function buildMonthlyChartData(
+export function buildChartData(
   expenses: ExpenseByDateRange[],
   length: number
 ): ExpensesChartItem[] {
@@ -42,18 +36,4 @@ export function buildMonthlyChartData(
   });
 
   return chartData;
-}
-
-export function filterExpensesByDay(expenses: ExpenseByDateRange[], day: number) {
-  let spentByDay = 0;
-
-  const expensesByDay = expenses.filter(expense => {
-    const dayCreated = getDate(expense.createdAt);
-    if (day === dayCreated) {
-      spentByDay += expense.value;
-      return true;
-    }
-  });
-
-  return { spentByDay, expensesByDay };
 }
