@@ -1,11 +1,6 @@
 import { describe, it, expect } from "vitest";
-import {
-  parseSelectedDay,
-  createDateFromDay,
-  getCurrentMonthRange,
-  getDayRange
-} from "@/lib/utils";
-import { startOfMonth, endOfMonth, startOfDay, endOfDay } from "date-fns";
+import { parseSelectedDay, createDateFromDay, getCurrentMonthRange } from "@/lib/utils";
+import { startOfMonth, endOfMonth } from "date-fns";
 
 describe("#parseSelectedDay", () => {
   describe("valid inputs", () => {
@@ -187,89 +182,5 @@ describe("#getCurrentMonthRange", () => {
     const result = getCurrentMonthRange(testDate);
 
     expect(result.start.getTime()).toBeLessThan(result.end.getTime());
-  });
-});
-
-describe("#getDayRange", () => {
-  it("should return start and end of day", () => {
-    const testDate = new Date(2024, 5, 15, 14, 30, 45);
-    const result = getDayRange(testDate);
-
-    expect(result.start).toEqual(startOfDay(testDate));
-    expect(result.end).toEqual(endOfDay(testDate));
-  });
-
-  it("should set start to midnight (00:00:00.000)", () => {
-    const testDate = new Date(2024, 5, 15, 14, 30, 45);
-    const result = getDayRange(testDate);
-
-    expect(result.start.getHours()).toBe(0);
-    expect(result.start.getMinutes()).toBe(0);
-    expect(result.start.getSeconds()).toBe(0);
-    expect(result.start.getMilliseconds()).toBe(0);
-  });
-
-  it("should set end to last millisecond (23:59:59.999)", () => {
-    const testDate = new Date(2024, 5, 15, 14, 30, 45);
-    const result = getDayRange(testDate);
-
-    expect(result.end.getHours()).toBe(23);
-    expect(result.end.getMinutes()).toBe(59);
-    expect(result.end.getSeconds()).toBe(59);
-    expect(result.end.getMilliseconds()).toBe(999);
-  });
-
-  it("should handle date already at start of day", () => {
-    const testDate = new Date(2024, 5, 15, 0, 0, 0, 0);
-    const result = getDayRange(testDate);
-
-    expect(result.start).toEqual(testDate);
-    expect(result.end.getHours()).toBe(23);
-  });
-
-  it("should handle date already at end of day", () => {
-    const testDate = new Date(2024, 5, 15, 23, 59, 59, 999);
-    const result = getDayRange(testDate);
-
-    expect(result.start.getHours()).toBe(0);
-    expect(result.end).toEqual(testDate);
-  });
-
-  it("should preserve the same date", () => {
-    const testDate = new Date(2024, 5, 15, 14, 30);
-    const result = getDayRange(testDate);
-
-    expect(result.start.getFullYear()).toBe(2024);
-    expect(result.start.getMonth()).toBe(5);
-    expect(result.start.getDate()).toBe(15);
-
-    expect(result.end.getFullYear()).toBe(2024);
-    expect(result.end.getMonth()).toBe(5);
-    expect(result.end.getDate()).toBe(15);
-  });
-
-  it("should return date objects with proper structure", () => {
-    const testDate = new Date(2024, 5, 15);
-    const result = getDayRange(testDate);
-
-    expect(result).toHaveProperty("start");
-    expect(result).toHaveProperty("end");
-    expect(result.start).toBeInstanceOf(Date);
-    expect(result.end).toBeInstanceOf(Date);
-  });
-
-  it("should have start before end", () => {
-    const testDate = new Date(2024, 5, 15, 12, 0);
-    const result = getDayRange(testDate);
-
-    expect(result.start.getTime()).toBeLessThan(result.end.getTime());
-  });
-
-  it("should handle leap year date", () => {
-    const testDate = new Date(2024, 1, 29, 12, 0);
-    const result = getDayRange(testDate);
-
-    expect(result.start.getDate()).toBe(29);
-    expect(result.end.getDate()).toBe(29);
   });
 });

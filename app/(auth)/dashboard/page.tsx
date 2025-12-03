@@ -1,22 +1,21 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
-import {
-  getCategories,
-  getExpensesByDateRange,
-  getExpensesTotalByDateRange
-} from "@/lib/dal";
+import { getCategories, getExpensesByDateRange, getUserCreatedAt } from "@/lib/dal";
 import {
   buildChartConfig,
   buildChartData,
+  calculateTotalAmount,
   createDateFromDay,
   getCurrentMonthRange,
-  getDayRange,
-  parseSelectedDay
+  parseSelectedDay,
+  parseSelectedMonth
 } from "@/lib/utils";
 import FormattedAmount from "@/components/formatted-amount";
 import CompletedExpensesList from "@/components/expenses/completed-list";
 import MonthlyBarChart from "@/components/monthly-bar-chart";
 import { format, getDate } from "date-fns";
+import MonthSelect from "@/components/month-select";
+import { filterExpensesByDay } from "@/lib/utils";
 
 export default async function Page({
   searchParams
@@ -24,47 +23,46 @@ export default async function Page({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const params = await searchParams;
-  const now = new Date();
-  const monthRange = getCurrentMonthRange(now);
+  const selectedMonth = parseSelectedMonth(params.month);
+  const currentDate = selectedMonth || new Date();
+  const monthRange = getCurrentMonthRange(currentDate);
 
-  const selectedDayParam = parseSelectedDay(params.selectedDay);
-  const selectedDate = selectedDayParam ? createDateFromDay(selectedDayParam, now) : null;
+  const selectedDayParam = parseSelectedDay(params.day);
+  const highlightedDate = selectedDayParam
+    ? createDateFromDay(selectedDayParam, currentDate)
+    : null;
 
-  const [categories, expenses, totalSpent] = await Promise.all([
+  const [categories, monthlyExpenses, userData] = await Promise.all([
     getCategories(),
-    getExpensesByDateRange(monthRange.start, now),
-    getExpensesTotalByDateRange(monthRange.start, now)
+    getExpensesByDateRange(monthRange.start, currentDate),
+    getUserCreatedAt()
   ]);
 
-  if (categories === null || expenses === null || totalSpent === null) {
+  if (categories === null || monthlyExpenses === null || userData === null) {
     return null;
   }
 
-  let selectedExpenses = expenses;
-  let amountSpent = totalSpent / getDate(now);
+  const totalSpent = calculateTotalAmount(monthlyExpenses);
+  let selectedExpenses = monthlyExpenses;
+  let amountSpent = totalSpent / getDate(currentDate);
 
-  if (selectedDate) {
-    const dayRange = getDayRange(selectedDate);
-    const [dayExpenses, dayTotal] = await Promise.all([
-      getExpensesByDateRange(dayRange.start, dayRange.end),
-      getExpensesTotalByDateRange(dayRange.start, dayRange.end)
-    ]);
+  if (selectedDayParam) {
+    const dayExpenses = filterExpensesByDay(monthlyExpenses, selectedDayParam);
+    const dayTotal = calculateTotalAmount(dayExpenses);
 
     selectedExpenses = dayExpenses ?? [];
     amountSpent = dayTotal ?? 0;
   }
 
   const chartConfig = buildChartConfig(categories);
-  const chartData = buildChartData(expenses, getDate(monthRange.end));
+  const chartData = buildChartData(monthlyExpenses, getDate(monthRange.end));
 
   return (
     <div className="flex flex-col gap-4">
       <Card className="mx-auto flex w-full flex-col">
         <CardHeader className="flex w-full items-center justify-between">
           <div>
-            <p className="text-muted-foreground text-sm font-medium uppercase">
-              {format(now, "MMM yyyy")}
-            </p>
+            <MonthSelect startDate={userData.createdAt} />
             <FormattedAmount
               className="text-xl before:text-base"
               amount={totalSpent}
@@ -73,7 +71,9 @@ export default async function Page({
           </div>
           <div>
             <p className="text-muted-foreground text-sm font-medium uppercase">
-              {selectedDate === null ? "Spent/day" : format(selectedDate, "d MMM yyyy")}
+              {highlightedDate === null
+                ? "Spent/day"
+                : format(highlightedDate, "d MMM yyyy")}
             </p>
             <FormattedAmount className="text-xl before:text-base" amount={amountSpent} />
           </div>

@@ -1,6 +1,6 @@
 import type { ChartConfig } from "@/components/ui/chart";
 import type { CategoryPreview, ExpenseByDateRange, ExpensesChartItem } from "@/types";
-import { getDate } from "date-fns";
+import { getDate, format, getYear, getMonth } from "date-fns";
 
 export function buildChartConfig(categories: CategoryPreview[]): ChartConfig {
   return categories.reduce((config, category) => {
@@ -36,4 +36,41 @@ export function buildChartData(
   });
 
   return chartData;
+}
+
+export function buildMonthSelectOptions(date: Date) {
+  const now = new Date();
+  const startYear = getYear(date);
+  const startMonth = getMonth(date);
+  const endYear = getYear(now);
+  const endMonth = getMonth(now);
+
+  const options: Array<{ label: string; value: string }> = [];
+
+  let currentYear = endYear;
+  let currentMonth = endMonth;
+
+  while (
+    currentYear > startYear ||
+    (currentYear === startYear && currentMonth >= startMonth)
+  ) {
+    const optionDate = new Date(currentYear, currentMonth, 1);
+
+    options.push({
+      label: format(optionDate, "MMM yyyy"),
+      value: format(optionDate, "yyyy-MM")
+    });
+
+    currentMonth--;
+    if (currentMonth < 0) {
+      currentMonth = 11;
+      currentYear--;
+    }
+  }
+
+  return options;
+}
+
+export function calculateTotalAmount(expenses: ExpenseByDateRange[]): number {
+  return expenses.reduce((sum, e) => sum + e.value, 0);
 }

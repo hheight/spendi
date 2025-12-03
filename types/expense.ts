@@ -33,6 +33,12 @@ export type ExpenseByDateRange = Prisma.ExpenseGetPayload<{
   };
 }>;
 
+export type ExpenseWithCreatedAt = Prisma.ExpenseGetPayload<{
+  select: {
+    createdAt: true;
+  };
+}>;
+
 export type ExpensesChartItem = {
   day: number;
   [key: string]: number;

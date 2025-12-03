@@ -1,12 +1,4 @@
-import {
-  endOfMonth,
-  startOfMonth,
-  getYear,
-  getMonth,
-  startOfDay,
-  endOfDay,
-  isValid
-} from "date-fns";
+import { parse, endOfMonth, startOfMonth, getYear, getMonth, isValid } from "date-fns";
 
 export function parseSelectedDay(param: string | string[] | undefined): number | null {
   if (!param || Array.isArray(param)) return null;
@@ -15,6 +7,14 @@ export function parseSelectedDay(param: string | string[] | undefined): number |
   if (isNaN(day) || day < 1 || day > 31) return null;
 
   return day;
+}
+
+export function parseSelectedMonth(param: string | string[] | undefined): Date | null {
+  if (typeof param !== "string") return null;
+
+  const parsedDate = parse(param, "yyyy-MM", new Date());
+
+  return endOfMonth(parsedDate);
 }
 
 export function createDateFromDay(day: number, referenceDate: Date): Date | null {
@@ -36,15 +36,5 @@ export function getCurrentMonthRange(now: Date): {
   return {
     start: startOfMonth(now),
     end: endOfMonth(now)
-  };
-}
-
-export function getDayRange(date: Date): {
-  start: Date;
-  end: Date;
-} {
-  return {
-    start: startOfDay(date),
-    end: endOfDay(date)
   };
 }

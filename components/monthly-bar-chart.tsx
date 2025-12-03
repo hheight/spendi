@@ -21,11 +21,11 @@ export default function MonthlyBarChart({ chartData, chartConfig }: Props) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const selectedDay = searchParams.get("selectedDay");
+  const selectedDay = searchParams.get("day");
 
   const handleBarClick = (item: { day: number }) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("selectedDay", item.day.toString());
+    params.set("day", item.day.toString());
     router.push(`?${params.toString()}`);
   };
 
