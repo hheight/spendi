@@ -167,21 +167,21 @@ export const getExpenseById = cache(
   }
 );
 
-export const getUserCreatedAt = cache(async (): Promise<UserCreatedAt | null> => {
+export const getFirstExpense = cache(async (): Promise<Expense | null> => {
   const session = await verifySession();
   if (!session) return null;
 
   try {
-    const data = await prisma.user.findUnique({
-      where: { id: session.userId },
-      select: {
-        createdAt: true
+    const data = await prisma.expense.findFirst({
+      where: { userId: session.userId },
+      orderBy: {
+        createdAt: "asc"
       }
     });
 
     return data;
   } catch (error) {
-    console.error("Failed to fetch user:", error);
+    console.error("Failed to fetch first expense:", error);
     return null;
   }
 });

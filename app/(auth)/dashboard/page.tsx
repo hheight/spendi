@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
-import { getCategories, getExpensesByDateRange, getUserCreatedAt } from "@/lib/dal";
+import { getCategories, getExpensesByDateRange, getFirstExpense } from "@/lib/dal";
 import {
   buildChartConfig,
   buildChartData,
@@ -32,13 +32,13 @@ export default async function Page({
     ? createDateFromDay(selectedDayParam, currentDate)
     : null;
 
-  const [categories, monthlyExpenses, userData] = await Promise.all([
+  const [categories, monthlyExpenses, firstExpense] = await Promise.all([
     getCategories(),
     getExpensesByDateRange(monthRange.start, currentDate),
-    getUserCreatedAt()
+    getFirstExpense()
   ]);
 
-  if (categories === null || monthlyExpenses === null || userData === null) {
+  if (categories === null || monthlyExpenses === null || firstExpense === null) {
     return null;
   }
 
@@ -62,7 +62,7 @@ export default async function Page({
       <Card className="mx-auto flex w-full flex-col">
         <CardHeader className="flex w-full items-center justify-between">
           <div>
-            <MonthSelect startDate={userData.createdAt} />
+            <MonthSelect startDate={firstExpense.createdAt} />
             <FormattedAmount
               className="text-xl before:text-base"
               amount={totalSpent}
