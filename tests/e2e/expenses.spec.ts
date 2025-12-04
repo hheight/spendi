@@ -76,3 +76,14 @@ test("should allow to create future expense", async ({ expensesPage, page }) => 
   await expect(page.getByText("10.00")).toBeAttached();
   await expect(page.getByText(format(nextDay, "d MMM"))).toBeAttached();
 });
+
+test("should allow to delete expense", async ({ expensesPage, page }) => {
+  await expensesPage.createExpense({
+    description: "Test expense",
+    amount: "10",
+    categoryName: "Fun category"
+  });
+
+  await expensesPage.deleteExpense("Test expense");
+  await expect(page.getByText("No entries found.")).toBeAttached();
+});

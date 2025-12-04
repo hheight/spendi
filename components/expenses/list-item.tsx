@@ -1,6 +1,9 @@
+"use client";
+
 import FormattedAmount from "@/components/formatted-amount";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
+import { usePathname } from "next/navigation";
 
 type Props = {
   title: string;
@@ -19,6 +22,8 @@ export default function ExpensesListItem({
   subtitle,
   dateSeparator
 }: Props) {
+  const pathname = usePathname();
+
   return (
     <li>
       {dateSeparator && (
@@ -29,7 +34,10 @@ export default function ExpensesListItem({
           <Separator />
         </div>
       )}
-      <Link href={`/expenses/edit/${id}`} className="group block">
+      <Link
+        href={`/expenses/edit/${id}?redirectTo=${encodeURIComponent(pathname)}`}
+        className="group block"
+      >
         <div className="flex items-center gap-3">
           <div style={{ backgroundColor: color }} className="h-9 w-9 rounded-md"></div>
           <div className="flex-1 leading-5">

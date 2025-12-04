@@ -8,6 +8,8 @@ export class ExpensesPage {
   private readonly addNewExpenseLink: Locator;
   private readonly saveExpenseButton: Locator;
   private readonly addExpenseButton: Locator;
+  private readonly deleteExpenseButton: Locator;
+  private readonly confirmDeleteExpenseButton: Locator;
   private readonly datePickerButton: Locator;
   private readonly yearSelect: Locator;
   private readonly monthSelect: Locator;
@@ -21,6 +23,11 @@ export class ExpensesPage {
     this.addNewExpenseLink = this.page.getByRole("link", { name: "Add new expense" });
     this.saveExpenseButton = this.page.getByRole("button", { name: "Save" });
     this.addExpenseButton = this.page.getByRole("button", { name: "Add" });
+    this.deleteExpenseButton = this.page.getByRole("button", { name: "Delete expense" });
+    this.confirmDeleteExpenseButton = this.page.getByRole("button", {
+      name: "Delete",
+      exact: true
+    });
     this.datePickerButton = this.page.locator("#date-picker");
     this.yearSelect = this.page.locator("select.rdp-years_dropdown");
     this.monthSelect = this.page.locator("select.rdp-months_dropdown");
@@ -94,5 +101,11 @@ export class ExpensesPage {
       await this.categoryNameField.fill(categoryName);
     }
     await this.saveExpenseButton.click();
+  }
+
+  async deleteExpense(name: string) {
+    await this.page.getByRole("link", { name }).click();
+    await this.deleteExpenseButton.click();
+    await this.confirmDeleteExpenseButton.click();
   }
 }

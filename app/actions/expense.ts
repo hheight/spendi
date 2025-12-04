@@ -117,3 +117,24 @@ export async function updateExpense(
     return { success: false, message: "An error occured while editing expense" };
   }
 }
+
+export async function deleteExpense(id: Expense["id"]): Promise<ActionResponse> {
+  const session = await verifySession();
+
+  if (!session) {
+    return {
+      success: false
+    };
+  }
+
+  try {
+    await prisma.expense.delete({
+      where: { id, userId: session.userId }
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to delete expense:", error);
+    return { success: false, message: "An error occured while deleting expense" };
+  }
+}

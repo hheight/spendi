@@ -18,16 +18,22 @@ import { expenseSchema, type ExpenseInput } from "@/lib/expense/schemas";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import CategoryGroup from "./category-group";
 import type { CategoryPreview, Expense } from "@/types";
-import { createExpense, updateExpense } from "@/app/actions/expense";
+import { createExpense, deleteExpense, updateExpense } from "@/app/actions/expense";
 import { useRouter } from "next/navigation";
 import { DatePicker } from "@/components/date-picker";
+import { DeleteButton } from "./delete-button";
 
 type Props = {
   categories: CategoryPreview[] | null;
   expense?: Expense;
+  redirectTo?: string;
 };
 
-export default function ExpenseForm({ categories, expense }: Props) {
+export default function ExpenseForm({
+  categories,
+  expense,
+  redirectTo = "/expenses"
+}: Props) {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const isEditMode = !!expense;
@@ -49,14 +55,6 @@ export default function ExpenseForm({ categories, expense }: Props) {
   });
   const { isSubmitting } = form.formState;
 
-  const goBack = () => {
-    if (window.history.length > 1) {
-      router.back();
-    } else {
-      router.push("/expenses");
-    }
-  };
-
   const onSubmit = async (data: ExpenseInput) => {
     setServerError(null);
     const result = isEditMode
@@ -64,18 +62,38 @@ export default function ExpenseForm({ categories, expense }: Props) {
       : await createExpense(data);
 
     if (result.success) {
-      goBack();
+      router.push(redirectTo);
     } else {
       setServerError(result.message || "An error occured while saving expense");
     }
   };
 
+  const onDelete = async () => {
+    if (!expense) {
+      return;
+    }
+
+    setServerError(null);
+    const result = await deleteExpense(expense.id);
+
+    if (result.success) {
+      router.push(redirectTo);
+    } else {
+      setServerError(result.message || "An error occured while deleting expense");
+    }
+  };
+
+  const handleCancel = () => {
+    router.back();
+  };
+
   return (
     <Card className="mx-auto w-full max-w-prose">
-      <CardHeader>
-        <CardTitle className="text-lg font-medium">
+      <CardHeader className="jusrify-between flex items-center">
+        <CardTitle className="w-full text-lg font-medium">
           <h1>{isEditMode ? "Edit" : "Add"} expense</h1>
         </CardTitle>
+        {isEditMode && <DeleteButton onDelete={onDelete} itemName="expense" />}
       </CardHeader>
       <CardContent>
         {serverError && (
@@ -133,7 +151,7 @@ export default function ExpenseForm({ categories, expense }: Props) {
       </CardContent>
       <CardFooter className="mt-2 flex-col">
         <Field orientation="horizontal">
-          <Button variant="outline" disabled={isSubmitting} onClick={goBack}>
+          <Button variant="outline" disabled={isSubmitting} onClick={handleCancel}>
             Cancel
           </Button>
           <Button type="submit" form="expense-form" disabled={isSubmitting}>
