@@ -85,28 +85,56 @@ export const getExpensesByDateRange = cache(
 );
 
 export const getCompletedExpenses = cache(
-  async (): Promise<ExpenseWithColor[] | null> => {
+  async (
+    page: number = 1,
+    pageSize: number = 15
+  ): Promise<{
+    expenses: ExpenseWithColor[];
+    totalPages: number;
+    currentPage: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  } | null> => {
     const session = await verifySession();
     if (!session) return null;
 
-    try {
-      const data = await prisma.expense.findMany({
-        where: { userId: session.userId, createdAt: { lte: new Date() } },
-        select: {
-          id: true,
-          item: true,
-          value: true,
-          category: {
-            select: {
-              color: true
-            }
-          },
-          createdAt: true
-        },
-        orderBy: { createdAt: "desc" }
-      });
+    const validPage = Math.max(1, page);
 
-      return data;
+    try {
+      const skip = (validPage - 1) * pageSize;
+
+      const [data, totalCount] = await Promise.all([
+        prisma.expense.findMany({
+          where: { userId: session.userId, createdAt: { lte: new Date() } },
+          select: {
+            id: true,
+            item: true,
+            value: true,
+            category: {
+              select: {
+                color: true
+              }
+            },
+            createdAt: true
+          },
+          orderBy: { createdAt: "desc" },
+          skip,
+          take: pageSize
+        }),
+        prisma.expense.count({
+          where: { userId: session.userId, createdAt: { lte: new Date() } }
+        })
+      ]);
+
+      const totalPages = Math.ceil(totalCount / pageSize);
+
+      return {
+        expenses: data,
+        totalPages,
+        currentPage: validPage,
+        hasNextPage: validPage < totalPages,
+        hasPreviousPage: validPage > 1
+      };
     } catch (error) {
       console.error("Failed to fetch expenses:", error);
       return null;

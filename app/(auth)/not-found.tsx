@@ -6,7 +6,7 @@ import {
   EmptyMedia,
   EmptyTitle
 } from "@/components/ui/empty";
-import { BanknoteX } from "lucide-react";
+import { Ban } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -17,19 +17,19 @@ export default function NotFound() {
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <BanknoteX />
+              <Ban />
             </EmptyMedia>
-            <EmptyTitle>Not found</EmptyTitle>
+            <EmptyTitle>404 | Not found</EmptyTitle>
             <EmptyDescription>
-              The expense you are trying to edit does not exist or is no longer available.
+              Something went wrong. Try to refresh page or go back to dashboard.
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Link
-              href="/expenses"
+              href="/dashboard"
               className="text-sm font-medium underline underline-offset-4"
             >
-              Back to expenses
+              Back to dashboard
             </Link>
           </EmptyContent>
         </Empty>

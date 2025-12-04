@@ -49,20 +49,7 @@ export default function ExpenseForm({ categories, expense }: Props) {
   });
   const { isSubmitting } = form.formState;
 
-  const onSubmit = async (data: ExpenseInput) => {
-    setServerError(null);
-    const result = isEditMode
-      ? await updateExpense(data, expense.id)
-      : await createExpense(data);
-
-    if (result.success) {
-      router.push("/expenses");
-    } else {
-      setServerError(result.message || "An error occured while saving expense");
-    }
-  };
-
-  const handleCancel = () => {
+  const goBack = () => {
     if (window.history.length > 1) {
       router.back();
     } else {
@@ -70,11 +57,24 @@ export default function ExpenseForm({ categories, expense }: Props) {
     }
   };
 
+  const onSubmit = async (data: ExpenseInput) => {
+    setServerError(null);
+    const result = isEditMode
+      ? await updateExpense(data, expense.id)
+      : await createExpense(data);
+
+    if (result.success) {
+      goBack();
+    } else {
+      setServerError(result.message || "An error occured while saving expense");
+    }
+  };
+
   return (
     <Card className="mx-auto w-full max-w-prose">
       <CardHeader>
         <CardTitle className="text-lg font-medium">
-          {isEditMode ? "Edit" : "Add"} expense
+          <h1>{isEditMode ? "Edit" : "Add"} expense</h1>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -133,7 +133,7 @@ export default function ExpenseForm({ categories, expense }: Props) {
       </CardContent>
       <CardFooter className="mt-2 flex-col">
         <Field orientation="horizontal">
-          <Button variant="outline" disabled={isSubmitting} onClick={handleCancel}>
+          <Button variant="outline" disabled={isSubmitting} onClick={goBack}>
             Cancel
           </Button>
           <Button type="submit" form="expense-form" disabled={isSubmitting}>

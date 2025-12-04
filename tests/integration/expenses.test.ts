@@ -58,24 +58,84 @@ describe("expenses", () => {
 
       const result = await getCompletedExpenses();
 
-      expect(result).toHaveLength(2);
+      expect(result).toMatchObject({
+        currentPage: 1,
+        expenses: [
+          {
+            item: "Fruits",
+            value: 100,
+            category: {
+              color: foodCategory.color
+            }
+          },
+          {
+            item: "Meat",
+            value: 50,
+            category: {
+              color: foodCategory.color
+            }
+          }
+        ],
+        hasNextPage: false,
+        hasPreviousPage: false,
+        totalPages: 1
+      });
+    });
 
-      expect(result).toMatchObject([
-        {
-          item: "Fruits",
-          value: 100,
-          category: {
-            color: foodCategory.color
-          }
-        },
-        {
-          item: "Meat",
-          value: 50,
-          category: {
-            color: foodCategory.color
-          }
+    it("should return paginated list of completed expenses", async () => {
+      const user = await prisma.user.create({
+        data: {
+          email: "test@example.com",
+          password: { create: { hash: "hashed" } }
         }
-      ]);
+      });
+
+      const foodCategory = await prisma.category.create({
+        data: { name: "Food", color: "#FF0000", userId: user.id }
+      });
+
+      await prisma.expense.createMany({
+        data: [
+          { value: 10, userId: user.id, categoryId: foodCategory.id, item: "Item1" },
+          { value: 20, userId: user.id, categoryId: foodCategory.id, item: "Item2" },
+          { value: 30, userId: user.id, categoryId: foodCategory.id, item: "Item3" },
+          { value: 40, userId: user.id, categoryId: foodCategory.id, item: "Item4" },
+          { value: 50, userId: user.id, categoryId: foodCategory.id, item: "Item5" },
+          { value: 60, userId: user.id, categoryId: foodCategory.id, item: "Item6" },
+          { value: 70, userId: user.id, categoryId: foodCategory.id, item: "Item7" }
+        ]
+      });
+
+      const token = await encrypt({
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 1000000)
+      });
+      mockGet.mockReturnValue({ value: token });
+
+      const result = await getCompletedExpenses(2, 5);
+
+      expect(result).toMatchObject({
+        currentPage: 2,
+        expenses: [
+          {
+            item: "Item6",
+            value: 60,
+            category: {
+              color: foodCategory.color
+            }
+          },
+          {
+            item: "Item7",
+            value: 70,
+            category: {
+              color: foodCategory.color
+            }
+          }
+        ],
+        hasNextPage: false,
+        hasPreviousPage: true,
+        totalPages: 2
+      });
     });
 
     it("should only return expenses for current user", async () => {
@@ -99,7 +159,7 @@ describe("expenses", () => {
         data: { name: "Category2", color: "#00FF00", userId: user2.id }
       });
 
-      const expense1 = await prisma.expense.create({
+      await prisma.expense.create({
         data: { value: 100, userId: user1.id, categoryId: category1.id, item: "Item1" }
       });
       await prisma.expense.create({
@@ -114,10 +174,13 @@ describe("expenses", () => {
 
       const result = await getCompletedExpenses();
 
-      expect(result).toHaveLength(1);
-
-      expect(result?.[0].id).toBe(expense1.id);
-      expect(result?.[0].category.color).toBe(category1.color);
+      expect(result).toMatchObject({
+        currentPage: 1,
+        expenses: [{ item: "Item1", value: 100, category: { color: category1.color } }],
+        hasNextPage: false,
+        hasPreviousPage: false,
+        totalPages: 1
+      });
     });
 
     it("should return empty array when user has no expenses", async () => {
@@ -136,7 +199,13 @@ describe("expenses", () => {
 
       const result = await getCompletedExpenses();
 
-      expect(result).toEqual([]);
+      expect(result).toEqual({
+        currentPage: 1,
+        expenses: [],
+        hasNextPage: false,
+        hasPreviousPage: false,
+        totalPages: 0
+      });
     });
 
     it("should throw when not authenticated", async () => {
