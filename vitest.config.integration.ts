@@ -1,8 +1,8 @@
 import path from "path";
-import dotenv from "dotenv";
 import { defineConfig } from "vitest/config";
+import dotenv from "dotenv";
 
-dotenv.config({ path: ".env.test" });
+dotenv.config({ path: path.resolve(__dirname, ".env.test") });
 
 export default defineConfig({
   resolve: {
@@ -11,7 +11,7 @@ export default defineConfig({
     }
   },
   test: {
-    include: ["tests/integration/**/*.test.ts"],
+    include: ["tests/integration/**"],
     setupFiles: ["tests/helpers/setup-integration.ts"],
     poolOptions: {
       forks: {
