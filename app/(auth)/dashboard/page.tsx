@@ -39,8 +39,8 @@ export default async function Page({
     getFirstExpense()
   ]);
 
-  if (categories === null || monthlyExpenses === null || firstExpense === null) {
-    return notFound();
+  if (categories === null || monthlyExpenses === null) {
+    notFound();
   }
 
   const totalSpent = calculateTotalAmount(monthlyExpenses);
@@ -63,7 +63,7 @@ export default async function Page({
       <Card className="mx-auto flex w-full flex-col">
         <CardHeader className="flex w-full items-center justify-between">
           <div>
-            <MonthSelect startDate={firstExpense.createdAt} />
+            <MonthSelect startDate={firstExpense?.createdAt} />
             <FormattedAmount
               className="text-xl before:text-base"
               amount={totalSpent}

@@ -22,6 +22,7 @@ import { createExpense, deleteExpense, updateExpense } from "@/app/actions/expen
 import { useRouter } from "next/navigation";
 import { DatePicker } from "@/components/date-picker";
 import { DeleteButton } from "./delete-button";
+import { Spinner } from "@/components/ui/spinner";
 
 type Props = {
   categories: CategoryPreview[] | null;
@@ -155,6 +156,7 @@ export default function ExpenseForm({
             Cancel
           </Button>
           <Button type="submit" form="expense-form" disabled={isSubmitting}>
+            {isSubmitting && <Spinner />}
             {isEditMode ? "Save" : "Add"}
           </Button>
         </Field>

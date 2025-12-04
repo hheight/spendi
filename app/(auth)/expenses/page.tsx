@@ -43,13 +43,13 @@ export default async function Page({
 
   return (
     <Card>
-      <CardHeader className="flex items-center gap-4">
+      <CardHeader className="flex items-center justify-between gap-4">
         <CardTitle className="text-lg">
           <h1>Expenses</h1>
         </CardTitle>
-        <Button variant="outline" asChild aria-label="Add new expense" size="icon">
+        <Button variant="outline" asChild>
           <Link href="/expenses/new">
-            <Plus />
+            Add expense <Plus />
           </Link>
         </Button>
       </CardHeader>

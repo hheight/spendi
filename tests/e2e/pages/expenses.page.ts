@@ -20,7 +20,7 @@ export class ExpensesPage {
     this.amountField = this.page.getByLabel("Amount");
     this.newCategoryRadioButton = this.page.getByLabel("Create new category");
     this.categoryNameField = this.page.getByLabel("Name");
-    this.addNewExpenseLink = this.page.getByRole("link", { name: "Add new expense" });
+    this.addNewExpenseLink = this.page.getByRole("link", { name: "Add expense" });
     this.saveExpenseButton = this.page.getByRole("button", { name: "Save" });
     this.addExpenseButton = this.page.getByRole("button", { name: "Add" });
     this.deleteExpenseButton = this.page.getByRole("button", { name: "Delete expense" });

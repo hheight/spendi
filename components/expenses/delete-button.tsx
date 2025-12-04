@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Props {
   onDelete: () => Promise<void>;
@@ -64,6 +65,7 @@ export function DeleteButton({
               onClick={handleDelete}
               disabled={isPending}
             >
+              {isPending && <Spinner />}
               {isPending ? "Deleting..." : "Delete"}
             </Button>
           </div>

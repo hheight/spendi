@@ -20,7 +20,7 @@ const defaultOptions = [
   }
 ];
 
-export default function MonthSelect({ startDate }: { startDate: Date }) {
+export default function MonthSelect({ startDate }: { startDate?: Date }) {
   const [options, setOptions] =
     useState<Array<{ value: string; label: string }>>(defaultOptions);
   const searchParams = useSearchParams();
@@ -28,6 +28,9 @@ export default function MonthSelect({ startDate }: { startDate: Date }) {
   const selectedMonth = searchParams.get("month");
 
   useEffect(() => {
+    if (!startDate) {
+      return;
+    }
     const monthOptions = buildMonthSelectOptions(startDate);
     setOptions(monthOptions);
   }, []);
