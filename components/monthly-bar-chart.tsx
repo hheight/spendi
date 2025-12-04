@@ -43,15 +43,21 @@ export default function MonthlyBarChart({ chartData, chartConfig }: Props) {
           tickFormatter={formatToK}
         />
         <XAxis dataKey="day" tickLine={false} tickMargin={10} axisLine={false} />
-        <Bar dataKey="value" fill="var(--chart-1)" radius={4} onClick={handleBarClick}>
-          {chartData.map((_entry, index) => (
+        <Bar
+          dataKey="value"
+          fill="var(--chart-1)"
+          background={{ fill: "var(--muted)", radius: 4 }}
+          radius={4}
+          onClick={handleBarClick}
+        >
+          {chartData.map(entry => (
             <Cell
               className="duration-200"
               cursor="pointer"
               fillOpacity={
-                selectedDay === null ? 1 : Number(selectedDay) === index + 1 ? 1 : 0.5
+                selectedDay === null ? 1 : Number(selectedDay) === entry.day ? 1 : 0.5
               }
-              key={`cell-${index}`}
+              key={`cell-${entry.day}`}
             />
           ))}
         </Bar>
