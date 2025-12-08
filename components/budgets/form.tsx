@@ -14,73 +14,66 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { expenseSchema, type ExpenseInput } from "@/lib/expense/schemas";
+import { budgetSchema, type BudgetInput } from "@/lib/budget/schemas";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import CategoryGroup from "./category-group";
-import type { CategoryPreview, Expense } from "@/types";
-import { createExpense, deleteExpense, updateExpense } from "@/app/actions/expense";
+import type { CategoryPreview } from "@/types";
+import { createBudget, deleteBudget, updateBudget } from "@/app/actions/budget";
 import { useRouter } from "next/navigation";
-import { DatePicker } from "@/components/date-picker";
 import { DeleteButton } from "@/components/delete-button";
 import { Spinner } from "@/components/ui/spinner";
+import { BudgetType } from "@/app/generated/prisma";
+import type { Budget } from "@/types";
+import TypeGroup from "./type-group";
 
 type Props = {
   categories: CategoryPreview[] | null;
-  expense?: Expense;
-  redirectTo?: string;
+  budget?: Budget;
 };
 
-export default function ExpenseForm({
-  categories,
-  expense,
-  redirectTo = "/expenses"
-}: Props) {
+export default function BudgetForm({ categories, budget }: Props) {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
-  const isEditMode = !!expense;
-  const form = useForm<ExpenseInput>({
-    resolver: zodResolver(expenseSchema),
+  const isEditMode = !!budget;
+  const form = useForm<BudgetInput>({
+    resolver: zodResolver(budgetSchema),
     defaultValues: {
-      type: "existing",
-      description: "",
+      type: BudgetType.OVERALL,
       amount: "",
       categoryId: "",
-      date: new Date(),
       ...(isEditMode && {
-        description: expense.item,
-        amount: expense.value.toString(),
-        categoryId: expense.categoryId,
-        date: expense.createdAt
+        type: budget.type,
+        amount: budget.value.toString(),
+        categoryId: budget.category?.id || ""
       })
     }
   });
   const { isSubmitting } = form.formState;
 
-  const onSubmit = async (data: ExpenseInput) => {
+  const onSubmit = async (data: BudgetInput) => {
     setServerError(null);
     const result = isEditMode
-      ? await updateExpense(data, expense.id)
-      : await createExpense(data);
+      ? await updateBudget(data, budget.id)
+      : await createBudget(data);
 
     if (result.success) {
-      router.push(redirectTo);
+      router.push("/budgets");
     } else {
-      setServerError(result.message || "An error occured while saving expense");
+      setServerError(result.message || "An error occured while saving budget");
     }
   };
 
   const onDelete = async () => {
-    if (!expense) {
+    if (!budget) {
       return;
     }
 
     setServerError(null);
-    const result = await deleteExpense(expense.id);
+    const result = await deleteBudget(budget.id);
 
     if (result.success) {
-      router.push(redirectTo);
+      router.push("/budgets");
     } else {
-      setServerError(result.message || "An error occured while deleting expense");
+      setServerError(result.message || "An error occured while deleting budget");
     }
   };
 
@@ -92,9 +85,9 @@ export default function ExpenseForm({
     <Card className="mx-auto w-full max-w-prose">
       <CardHeader className="jusrify-between flex items-center">
         <CardTitle className="w-full text-lg font-medium">
-          <h1>{isEditMode ? "Edit" : "Add"} expense</h1>
+          <h1>{isEditMode ? "Edit" : "Add"} budget</h1>
         </CardTitle>
-        {isEditMode && <DeleteButton onDelete={onDelete} itemName="expense" />}
+        {isEditMode && <DeleteButton onDelete={onDelete} itemName="budget" />}
       </CardHeader>
       <CardContent>
         {serverError && (
@@ -103,40 +96,26 @@ export default function ExpenseForm({
             <AlertDescription>{serverError}</AlertDescription>
           </Alert>
         )}
-        <form id="expense-form" onSubmit={form.handleSubmit(onSubmit)}>
+        <form id="budget-form" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
-            <Controller
-              name="description"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="expense-form-description-input">
-                    Description
-                  </FieldLabel>
-                  <Input
-                    {...field}
-                    type="text"
-                    id="expense-form-description-input"
-                    aria-invalid={fieldState.invalid}
-                    autoComplete="off"
-                  />
-                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                </Field>
-              )}
+            <TypeGroup
+              formControl={form.control}
+              categories={categories}
+              isEditMode={isEditMode}
             />
             <Controller
               name="amount"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="expense-form-amount-input">Amount</FieldLabel>
+                  <FieldLabel htmlFor="budget-form-amount-input">Amount</FieldLabel>
                   <div className="relative">
                     <EuroIcon className="text-muted-foreground absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
                     <Input
                       {...field}
                       className="pl-8"
                       type="number"
-                      id="expense-form-amount-input"
+                      id="budget-form-amount-input"
                       aria-invalid={fieldState.invalid}
                       autoComplete="off"
                     />
@@ -145,8 +124,6 @@ export default function ExpenseForm({
                 </Field>
               )}
             />
-            <DatePicker formControl={form.control} />
-            <CategoryGroup formControl={form.control} categories={categories} />
           </FieldGroup>
         </form>
       </CardContent>
@@ -155,7 +132,7 @@ export default function ExpenseForm({
           <Button variant="outline" disabled={isSubmitting} onClick={handleCancel}>
             Cancel
           </Button>
-          <Button type="submit" form="expense-form" disabled={isSubmitting}>
+          <Button type="submit" form="budget-form" disabled={isSubmitting}>
             {isSubmitting && <Spinner />}
             {isEditMode ? "Save" : "Add"}
           </Button>

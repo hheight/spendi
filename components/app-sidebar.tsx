@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, CreditCard, BadgeEuro } from "lucide-react";
+import { CreditCard, BadgeEuro, HandCoins, ChartColumnBig } from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -21,12 +21,17 @@ const items = [
   {
     title: "Dashboard",
     url: "/dashboard",
-    icon: LayoutDashboard
+    icon: ChartColumnBig
   },
   {
     title: "Income",
     url: "/income",
     icon: BadgeEuro
+  },
+  {
+    title: "Budgets",
+    url: "/budgets",
+    icon: HandCoins
   },
   {
     title: "Expenses",

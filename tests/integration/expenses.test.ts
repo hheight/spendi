@@ -4,10 +4,10 @@ import {
   getExpenseById,
   getCompletedExpenses,
   getUpcomingExpenses,
-  getExpensesByDateRange
+  getExpensesByDateRange,
+  getExpensesByCategory
 } from "@/lib/dal";
 import { encrypt } from "@/lib/auth/session";
-import { nextDay } from "date-fns";
 
 const mockGet = vi.fn();
 
@@ -215,8 +215,8 @@ describe("expenses", () => {
     });
   });
 
-  describe("getUpcomingExpenses", () => {
-    it("should return list of upcoming expenses", async () => {
+  describe("#getUpcomingExpenses", () => {
+    it("should return ordered list of upcoming expenses", async () => {
       const user = await prisma.user.create({
         data: {
           email: "test@example.com",
@@ -235,14 +235,14 @@ describe("expenses", () => {
             userId: user.id,
             categoryId: foodCategory.id,
             item: "Fruits",
-            createdAt: nextDay(new Date(), 2)
+            createdAt: new Date(Date.now() + 100000)
           },
           {
             value: 50,
             userId: user.id,
             categoryId: foodCategory.id,
             item: "Meat",
-            createdAt: nextDay(new Date(), 1)
+            createdAt: new Date(Date.now() + 200000)
           }
         ]
       });
@@ -259,15 +259,15 @@ describe("expenses", () => {
 
       expect(result).toMatchObject([
         {
-          item: "Fruits",
-          value: 100,
+          item: "Meat",
+          value: 50,
           category: {
             color: foodCategory.color
           }
         },
         {
-          item: "Meat",
-          value: 50,
+          item: "Fruits",
+          value: 100,
           category: {
             color: foodCategory.color
           }
@@ -302,7 +302,7 @@ describe("expenses", () => {
           userId: user1.id,
           categoryId: category1.id,
           item: "Item1",
-          createdAt: nextDay(new Date(), 1)
+          createdAt: new Date(Date.now() + 100000)
         }
       });
       await prisma.expense.create({
@@ -469,6 +469,82 @@ describe("expenses", () => {
       await expect(
         getExpensesByDateRange(new Date("2025-01-01"), new Date("2025-01-31"))
       ).rejects.toThrow();
+    });
+  });
+
+  describe("#getExpensesByCategory", () => {
+    const startDate = new Date("2025-01-01");
+    const endDate = new Date("2025-01-31");
+
+    it("should return expenses grouped by category with correct sum within date range", async () => {
+      const user = await prisma.user.create({
+        data: {
+          email: "test@example.com",
+          password: { create: { hash: "hashed" } }
+        }
+      });
+
+      const foodCategory = await prisma.category.create({
+        data: { name: "Food", color: "#FF0000", userId: user.id }
+      });
+
+      const transportCategory = await prisma.category.create({
+        data: { name: "Transport", color: "#00FF00", userId: user.id }
+      });
+
+      await prisma.expense.createMany({
+        data: [
+          {
+            value: 100,
+            userId: user.id,
+            categoryId: foodCategory.id,
+            item: "Fruits",
+            createdAt: new Date("2025-01-10")
+          },
+          {
+            value: 50,
+            userId: user.id,
+            categoryId: transportCategory.id,
+            item: "Bus",
+            createdAt: new Date("2025-01-15")
+          },
+          {
+            value: 50,
+            userId: user.id,
+            categoryId: foodCategory.id,
+            item: "Meat",
+            createdAt: new Date("2025-01-15")
+          },
+          {
+            value: 200,
+            userId: user.id,
+            categoryId: transportCategory.id,
+            item: "Tickets",
+            createdAt: new Date("2025-02-15")
+          }
+        ]
+      });
+
+      const token = await encrypt({
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 1000000)
+      });
+      mockGet.mockReturnValue({ value: token });
+
+      const result = await getExpensesByCategory(startDate, endDate);
+
+      expect(result).toHaveLength(2);
+
+      expect(result).toMatchObject([
+        { categoryId: foodCategory.id, _sum: { value: 150 } },
+        { categoryId: transportCategory.id, _sum: { value: 50 } }
+      ]);
+    });
+
+    it("should throw when not authenticated", async () => {
+      mockGet.mockReturnValue(undefined);
+
+      await expect(getExpensesByCategory(startDate, endDate)).rejects.toThrow();
     });
   });
 });

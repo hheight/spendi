@@ -11,7 +11,8 @@ import type {
   UserIncome,
   Expense,
   ExpenseByDateRange,
-  UserCreatedAt
+  Budget,
+  ExpenseByCategory
 } from "@/types";
 
 export const verifySession = cache(async () => {
@@ -79,6 +80,34 @@ export const getExpensesByDateRange = cache(
       return data;
     } catch (error) {
       console.error("Failed to fetch expenses:", error);
+      return null;
+    }
+  }
+);
+
+export const getExpensesByCategory = cache(
+  async (startDate: Date, endDate: Date): Promise<ExpenseByCategory[] | null> => {
+    const session = await verifySession();
+    if (!session) return null;
+
+    try {
+      const result = await prisma.expense.groupBy({
+        by: ["categoryId"],
+        where: {
+          userId: session.userId,
+          createdAt: {
+            gte: startDate,
+            lte: endDate
+          }
+        },
+        _sum: {
+          value: true
+        }
+      });
+
+      return result;
+    } catch (error) {
+      console.error("Failed to fetch expenses by category:", error);
       return null;
     }
   }
@@ -229,6 +258,72 @@ export const getUserIncome = cache(async (): Promise<UserIncome | null> => {
     return data;
   } catch (error) {
     console.error("Failed to fetch user:", error);
+    return null;
+  }
+});
+
+export const getBudgets = cache(async (): Promise<Budget[] | null> => {
+  const session = await verifySession();
+  if (!session) return null;
+
+  try {
+    const data = await prisma.budget.findMany({
+      where: {
+        userId: session.userId
+      },
+      select: {
+        id: true,
+        type: true,
+        value: true,
+        createdAt: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            color: true
+          }
+        }
+      },
+      orderBy: {
+        type: "asc"
+      }
+    });
+
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch budgets:", error);
+    return null;
+  }
+});
+
+export const getBudgetById = cache(async (id: Budget["id"]): Promise<Budget | null> => {
+  const session = await verifySession();
+  if (!session) return null;
+
+  try {
+    const data = await prisma.budget.findUnique({
+      where: {
+        userId: session.userId,
+        id
+      },
+      select: {
+        id: true,
+        type: true,
+        value: true,
+        createdAt: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            color: true
+          }
+        }
+      }
+    });
+
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch budget:", error);
     return null;
   }
 });
