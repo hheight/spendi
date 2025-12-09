@@ -45,7 +45,10 @@ export default function MonthSelect({ startDate }: { startDate?: Date }) {
 
   return (
     <Select onValueChange={handleChange} value={selectedMonth || options[0]?.value}>
-      <SelectTrigger className="text-muted-foreground cursor-pointer rounded-none border-0 bg-transparent p-0 text-sm font-medium uppercase shadow-none data-[size=default]:h-[1lh] dark:bg-transparent">
+      <SelectTrigger
+        id="month-select-trigger"
+        className="text-muted-foreground cursor-pointer rounded-none border-0 bg-transparent p-0 text-sm font-medium uppercase shadow-none data-[size=default]:h-[1lh] dark:bg-transparent"
+      >
         <SelectValue placeholder="Choose month" />
       </SelectTrigger>
       <SelectContent>
