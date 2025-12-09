@@ -16,7 +16,7 @@ import { BudgetType } from "@/app/generated/prisma";
 
 type Props = {
   formControl: Control<BudgetInput>;
-  categories: CategoryPreview[] | null;
+  categories: CategoryPreview[];
   isEditMode: boolean;
 };
 
@@ -56,7 +56,7 @@ export default function TypeGroup({ formControl, categories, isEditMode }: Props
             <Select
               onValueChange={categoryField.onChange}
               value={categoryField.value}
-              disabled={isEditMode}
+              disabled={isEditMode || categories.length === 0}
             >
               <SelectTrigger
                 id="expense-form-category-select"

@@ -14,8 +14,8 @@ export default function OverallBudget({ budgetValue, spent }: Props) {
   const isOverSpent = progressValue < 0;
 
   return (
-    <div className="flex flex-col items-center gap-2 py-4">
-      <p className="text-muted-foreground text-sm font-medium uppercase">
+    <div className="flex flex-col items-center gap-2 py-4" id="overall-budget-card">
+      <p className="text-muted-foreground text-sm font-medium uppercase group-hover:underline">
         Overall spent: {spentPercentage.toFixed()}%
       </p>
       <Progress className="h-5" value={progressValue} />

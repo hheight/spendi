@@ -7,7 +7,9 @@ import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardAction,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle
@@ -26,7 +28,7 @@ import type { Budget } from "@/types";
 import TypeGroup from "./type-group";
 
 type Props = {
-  categories: CategoryPreview[] | null;
+  categories: CategoryPreview[];
   budget?: Budget;
 };
 
@@ -82,12 +84,22 @@ export default function BudgetForm({ categories, budget }: Props) {
   };
 
   return (
-    <Card className="mx-auto w-full max-w-prose">
-      <CardHeader className="jusrify-between flex items-center">
-        <CardTitle className="w-full text-lg font-medium">
-          <h1>{isEditMode ? "Edit" : "Add"} budget</h1>
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <h1 className="text-lg font-medium">
+            {isEditMode ? "Edit budget amount" : "Add monthly budget"}
+          </h1>
         </CardTitle>
-        {isEditMode && <DeleteButton onDelete={onDelete} itemName="budget" />}
+        {!isEditMode && (
+          <CardDescription>
+            The overall budget tracks all expenses, while categorical budgets are tied to
+            a specific type of expense.
+          </CardDescription>
+        )}
+        <CardAction>
+          {isEditMode && <DeleteButton onDelete={onDelete} itemName="budget" />}
+        </CardAction>
       </CardHeader>
       <CardContent>
         {serverError && (

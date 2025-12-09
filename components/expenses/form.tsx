@@ -7,6 +7,7 @@ import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardAction,
   CardContent,
   CardFooter,
   CardHeader,
@@ -89,12 +90,14 @@ export default function ExpenseForm({
   };
 
   return (
-    <Card className="mx-auto w-full max-w-prose">
-      <CardHeader className="jusrify-between flex items-center">
-        <CardTitle className="w-full text-lg font-medium">
-          <h1>{isEditMode ? "Edit" : "Add"} expense</h1>
+    <Card>
+      <CardHeader>
+        <CardTitle>
+          <h1 className="text-lg font-medium">{isEditMode ? "Edit" : "Add"} expense</h1>
         </CardTitle>
-        {isEditMode && <DeleteButton onDelete={onDelete} itemName="expense" />}
+        <CardAction>
+          {isEditMode && <DeleteButton onDelete={onDelete} itemName="expense" />}
+        </CardAction>
       </CardHeader>
       <CardContent>
         {serverError && (

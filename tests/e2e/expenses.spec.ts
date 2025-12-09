@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { test, expect } from "./fixtures/auth.fixture";
 
 test("should allow to add new expense", async ({ expensesPage, page }) => {
+  await expensesPage.goto();
   await expensesPage.createExpense({
     description: "Test expense",
     amount: "10",
@@ -18,6 +19,7 @@ test("should allow to add new expense", async ({ expensesPage, page }) => {
 });
 
 test("should allow to edit existing expense", async ({ expensesPage, page }) => {
+  await expensesPage.goto();
   await expensesPage.createExpense({
     description: "Test expense",
     amount: "10",
@@ -60,6 +62,7 @@ test("should allow to edit existing expense", async ({ expensesPage, page }) => 
 test("should allow to create future expense", async ({ expensesPage, page }) => {
   const nextDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
+  await expensesPage.goto();
   await expensesPage.createExpense({
     description: "Future expense",
     amount: "10",
@@ -78,6 +81,7 @@ test("should allow to create future expense", async ({ expensesPage, page }) => 
 });
 
 test("should allow to delete expense", async ({ expensesPage, page }) => {
+  await expensesPage.goto();
   await expensesPage.createExpense({
     description: "Test expense",
     amount: "10",

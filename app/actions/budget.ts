@@ -19,6 +19,40 @@ export async function createBudget(data: BudgetInput): Promise<ActionResponse> {
   try {
     const { amount, categoryId, type } = data;
 
+    if (type === BudgetType.OVERALL) {
+      const existingOverallBudget = await prisma.budget.findFirst({
+        where: {
+          userId: session.userId,
+          type: BudgetType.OVERALL,
+          categoryId: null
+        }
+      });
+
+      if (existingOverallBudget) {
+        return {
+          success: false,
+          message: "You already have an overall budget"
+        };
+      }
+    }
+
+    if (type === BudgetType.CATEGORY && categoryId) {
+      const existingCategoryBudget = await prisma.budget.findFirst({
+        where: {
+          userId: session.userId,
+          type: BudgetType.CATEGORY,
+          categoryId
+        }
+      });
+
+      if (existingCategoryBudget) {
+        return {
+          success: false,
+          message: "Budget for this category already exists"
+        };
+      }
+    }
+
     await prisma.budget.create({
       data: {
         type,
