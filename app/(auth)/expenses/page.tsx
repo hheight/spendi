@@ -30,10 +30,6 @@ export default async function Page({
     getUpcomingExpenses()
   ]);
 
-  if (!completedExpensesData || !upcomingExpenses) {
-    notFound();
-  }
-
   const { expenses, totalPages, currentPage, hasNextPage, hasPreviousPage } =
     completedExpensesData;
 

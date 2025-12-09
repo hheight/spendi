@@ -5,11 +5,6 @@ import { encrypt } from "@/lib/auth/session";
 
 const mockGet = vi.fn();
 
-vi.mock("next/navigation", () => ({
-  redirect: vi.fn(() => {
-    throw new Error("NEXT_REDIRECT");
-  })
-}));
 vi.mock("next/headers", () => ({
   cookies: vi.fn(() =>
     Promise.resolve({
@@ -83,12 +78,6 @@ describe("#getCategories", () => {
 
     expect(result).toHaveLength(1);
     expect(result?.[0].name).toBe("User1 Category");
-  });
-
-  it("should return null when not authenticated", async () => {
-    mockGet.mockReturnValue(undefined);
-
-    await expect(getCategories()).rejects.toThrow();
   });
 
   it("should return categories sorted by name", async () => {

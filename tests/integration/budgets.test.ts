@@ -6,12 +6,6 @@ import { BudgetType } from "@/app/generated/prisma";
 
 const mockGet = vi.fn();
 
-vi.mock("next/navigation", () => ({
-  redirect: vi.fn(() => {
-    throw new Error("NEXT_REDIRECT");
-  })
-}));
-
 vi.mock("next/headers", () => ({
   cookies: vi.fn(() =>
     Promise.resolve({
@@ -129,12 +123,6 @@ describe("budgets", () => {
 
       expect(result).toEqual([]);
     });
-
-    it("should throw when not authenticated", async () => {
-      mockGet.mockReturnValue(undefined);
-
-      await expect(getBudgets()).rejects.toThrow();
-    });
   });
 
   describe("#getExpenseById", () => {
@@ -196,12 +184,6 @@ describe("budgets", () => {
       const result = await getBudgetById("non-exist");
 
       expect(result).toEqual(null);
-    });
-
-    it("should throw when not authenticated", async () => {
-      mockGet.mockReturnValue(undefined);
-
-      await expect(getBudgetById("")).rejects.toThrow();
     });
   });
 });

@@ -6,7 +6,6 @@ import { getBudgets, getExpensesByCategory } from "@/lib/dal";
 import { getCurrentMonthRange } from "@/lib/utils";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 
 export default async function BudgetsPage() {
   const currentDate = new Date();
@@ -16,10 +15,6 @@ export default async function BudgetsPage() {
     getBudgets(),
     getExpensesByCategory(monthRange.start, monthRange.end)
   ]);
-
-  if (budgets === null || expenses === null) {
-    notFound();
-  }
 
   return (
     <Card>

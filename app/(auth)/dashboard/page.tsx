@@ -16,7 +16,6 @@ import MonthlyBarChart from "@/components/monthly-bar-chart";
 import { format, getDate } from "date-fns";
 import MonthSelect from "@/components/month-select";
 import { filterExpensesByDay } from "@/lib/utils";
-import { notFound } from "next/navigation";
 
 export default async function Page({
   searchParams
@@ -38,10 +37,6 @@ export default async function Page({
     getExpensesByDateRange(monthRange.start, currentDate),
     getFirstExpense()
   ]);
-
-  if (categories === null || monthlyExpenses === null) {
-    notFound();
-  }
 
   const totalSpent = calculateTotalAmount(monthlyExpenses);
   let selectedExpenses = monthlyExpenses;

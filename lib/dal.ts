@@ -25,9 +25,8 @@ export const verifySession = cache(async () => {
   return { isAuth: true, userId: session.userId };
 });
 
-export async function getCategories(): Promise<CategoryPreview[] | null> {
+export async function getCategories(): Promise<CategoryPreview[]> {
   const session = await verifySession();
-  if (!session) return null;
 
   try {
     const data = await prisma.category.findMany({
@@ -42,17 +41,15 @@ export async function getCategories(): Promise<CategoryPreview[] | null> {
 
     return data;
   } catch (error) {
-    console.error("Failed to fetch categories:", error);
-    return null;
+    throw error;
   }
 }
 
 export async function getExpensesByDateRange(
   startDate: Date,
   endDate: Date
-): Promise<ExpenseByDateRange[] | null> {
+): Promise<ExpenseByDateRange[]> {
   const session = await verifySession();
-  if (!session) return null;
 
   try {
     const data = await prisma.expense.findMany({
@@ -80,17 +77,15 @@ export async function getExpensesByDateRange(
 
     return data;
   } catch (error) {
-    console.error("Failed to fetch expenses:", error);
-    return null;
+    throw error;
   }
 }
 
 export async function getExpensesByCategory(
   startDate: Date,
   endDate: Date
-): Promise<ExpenseByCategory[] | null> {
+): Promise<ExpenseByCategory[]> {
   const session = await verifySession();
-  if (!session) return null;
 
   try {
     const result = await prisma.expense.groupBy({
@@ -109,8 +104,7 @@ export async function getExpensesByCategory(
 
     return result;
   } catch (error) {
-    console.error("Failed to fetch expenses by category:", error);
-    return null;
+    throw error;
   }
 }
 
@@ -123,13 +117,11 @@ export async function getCompletedExpenses(
   currentPage: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
-} | null> {
+}> {
   const session = await verifySession();
-  if (!session) return null;
-
-  const validPage = Math.max(1, page);
 
   try {
+    const validPage = Math.max(1, page);
     const skip = (validPage - 1) * pageSize;
 
     const [data, totalCount] = await Promise.all([
@@ -165,14 +157,12 @@ export async function getCompletedExpenses(
       hasPreviousPage: validPage > 1
     };
   } catch (error) {
-    console.error("Failed to fetch expenses:", error);
-    return null;
+    throw error;
   }
 }
 
-export async function getUpcomingExpenses(): Promise<ExpenseWithColor[] | null> {
+export async function getUpcomingExpenses(): Promise<ExpenseWithColor[]> {
   const session = await verifySession();
-  if (!session) return null;
 
   try {
     const data = await prisma.expense.findMany({
@@ -193,14 +183,12 @@ export async function getUpcomingExpenses(): Promise<ExpenseWithColor[] | null> 
 
     return data;
   } catch (error) {
-    console.error("Failed to fetch expenses:", error);
-    return null;
+    throw error;
   }
 }
 
 export async function getExpenseById(id: Expense["id"]): Promise<Expense | null> {
   const session = await verifySession();
-  if (!session) return null;
 
   try {
     const data = await prisma.expense.findUnique({
@@ -216,14 +204,12 @@ export async function getExpenseById(id: Expense["id"]): Promise<Expense | null>
 
     return data;
   } catch (error) {
-    console.error("Failed to fetch expense by id:", error);
-    return null;
+    throw error;
   }
 }
 
 export async function getFirstExpense(): Promise<Expense | null> {
   const session = await verifySession();
-  if (!session) return null;
 
   try {
     const data = await prisma.expense.findFirst({
@@ -235,14 +221,12 @@ export async function getFirstExpense(): Promise<Expense | null> {
 
     return data;
   } catch (error) {
-    console.error("Failed to fetch first expense:", error);
-    return null;
+    throw error;
   }
 }
 
-export async function getBudgets(): Promise<Budget[] | null> {
+export async function getBudgets(): Promise<Budget[]> {
   const session = await verifySession();
-  if (!session) return null;
 
   try {
     const data = await prisma.budget.findMany({
@@ -269,14 +253,12 @@ export async function getBudgets(): Promise<Budget[] | null> {
 
     return data;
   } catch (error) {
-    console.error("Failed to fetch budgets:", error);
-    return null;
+    throw error;
   }
 }
 
 export async function getBudgetById(id: Budget["id"]): Promise<Budget | null> {
   const session = await verifySession();
-  if (!session) return null;
 
   try {
     const data = await prisma.budget.findUnique({
@@ -301,7 +283,6 @@ export async function getBudgetById(id: Budget["id"]): Promise<Budget | null> {
 
     return data;
   } catch (error) {
-    console.error("Failed to fetch budget:", error);
-    return null;
+    throw error;
   }
 }

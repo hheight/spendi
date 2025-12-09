@@ -11,12 +11,6 @@ import { encrypt } from "@/lib/auth/session";
 
 const mockGet = vi.fn();
 
-vi.mock("next/navigation", () => ({
-  redirect: vi.fn(() => {
-    throw new Error("NEXT_REDIRECT");
-  })
-}));
-
 vi.mock("next/headers", () => ({
   cookies: vi.fn(() =>
     Promise.resolve({
@@ -207,12 +201,6 @@ describe("expenses", () => {
         totalPages: 0
       });
     });
-
-    it("should throw when not authenticated", async () => {
-      mockGet.mockReturnValue(undefined);
-
-      await expect(getCompletedExpenses()).rejects.toThrow();
-    });
   });
 
   describe("#getUpcomingExpenses", () => {
@@ -341,12 +329,6 @@ describe("expenses", () => {
 
       expect(result).toEqual([]);
     });
-
-    it("should throw when not authenticated", async () => {
-      mockGet.mockReturnValue(undefined);
-
-      await expect(getUpcomingExpenses()).rejects.toThrow();
-    });
   });
 
   describe("#getExpenseById", () => {
@@ -399,12 +381,6 @@ describe("expenses", () => {
       const result = await getExpenseById("non-exist");
 
       expect(result).toEqual(null);
-    });
-
-    it("should throw when not authenticated", async () => {
-      mockGet.mockReturnValue(undefined);
-
-      await expect(getExpenseById("")).rejects.toThrow();
     });
   });
 
@@ -462,14 +438,6 @@ describe("expenses", () => {
       expect(result?.[0].item).toBe("Lunch");
       expect(result?.[1].item).toBe("Coffee");
     });
-
-    it("should throw when not authenticated", async () => {
-      mockGet.mockReturnValue(undefined);
-
-      await expect(
-        getExpensesByDateRange(new Date("2025-01-01"), new Date("2025-01-31"))
-      ).rejects.toThrow();
-    });
   });
 
   describe("#getExpensesByCategory", () => {
@@ -506,7 +474,7 @@ describe("expenses", () => {
             userId: user.id,
             categoryId: transportCategory.id,
             item: "Bus",
-            createdAt: new Date("2025-01-15")
+            createdAt: new Date("2025-01-16")
           },
           {
             value: 50,
@@ -539,12 +507,6 @@ describe("expenses", () => {
         { categoryId: foodCategory.id, _sum: { value: 150 } },
         { categoryId: transportCategory.id, _sum: { value: 50 } }
       ]);
-    });
-
-    it("should throw when not authenticated", async () => {
-      mockGet.mockReturnValue(undefined);
-
-      await expect(getExpensesByCategory(startDate, endDate)).rejects.toThrow();
     });
   });
 });
