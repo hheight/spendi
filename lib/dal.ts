@@ -8,7 +8,6 @@ import { cache } from "react";
 import type {
   CategoryPreview,
   ExpenseWithColor,
-  UserIncome,
   Expense,
   ExpenseByDateRange,
   Budget,
@@ -239,25 +238,6 @@ export const getFirstExpense = cache(async (): Promise<Expense | null> => {
     return data;
   } catch (error) {
     console.error("Failed to fetch first expense:", error);
-    return null;
-  }
-});
-
-export const getUserIncome = cache(async (): Promise<UserIncome | null> => {
-  const session = await verifySession();
-  if (!session) return null;
-
-  try {
-    const data = await prisma.user.findUnique({
-      where: { id: session.userId },
-      select: {
-        income: true
-      }
-    });
-
-    return data;
-  } catch (error) {
-    console.error("Failed to fetch user:", error);
     return null;
   }
 });

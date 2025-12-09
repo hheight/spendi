@@ -2,7 +2,6 @@ import { test as base } from "@playwright/test";
 import { LoginPage } from "../pages/login.page";
 import { SignupPage } from "../pages/signup.page";
 import { ExpensesPage } from "../pages/expenses.page";
-import { IncomePage } from "../pages/income.page";
 import prisma from "../../helpers/prisma";
 import { faker } from "@faker-js/faker";
 
@@ -15,7 +14,6 @@ type AuthFixtures = {
   loginPage: LoginPage;
   signupPage: SignupPage;
   expensesPage: ExpensesPage;
-  incomePage: IncomePage;
   user_credentials: UserDetails;
   account: UserDetails;
 };
@@ -39,15 +37,6 @@ export const test = base.extend<AuthFixtures>({
     const expensesPage = new ExpensesPage(page);
     await expensesPage.goto();
     await use(expensesPage);
-  },
-  incomePage: async ({ page, loginPage, account }, use) => {
-    await loginPage.goto();
-    await loginPage.submitForm(account.email, account.password);
-    await page.waitForURL("/dashboard");
-
-    const incomePage = new IncomePage(page);
-    await incomePage.goto();
-    await use(incomePage);
   },
   user_credentials: async ({}, use) => {
     const email = faker.internet.email();

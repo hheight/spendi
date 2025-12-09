@@ -8,7 +8,7 @@ describe("Middleware", () => {
     const protectedRoutes = [
       { path: "/dashboard", name: "Dashboard" },
       { path: "/expenses", name: "Expenses" },
-      { path: "/income", name: "Income" }
+      { path: "/budgets", name: "Budgets" }
     ];
 
     describe("Unauthorized access", () => {
