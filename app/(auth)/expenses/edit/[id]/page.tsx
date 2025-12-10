@@ -1,6 +1,11 @@
 import ExpenseForm from "@/components/expenses/form";
 import { getCategories, getExpenseById } from "@/lib/dal";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Edit expense"
+};
 
 export default async function Page({
   params,

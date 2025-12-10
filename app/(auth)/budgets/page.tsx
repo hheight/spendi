@@ -5,7 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getBudgets, getExpensesByCategory } from "@/lib/dal";
 import { getCurrentMonthRange } from "@/lib/utils";
 import { Plus } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Budgets"
+};
 
 export default async function BudgetsPage() {
   const currentDate = new Date();

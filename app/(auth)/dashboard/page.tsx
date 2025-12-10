@@ -16,6 +16,11 @@ import MonthlyBarChart from "@/components/monthly-bar-chart";
 import { format, getDate } from "date-fns";
 import MonthSelect from "@/components/month-select";
 import { filterExpensesByDay } from "@/lib/utils";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard"
+};
 
 export default async function Page({
   searchParams

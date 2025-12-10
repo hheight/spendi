@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { getCompletedExpenses, getUpcomingExpenses } from "@/lib/dal";
 import Link from "next/link";
@@ -13,6 +14,10 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import { Plus } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Expenses"
+};
 
 export default async function Page({
   searchParams
