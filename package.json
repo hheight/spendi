@@ -18,7 +18,7 @@
     "docker:test:stop": "docker compose -f compose.yaml -f compose.test.yaml down",
     "prisma:migrate": "npx prisma migrate dev --name init",
     "prisma:seed": "npx prisma db seed",
-    "prisma": "npx prisma db seed"
+    "prisma:generate": "npx prisma generate"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
