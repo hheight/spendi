@@ -1,7 +1,9 @@
 {
-  "name": "spendi-expense-tracker",
-  "version": "0.1.0",
-  "private": true,
+  "name": "spendi",
+  "version": "1.0.0",
+  "description": "Expense tracker application",
+  "license": "MIT",
+  "author": "Vitalii Shytikov",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
