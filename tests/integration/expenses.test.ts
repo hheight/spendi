@@ -503,10 +503,18 @@ describe("expenses", () => {
 
       expect(result).toHaveLength(2);
 
-      expect(result).toMatchObject([
-        { categoryId: foodCategory.id, _sum: { value: 150 } },
-        { categoryId: transportCategory.id, _sum: { value: 50 } }
-      ]);
+      expect(result).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            categoryId: foodCategory.id,
+            _sum: { value: 150 }
+          }),
+          expect.objectContaining({
+            categoryId: transportCategory.id,
+            _sum: { value: 50 }
+          })
+        ])
+      );
     });
   });
 });
