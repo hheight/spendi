@@ -1,3 +1,5 @@
+name: spendi-tests
+
 services:
   db:
     image: postgres:14.19
@@ -5,3 +7,6 @@ services:
     environment:
       POSTGRES_USER: prisma
       POSTGRES_PASSWORD: prisma
+      POSTGRES_DB: tests
+    ports:
+      - "5433:5432"

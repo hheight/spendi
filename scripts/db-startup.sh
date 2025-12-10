@@ -3,8 +3,8 @@
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/setenv.sh
 
-docker compose -f compose.yaml -f compose.test.yaml up -d
+docker compose up -d
 echo '🟡 - Waiting for database to be ready...'
 $DIR/wait-for-it.sh localhost:5433 -t 30 -- echo '🟢 - Database is ready!'
 
-npx prisma migrate deploy
+npx prisma migrate dev --name init

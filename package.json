@@ -13,12 +13,8 @@
     "test:int": "./scripts/run-integration.sh",
     "test:e2e": "./scripts/run-e2e.sh",
     "prepare": "husky",
-    "docker:dev:start": "docker compose -f compose.yaml -f compose.dev.yaml up -d",
-    "docker:dev:stop": "docker compose -f compose.yaml -f compose.dev.yaml down",
-    "docker:test:stop": "docker compose -f compose.yaml -f compose.test.yaml down",
-    "prisma:migrate": "npx prisma migrate dev --name init",
-    "prisma:seed": "npx prisma db seed",
-    "prisma:generate": "npx prisma generate"
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
