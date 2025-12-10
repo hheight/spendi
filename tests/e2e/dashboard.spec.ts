@@ -59,7 +59,7 @@ test.describe("Dashboard page", () => {
     await monthSelectTrigger.click();
     await page.getByRole("option", { name: "Dec 2025" }).click();
 
-    await expect(page.getByText("110.00")).toBeAttached();
+    await expect(page.getByText("110.00", { exact: true })).toBeAttached();
     await expect(page.getByText("Dec 2 expense")).toBeAttached();
     await expect(page.getByText("Dec 1 expense")).toBeAttached();
     await expect(page.getByText("Nov 2 expense")).not.toBeAttached();
@@ -68,7 +68,7 @@ test.describe("Dashboard page", () => {
     await monthSelectTrigger.click();
     await page.getByRole("option", { name: "Nov 2025" }).click();
 
-    await expect(page.getByText("230.00")).toBeAttached();
+    await expect(page.getByText("230.00", { exact: true })).toBeAttached();
     await expect(page.getByText("Dec 2 expense")).not.toBeAttached();
     await expect(page.getByText("Dec 1 expense")).not.toBeAttached();
     await expect(page.getByText("Nov 2 expense")).toBeAttached();
