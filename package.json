@@ -9,6 +9,7 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
+    "postinstall": "prisma generate",
     "test:unit": "vitest run --config ./vitest.config.unit.ts",
     "test:int": "./scripts/run-integration.sh",
     "test:e2e": "./scripts/run-e2e.sh",
