@@ -60,37 +60,33 @@ export default async function Page({
   const chartData = buildChartData(monthlyExpenses, getDate(monthRange.end));
 
   return (
-    <div className="flex flex-col gap-4">
-      <Card className="mx-auto flex w-full flex-col">
-        <CardHeader className="flex w-full items-center justify-between">
-          <div>
-            <MonthSelect startDate={firstExpense?.createdAt} />
-            <FormattedAmount
-              className="text-xl before:text-base"
-              amount={totalSpent}
-              negativeValue
-            />
-          </div>
-          <div>
-            <p className="text-muted-foreground text-sm font-medium uppercase">
-              {highlightedDate === null
-                ? "Spent/day"
-                : format(highlightedDate, "d MMM yyyy")}
-            </p>
-            <FormattedAmount className="text-xl before:text-base" amount={amountSpent} />
-          </div>
-        </CardHeader>
-        <CardContent className="flex-1 pb-0">
-          <MonthlyBarChart chartData={chartData} chartConfig={chartConfig} />
-          <div className="mt-8">
-            {selectedExpenses.length === 0 ? (
-              <EmptyList />
-            ) : (
-              <CompletedExpensesList expenses={selectedExpenses} />
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    <Card>
+      <CardHeader className="flex w-full items-center justify-between">
+        <div>
+          <MonthSelect startDate={firstExpense?.createdAt} />
+          <FormattedAmount
+            className="text-xl before:text-base"
+            amount={totalSpent}
+            negativeValue
+          />
+        </div>
+        <div>
+          <p className="text-muted-foreground text-sm font-medium uppercase">
+            {highlightedDate === null
+              ? "Spent/day"
+              : format(highlightedDate, "d MMM yyyy")}
+          </p>
+          <FormattedAmount className="text-xl before:text-base" amount={amountSpent} />
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-8">
+        <MonthlyBarChart chartData={chartData} chartConfig={chartConfig} />
+        {selectedExpenses.length === 0 ? (
+          <EmptyList />
+        ) : (
+          <CompletedExpensesList expenses={selectedExpenses} />
+        )}
+      </CardContent>
+    </Card>
   );
 }
