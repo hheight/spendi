@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertCircleIcon, EuroIcon } from "lucide-react";
+import { EuroIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,6 @@ import {
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { expenseSchema, type ExpenseInput } from "@/lib/expense/schemas";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import CategoryGroup from "./category-group";
 import type { CategoryPreview, Expense } from "@/types";
 import { createExpense, deleteExpense, updateExpense } from "@/app/actions/expense";
@@ -24,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { DatePicker } from "@/components/date-picker";
 import { DeleteButton } from "@/components/delete-button";
 import { Spinner } from "@/components/ui/spinner";
+import FormAlert from "@/components/form-alert";
 
 type Props = {
   categories: CategoryPreview[] | null;
@@ -93,19 +93,14 @@ export default function ExpenseForm({
     <Card>
       <CardHeader>
         <CardTitle>
-          <h1 className="text-lg font-medium">{isEditMode ? "Edit" : "Add"} expense</h1>
+          <h1 className="text-lg">{isEditMode ? "Edit" : "Add"} expense</h1>
         </CardTitle>
         <CardAction>
           {isEditMode && <DeleteButton onDelete={onDelete} itemName="expense" />}
         </CardAction>
       </CardHeader>
-      <CardContent>
-        {serverError && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertCircleIcon />
-            <AlertDescription>{serverError}</AlertDescription>
-          </Alert>
-        )}
+      <CardContent className="space-y-6">
+        <FormAlert text={serverError} />
         <form id="expense-form" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller
@@ -153,7 +148,7 @@ export default function ExpenseForm({
           </FieldGroup>
         </form>
       </CardContent>
-      <CardFooter className="mt-2 flex-col">
+      <CardFooter>
         <Field orientation="horizontal">
           <Button variant="outline" disabled={isSubmitting} onClick={handleCancel}>
             Cancel

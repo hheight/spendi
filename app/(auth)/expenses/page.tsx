@@ -8,12 +8,14 @@ import PaginationControls from "@/components/pagination-controls";
 import { notFound } from "next/navigation";
 import {
   Card,
+  CardAction,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
 import { Plus } from "lucide-react";
+import EmptyList from "@/components/empty-list";
 
 export const metadata: Metadata = {
   title: "Expenses"
@@ -44,23 +46,27 @@ export default async function Page({
 
   return (
     <Card>
-      <CardHeader className="flex items-center justify-between gap-4">
-        <CardTitle className="text-lg">
-          <h1>Expenses</h1>
+      <CardHeader>
+        <CardTitle>
+          <h1 className="text-lg">Expenses</h1>
         </CardTitle>
-        <Button variant="outline" asChild>
-          <Link href="/expenses/new">
-            Add expense <Plus />
-          </Link>
-        </Button>
+        <CardAction>
+          <Button variant="outline" asChild>
+            <Link href="/expenses/new">
+              Add expense <Plus />
+            </Link>
+          </Button>
+        </CardAction>
       </CardHeader>
-      <CardContent>
-        {currentPage === 1 && (
-          <div className="mb-8">
-            <UpcomingExpensesList expenses={upcomingExpenses} />
-          </div>
+      <CardContent className="space-y-8">
+        {expenses.length === 0 && upcomingExpenses.length === 0 ? (
+          <EmptyList />
+        ) : (
+          <>
+            {currentPage === 1 && <UpcomingExpensesList expenses={upcomingExpenses} />}
+            <CompletedExpensesList expenses={expenses} />
+          </>
         )}
-        <CompletedExpensesList expenses={expenses} />
       </CardContent>
       <CardFooter>
         {totalPages > 1 && (

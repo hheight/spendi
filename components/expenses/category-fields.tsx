@@ -72,24 +72,21 @@ function IdField({ formControl, categories }: FormGroupProps) {
 }
 
 function ColorField({ formControl }: FormControlProps) {
-  const { field: categoryColorField, fieldState: categoryColorFieldState } =
-    useController({
-      name: "categoryColor",
-      defaultValue: "#454545",
-      control: formControl
-    });
+  const { field, fieldState } = useController({
+    name: "categoryColor",
+    defaultValue: "#454545",
+    control: formControl
+  });
   return (
-    <Field data-invalid={categoryColorFieldState.invalid} className="w-[100px]">
+    <Field data-invalid={fieldState.invalid} className="w-[100px]">
       <FieldLabel htmlFor="expense-form-color-input">Color</FieldLabel>
       <Input
-        {...categoryColorField}
+        {...field}
         type="color"
-        aria-invalid={categoryColorFieldState.invalid}
+        aria-invalid={fieldState.invalid}
         id="expense-form-color-input"
       />
-      {categoryColorFieldState.invalid && (
-        <FieldError errors={[categoryColorFieldState.error]} />
-      )}
+      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
     </Field>
   );
 }

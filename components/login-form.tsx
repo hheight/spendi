@@ -1,6 +1,5 @@
 "use client";
 
-import { AlertCircleIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -17,10 +16,10 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field
 import { Input } from "@/components/ui/input";
 import { type SigninInput, signinSchema } from "@/lib/auth/schemas";
 import { login } from "@/app/actions/auth";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import FormAlert from "@/components/form-alert";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -51,13 +50,8 @@ export default function LoginForm() {
         <CardTitle>Log in</CardTitle>
         <CardDescription>Enter your email and password</CardDescription>
       </CardHeader>
-      <CardContent>
-        {serverError && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertCircleIcon />
-            <AlertDescription>{serverError}</AlertDescription>
-          </Alert>
-        )}
+      <CardContent className="space-y-6">
+        <FormAlert text={serverError} />
         <form id="login-form" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller

@@ -17,6 +17,7 @@ import { format, getDate } from "date-fns";
 import MonthSelect from "@/components/month-select";
 import { filterExpensesByDay } from "@/lib/utils";
 import type { Metadata } from "next";
+import EmptyList from "@/components/empty-list";
 
 export const metadata: Metadata = {
   title: "Dashboard"
@@ -82,7 +83,11 @@ export default async function Page({
         <CardContent className="flex-1 pb-0">
           <MonthlyBarChart chartData={chartData} chartConfig={chartConfig} />
           <div className="mt-8">
-            <CompletedExpensesList expenses={selectedExpenses} />
+            {selectedExpenses.length === 0 ? (
+              <EmptyList />
+            ) : (
+              <CompletedExpensesList expenses={selectedExpenses} />
+            )}
           </div>
         </CardContent>
       </Card>

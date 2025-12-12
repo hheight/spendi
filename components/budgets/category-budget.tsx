@@ -18,12 +18,12 @@ export default function CategoryBudget({ name, budgetValue, spent, color }: Prop
 
   return (
     <Card>
-      <CardHeader className="flex items-center justify-between gap-4">
-        <CardTitle className="text-sm">
-          <h3 className="group-hover:underline">{name}</h3>
+      <CardHeader>
+        <CardTitle>
+          <h3 className="text-sm group-hover:underline">{name}</h3>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-1">
+      <CardContent className="space-y-1">
         {!isOverSpent && (
           <p className="text-xs font-medium uppercase text-green-600">
             {spentPercentage.toFixed()}% spent
@@ -41,7 +41,7 @@ export default function CategoryBudget({ name, budgetValue, spent, color }: Prop
             {isOverSpent ? "over" : "left"} this month
           </p>
         </div>
-        <Progress color={color} className="mt-1 h-4" value={progressValue} />
+        <Progress color={color} className="mt-2 h-4" value={progressValue} />
       </CardContent>
     </Card>
   );

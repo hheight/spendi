@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircleIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -19,8 +18,8 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field
 import { Input } from "@/components/ui/input";
 import { signupSchema, type SignupInput } from "@/lib/auth/schemas";
 import { signup } from "@/app/actions/auth";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
+import FormAlert from "@/components/form-alert";
 
 export default function SignupForm() {
   const router = useRouter();
@@ -52,13 +51,8 @@ export default function SignupForm() {
         <CardTitle>Sign up</CardTitle>
         <CardDescription>Create an account to get started</CardDescription>
       </CardHeader>
-      <CardContent>
-        {serverError && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertCircleIcon />
-            <AlertDescription>{serverError}</AlertDescription>
-          </Alert>
-        )}
+      <CardContent className="space-y-6">
+        <FormAlert text={serverError} />
         <form id="signup-form" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <Controller

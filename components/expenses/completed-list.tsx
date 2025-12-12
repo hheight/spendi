@@ -1,5 +1,4 @@
 import type { ExpenseWithColor } from "@/types";
-import EmptyList from "../empty-list";
 import ExpensesListItem from "./list-item";
 import { format } from "date-fns";
 
@@ -16,10 +15,6 @@ function formatDateShort(date: Date | undefined) {
 }
 
 export default function CompletedExpensesList({ expenses }: Props) {
-  if (expenses.length === 0) {
-    return <EmptyList />;
-  }
-
   return (
     <ul className="align-center flex flex-col gap-4">
       {expenses.map((expense, i) => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertCircleIcon, EuroIcon } from "lucide-react";
+import { EuroIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,6 @@ import {
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { budgetSchema, type BudgetInput } from "@/lib/budget/schemas";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { CategoryPreview } from "@/types";
 import { createBudget, deleteBudget, updateBudget } from "@/app/actions/budget";
 import { useRouter } from "next/navigation";
@@ -26,6 +25,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { BudgetType } from "@/app/generated/prisma";
 import type { Budget } from "@/types";
 import TypeGroup from "./type-group";
+import FormAlert from "@/components/form-alert";
 
 type Props = {
   categories: CategoryPreview[];
@@ -87,7 +87,7 @@ export default function BudgetForm({ categories, budget }: Props) {
     <Card>
       <CardHeader>
         <CardTitle>
-          <h1 className="text-lg font-medium">
+          <h1 className="text-lg">
             {isEditMode ? "Edit budget amount" : "Add monthly budget"}
           </h1>
         </CardTitle>
@@ -101,13 +101,8 @@ export default function BudgetForm({ categories, budget }: Props) {
           {isEditMode && <DeleteButton onDelete={onDelete} itemName="budget" />}
         </CardAction>
       </CardHeader>
-      <CardContent>
-        {serverError && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertCircleIcon />
-            <AlertDescription>{serverError}</AlertDescription>
-          </Alert>
-        )}
+      <CardContent className="space-y-6">
+        <FormAlert text={serverError} />
         <form id="budget-form" onSubmit={form.handleSubmit(onSubmit)}>
           <FieldGroup>
             <TypeGroup
@@ -139,7 +134,7 @@ export default function BudgetForm({ categories, budget }: Props) {
           </FieldGroup>
         </form>
       </CardContent>
-      <CardFooter className="mt-2 flex-col">
+      <CardFooter>
         <Field orientation="horizontal">
           <Button variant="outline" disabled={isSubmitting} onClick={handleCancel}>
             Cancel
