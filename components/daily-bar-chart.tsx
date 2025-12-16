@@ -1,13 +1,11 @@
 "use client";
 
-import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts";
-import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
+import { Bar, BarChart, Cell, XAxis, YAxis, type BarRectangleItem } from "recharts";
 import type { ExpensesChartItem } from "@/types";
 import { useRouter, useSearchParams } from "next/navigation";
 
 type Props = {
   chartData: ExpensesChartItem[];
-  chartConfig: ChartConfig;
 };
 
 const visibleDays = [1, 8, 15, 22, 28];
@@ -19,21 +17,21 @@ function formatToK(num: number) {
   return num.toString();
 }
 
-export default function MonthlyBarChart({ chartData, chartConfig }: Props) {
+export default function DailyBarChart({ chartData }: Props) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
   const selectedDay = searchParams.get("day");
 
-  const handleBarClick = (item: { day: number }) => {
+  const handleBarClick = (item: BarRectangleItem) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("day", item.day.toString());
+    params.set("day", item.payload.day.toString());
     router.push(`?${params.toString()}`);
   };
 
   return (
-    <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-      <BarChart accessibilityLayer data={chartData}>
+    <div className="flex aspect-video justify-center text-xs">
+      <BarChart responsive data={chartData} style={{ minHeight: "200px", width: "100%" }}>
         <YAxis
           dataKey="value"
           axisLine={false}
@@ -69,6 +67,6 @@ export default function MonthlyBarChart({ chartData, chartConfig }: Props) {
           ))}
         </Bar>
       </BarChart>
-    </ChartContainer>
+    </div>
   );
 }

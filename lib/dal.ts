@@ -108,7 +108,7 @@ export async function getExpensesByCategory(
   }
 }
 
-export async function getCompletedExpenses(
+export async function getPaginatedExpenses(
   page: number = 1,
   pageSize: number = 15
 ): Promise<{

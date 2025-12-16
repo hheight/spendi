@@ -2,7 +2,7 @@ import { vi, describe, expect, it, beforeEach } from "vitest";
 import prisma from "@/tests/helpers/prisma";
 import {
   getExpenseById,
-  getCompletedExpenses,
+  getPaginatedExpenses,
   getUpcomingExpenses,
   getExpensesByDateRange,
   getExpensesByCategory
@@ -24,7 +24,7 @@ describe("expenses", () => {
     vi.clearAllMocks();
   });
 
-  describe("#getCompletedExpenses", () => {
+  describe("#getPaginatedExpenses", () => {
     it("should return list of completed expenses", async () => {
       const user = await prisma.user.create({
         data: {
@@ -50,7 +50,7 @@ describe("expenses", () => {
       });
       mockGet.mockReturnValue({ value: token });
 
-      const result = await getCompletedExpenses();
+      const result = await getPaginatedExpenses();
 
       expect(result).toMatchObject({
         currentPage: 1,
@@ -106,7 +106,7 @@ describe("expenses", () => {
       });
       mockGet.mockReturnValue({ value: token });
 
-      const result = await getCompletedExpenses(2, 5);
+      const result = await getPaginatedExpenses(2, 5);
 
       expect(result).toMatchObject({
         currentPage: 2,
@@ -166,7 +166,7 @@ describe("expenses", () => {
       });
       mockGet.mockReturnValue({ value: token });
 
-      const result = await getCompletedExpenses();
+      const result = await getPaginatedExpenses();
 
       expect(result).toMatchObject({
         currentPage: 1,
@@ -191,7 +191,7 @@ describe("expenses", () => {
       });
       mockGet.mockReturnValue({ value: token });
 
-      const result = await getCompletedExpenses();
+      const result = await getPaginatedExpenses();
 
       expect(result).toEqual({
         currentPage: 1,
