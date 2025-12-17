@@ -2,7 +2,7 @@
 
 Expense tracker application built for fun with [Next.js 15](https://nextjs.org/docs/15/app/getting-started) and [Prisma Postgres](https://www.prisma.io/docs/postgres) database.
 
-Demo: https://spendi-kappa.vercel.app
+Demo: https://spendi-two.vercel.app/
 
 You can use a test account or create a new one:
 
