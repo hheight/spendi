@@ -110,7 +110,8 @@ export async function getExpensesByCategory(
 
 export async function getPaginatedExpenses(
   page: number = 1,
-  pageSize: number = 15
+  pageSize: number = 15,
+  startsWith: string = ""
 ): Promise<{
   expenses: ExpenseWithColor[];
   totalPages: number;
@@ -126,7 +127,10 @@ export async function getPaginatedExpenses(
 
     const [data, totalCount] = await Promise.all([
       prisma.expense.findMany({
-        where: { userId: session.userId, createdAt: { lte: new Date() } },
+        where: {
+          userId: session.userId,
+          item: { startsWith, mode: "insensitive" }
+        },
         select: {
           id: true,
           item: true,
@@ -143,7 +147,10 @@ export async function getPaginatedExpenses(
         take: pageSize
       }),
       prisma.expense.count({
-        where: { userId: session.userId, createdAt: { lte: new Date() } }
+        where: {
+          userId: session.userId,
+          item: { startsWith }
+        }
       })
     ]);
 
@@ -156,32 +163,6 @@ export async function getPaginatedExpenses(
       hasNextPage: validPage < totalPages,
       hasPreviousPage: validPage > 1
     };
-  } catch (error) {
-    throw error;
-  }
-}
-
-export async function getUpcomingExpenses(): Promise<ExpenseWithColor[]> {
-  const session = await verifySession();
-
-  try {
-    const data = await prisma.expense.findMany({
-      where: { userId: session.userId, createdAt: { gt: new Date() } },
-      select: {
-        id: true,
-        item: true,
-        value: true,
-        category: {
-          select: {
-            color: true
-          }
-        },
-        createdAt: true
-      },
-      orderBy: { createdAt: "desc" }
-    });
-
-    return data;
   } catch (error) {
     throw error;
   }

@@ -1,19 +1,13 @@
 import type { Metadata } from "next";
-import { getPaginatedExpenses, getUpcomingExpenses } from "@/lib/dal";
-import CompletedExpensesList from "@/components/expenses/completed-list";
-import UpcomingExpensesList from "@/components/expenses/upcoming-list";
+import { getPaginatedExpenses } from "@/lib/dal";
+import ExpensesList from "@/components/expenses/list";
 import PaginationControls from "@/components/pagination-controls";
 import { notFound } from "next/navigation";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardFooter,
-  CardHeader
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import EmptyList from "@/components/empty-list";
 import PageTitle from "@/components/page-title";
 import AddButton from "@/components/add-button";
+import SearchInput from "@/components/expenses/search-input";
 
 export const metadata: Metadata = {
   title: "Expenses"
@@ -22,18 +16,16 @@ export const metadata: Metadata = {
 export default async function Page({
   searchParams
 }: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  searchParams: Promise<{ page: string; startsWith: string }>;
 }) {
   const params = await searchParams;
   const page = params.page ? Number(params.page) : 1;
+  const startsWith = params.startsWith;
 
   if (isNaN(page) || page < 1) {
     notFound();
   }
-  const [paginatedExpensesData, upcomingExpenses] = await Promise.all([
-    getPaginatedExpenses(page),
-    getUpcomingExpenses()
-  ]);
+  const paginatedExpensesData = await getPaginatedExpenses(page, 15, startsWith);
 
   const { expenses, totalPages, currentPage, hasNextPage, hasPreviousPage } =
     paginatedExpensesData;
@@ -50,28 +42,21 @@ export default async function Page({
       </div>
       <Card>
         <CardHeader>
-          <CardAction></CardAction>
+          <SearchInput />
         </CardHeader>
         <CardContent className="space-y-8">
-          {expenses.length === 0 && upcomingExpenses.length === 0 ? (
-            <EmptyList />
-          ) : (
-            <>
-              {currentPage === 1 && <UpcomingExpensesList expenses={upcomingExpenses} />}
-              <CompletedExpensesList expenses={expenses} />
-            </>
-          )}
+          {expenses.length === 0 ? <EmptyList /> : <ExpensesList expenses={expenses} />}
         </CardContent>
-        <CardFooter>
-          {totalPages > 1 && (
+        {totalPages > 1 && (
+          <CardFooter>
             <PaginationControls
               currentPage={currentPage}
               totalPages={totalPages}
               hasNextPage={hasNextPage}
               hasPreviousPage={hasPreviousPage}
             />
-          )}
-        </CardFooter>
+          </CardFooter>
+        )}
       </Card>
     </>
   );

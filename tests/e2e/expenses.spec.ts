@@ -91,3 +91,21 @@ test("should allow to delete expense", async ({ expensesPage, page }) => {
   await expensesPage.deleteExpense("Test expense");
   await expect(page.getByText("No entries found.")).toBeAttached();
 });
+
+test("should allow to search expense", async ({ expensesPage, page }) => {
+  await expensesPage.goto();
+  await expensesPage.createExpense({
+    description: "First expense",
+    amount: "10",
+    categoryName: "Fun category"
+  });
+  await expensesPage.createExpense({
+    description: "Second expense",
+    amount: "20",
+    categoryName: "Fun category"
+  });
+
+  await page.getByPlaceholder("Search").fill("first");
+  await expect(page.getByText("First expense")).toBeAttached();
+  await expect(page.getByText("Second expense")).not.toBeAttached();
+});

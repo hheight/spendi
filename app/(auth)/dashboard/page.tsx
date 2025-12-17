@@ -9,7 +9,7 @@ import {
   parseSelectedMonth
 } from "@/lib/utils";
 import FormattedAmount from "@/components/formatted-amount";
-import CompletedExpensesList from "@/components/expenses/completed-list";
+import ExpensesList from "@/components/expenses/list";
 import DailyBarChart from "@/components/daily-bar-chart";
 import { format, getDate } from "date-fns";
 import MonthSelect from "@/components/month-select";
@@ -86,7 +86,7 @@ export default async function Page({
           {selectedExpenses.length === 0 ? (
             <EmptyList />
           ) : (
-            <CompletedExpensesList expenses={selectedExpenses} />
+            <ExpensesList expenses={selectedExpenses} />
           )}
         </CardContent>
       </Card>
