@@ -5,7 +5,6 @@ import PageTitle from "@/components/page-title";
 import { Card, CardAction, CardContent, CardHeader } from "@/components/ui/card";
 import { getBudgets, getExpensesByCategory } from "@/lib/dal";
 import { getCurrentMonthRange } from "@/lib/utils";
-import { HandCoins } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -23,21 +22,19 @@ export default async function BudgetsPage() {
 
   return (
     <>
-      <PageTitle text="Budgets" icon={HandCoins} />
-      <Card>
-        <CardHeader>
-          <CardAction>
-            <AddButton text="Add budget" href="/budgets/new" />
-          </CardAction>
-        </CardHeader>
-        <CardContent>
-          {budgets.length === 0 ? (
+      <div className="flex items-center justify-between">
+        <PageTitle text="Budgets" />
+        <AddButton text="Add budget" href="/budgets/new" />
+      </div>
+      {budgets.length === 0 ? (
+        <Card>
+          <CardContent>
             <EmptyList />
-          ) : (
-            <BudgetsList budgets={budgets} expenses={expenses} />
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      ) : (
+        <BudgetsList budgets={budgets} expenses={expenses} />
+      )}
     </>
   );
 }

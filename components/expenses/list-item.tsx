@@ -35,6 +35,7 @@ export default function ExpensesListItem({
         </div>
       )}
       <Link
+        prefetch={false}
         href={`/expenses/edit/${id}?redirectTo=${encodeURIComponent(pathname)}`}
         className="group block"
       >

@@ -17,7 +17,6 @@ import { filterExpensesByDay } from "@/lib/utils";
 import type { Metadata } from "next";
 import EmptyList from "@/components/empty-list";
 import PageTitle from "@/components/page-title";
-import { ChartColumnBig } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Dashboard"
@@ -58,7 +57,7 @@ export default async function Page({
 
   return (
     <>
-      <PageTitle text="Dashboard" icon={ChartColumnBig} />
+      <PageTitle text="Dashboard" />
       <Card>
         <CardHeader className="flex w-full items-center justify-between">
           <div>

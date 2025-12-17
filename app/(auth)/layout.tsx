@@ -8,7 +8,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     <div className="flex min-h-screen flex-col">
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset className="bg-muted">
+        <SidebarInset>
           <Header withLogo={false} actions={<AccountMenu />} />
           <div className="flex grow flex-col p-6">
             <div className="w-full max-w-[82ch] space-y-6">{children}</div>

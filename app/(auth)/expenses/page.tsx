@@ -11,7 +11,6 @@ import {
   CardFooter,
   CardHeader
 } from "@/components/ui/card";
-import { CreditCard } from "lucide-react";
 import EmptyList from "@/components/empty-list";
 import PageTitle from "@/components/page-title";
 import AddButton from "@/components/add-button";
@@ -45,12 +44,13 @@ export default async function Page({
 
   return (
     <>
-      <PageTitle text="Expenses" icon={CreditCard} />
+      <div className="flex items-center justify-between">
+        <PageTitle text="Expenses" />
+        <AddButton text="Add expense" href="/expenses/new" />
+      </div>
       <Card>
         <CardHeader>
-          <CardAction>
-            <AddButton text="Add expense" href="/expenses/new" />
-          </CardAction>
+          <CardAction></CardAction>
         </CardHeader>
         <CardContent className="space-y-8">
           {expenses.length === 0 && upcomingExpenses.length === 0 ? (

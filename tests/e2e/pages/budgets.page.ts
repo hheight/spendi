@@ -55,7 +55,7 @@ export class BudgetsPage {
       await this.overallBudgetCard.click();
     }
     if (type === BudgetType.CATEGORY && category) {
-      await this.page.locator("h3", { hasText: category }).click();
+      await this.page.locator("h2", { hasText: category }).click();
     }
     await this.amountField.fill(amount);
     await this.saveButton.click();

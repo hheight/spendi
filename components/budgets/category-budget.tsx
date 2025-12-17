@@ -1,7 +1,7 @@
 import { Progress } from "@/components/ui/progress";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import FormattedAmount from "@/components/formatted-amount";
 import { cn } from "@/lib/utils";
+import CardWrapper from "./card-wrapper";
 
 type Props = {
   name: string;
@@ -17,13 +17,8 @@ export default function CategoryBudget({ name, budgetValue, spent, color }: Prop
   const isOverSpent = progressValue < 0;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <h3 className="text-sm group-hover:underline">{name}</h3>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-1">
+    <CardWrapper title={name}>
+      <div className="space-y-1">
         {!isOverSpent && (
           <p className="text-xs font-medium uppercase text-green-600">
             {spentPercentage.toFixed()}% spent
@@ -42,7 +37,7 @@ export default function CategoryBudget({ name, budgetValue, spent, color }: Prop
           </p>
         </div>
         <Progress color={color} className="mt-2 h-4" value={progressValue} />
-      </CardContent>
-    </Card>
+      </div>
+    </CardWrapper>
   );
 }
