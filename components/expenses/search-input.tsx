@@ -8,12 +8,17 @@ import { useRouter, useSearchParams } from "next/navigation";
 export default function SearchInput() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const startsWith = searchParams.get("startsWith");
+  const query = searchParams.get("query");
 
   const setStartsWithParam = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
     const params = new URLSearchParams();
-    params.set("startsWith", e.target.value);
-    router.push(`?${params.toString()}`);
+    if (value) {
+      params.set("query", value);
+    } else {
+      params.delete("query");
+    }
+    router.replace(`?${params.toString()}`);
   };
 
   const handleInputChange = debounce(setStartsWithParam, 300);
@@ -22,7 +27,7 @@ export default function SearchInput() {
     <div className="relative">
       <Search className="text-muted-foreground absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2" />
       <Input
-        defaultValue={startsWith || ""}
+        defaultValue={query || ""}
         placeholder="Search"
         className="pl-8"
         type="text"

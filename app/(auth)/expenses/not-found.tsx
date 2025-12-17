@@ -20,15 +20,15 @@ export default function NotFound() {
             </EmptyMedia>
             <EmptyTitle>Not found</EmptyTitle>
             <EmptyDescription>
-              The budget you are trying to edit does not exist or is no longer available.
+              The page you are trying to reach does not exist.
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <a
-              href="/budgets"
+              href="/expenses"
               className="text-sm font-medium underline underline-offset-4"
             >
-              Back to budgets
+              Back to expenses
             </a>
           </EmptyContent>
         </Empty>
