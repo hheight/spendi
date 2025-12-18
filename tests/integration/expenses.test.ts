@@ -4,7 +4,8 @@ import {
   getExpenseById,
   getPaginatedExpenses,
   getExpensesByDateRange,
-  getExpensesByCategory
+  getExpensesByCategory,
+  getExpensesPages
 } from "@/lib/dal";
 import { encrypt } from "@/lib/auth/session";
 
@@ -49,29 +50,23 @@ describe("expenses", () => {
       });
       mockGet.mockReturnValue({ value: token });
 
-      const result = await getPaginatedExpenses();
+      const result = await getPaginatedExpenses(1, 5);
 
-      expect(result).toMatchObject({
-        currentPage: 1,
-        expenses: [
-          {
-            item: "Fruits",
-            value: 100,
-            category: {
-              color: foodCategory.color
-            }
-          },
-          {
-            item: "Meat",
-            value: 50,
-            category: {
-              color: foodCategory.color
-            }
-          }
-        ],
-        hasNextPage: false,
-        hasPreviousPage: false,
-        totalPages: 1
+      expect(result).toHaveLength(2);
+
+      expect(result[0]).toMatchObject({
+        item: "Fruits",
+        value: 100,
+        category: {
+          color: foodCategory.color
+        }
+      });
+      expect(result[1]).toMatchObject({
+        item: "Meat",
+        value: 50,
+        category: {
+          color: foodCategory.color
+        }
       });
     });
 
@@ -106,28 +101,21 @@ describe("expenses", () => {
       mockGet.mockReturnValue({ value: token });
 
       const result = await getPaginatedExpenses(2, 5);
+      expect(result).toHaveLength(2);
 
-      expect(result).toMatchObject({
-        currentPage: 2,
-        expenses: [
-          {
-            item: "Item6",
-            value: 60,
-            category: {
-              color: foodCategory.color
-            }
-          },
-          {
-            item: "Item7",
-            value: 70,
-            category: {
-              color: foodCategory.color
-            }
-          }
-        ],
-        hasNextPage: false,
-        hasPreviousPage: true,
-        totalPages: 2
+      expect(result[0]).toMatchObject({
+        item: "Item6",
+        value: 60,
+        category: {
+          color: foodCategory.color
+        }
+      });
+      expect(result[1]).toMatchObject({
+        item: "Item7",
+        value: 70,
+        category: {
+          color: foodCategory.color
+        }
       });
     });
 
@@ -165,14 +153,12 @@ describe("expenses", () => {
       });
       mockGet.mockReturnValue({ value: token });
 
-      const result = await getPaginatedExpenses();
+      const result = await getPaginatedExpenses(1, 5);
 
-      expect(result).toMatchObject({
-        currentPage: 1,
-        expenses: [{ item: "Item1", value: 100, category: { color: category1.color } }],
-        hasNextPage: false,
-        hasPreviousPage: false,
-        totalPages: 1
+      expect(result[0]).toMatchObject({
+        item: "Item1",
+        value: 100,
+        category: { color: category1.color }
       });
     });
 
@@ -190,15 +176,72 @@ describe("expenses", () => {
       });
       mockGet.mockReturnValue({ value: token });
 
-      const result = await getPaginatedExpenses();
+      const result = await getPaginatedExpenses(1, 5);
 
-      expect(result).toEqual({
-        currentPage: 1,
-        expenses: [],
-        hasNextPage: false,
-        hasPreviousPage: false,
-        totalPages: 0
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe("#getExpensesPages", () => {
+    it("should return number of expenses pages", async () => {
+      const user = await prisma.user.create({
+        data: {
+          email: "test@example.com",
+          password: { create: { hash: "hashed" } }
+        }
       });
+
+      const foodCategory = await prisma.category.create({
+        data: { name: "Food", color: "#FF0000", userId: user.id }
+      });
+
+      await prisma.expense.createMany({
+        data: [
+          {
+            value: 100,
+            userId: user.id,
+            categoryId: foodCategory.id,
+            item: "Item Fruits"
+          },
+          {
+            value: 90,
+            userId: user.id,
+            categoryId: foodCategory.id,
+            item: "Item Cookies"
+          },
+          { value: 70, userId: user.id, categoryId: foodCategory.id, item: "Vegetables" },
+          { value: 50, userId: user.id, categoryId: foodCategory.id, item: "Meat" }
+        ]
+      });
+
+      const token = await encrypt({
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 1000000)
+      });
+      mockGet.mockReturnValue({ value: token });
+
+      const result = await getExpensesPages("ite", 2);
+
+      expect(result).toEqual(1);
+    });
+
+    it("should return zero when user have no expenses", async () => {
+      const user = await prisma.user.create({
+        data: {
+          email: "test@example.com",
+          password: { create: { hash: "hashed" } }
+        }
+      });
+
+      const token = await encrypt({
+        userId: user.id,
+        expiresAt: new Date(Date.now() + 1000000)
+      });
+      mockGet.mockReturnValue({ value: token });
+
+      const result = await getExpensesPages("", 5);
+
+      expect(result).toEqual(0);
     });
   });
 

@@ -108,61 +108,54 @@ export async function getExpensesByCategory(
   }
 }
 
-export async function getPaginatedExpenses(
-  page: number = 1,
-  pageSize: number = 15,
-  startsWith: string = ""
-): Promise<{
-  expenses: ExpenseWithColor[];
-  totalPages: number;
-  currentPage: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}> {
+export async function getExpensesPages(query: string, pageSize: number): Promise<number> {
   const session = await verifySession();
 
   try {
-    const validPage = Math.max(1, page);
-    const skip = (validPage - 1) * pageSize;
+    const data = await prisma.expense.count({
+      where: {
+        userId: session.userId,
+        item: { startsWith: query, mode: "insensitive" }
+      }
+    });
 
-    const [data, totalCount] = await Promise.all([
-      prisma.expense.findMany({
-        where: {
-          userId: session.userId,
-          item: { startsWith, mode: "insensitive" }
+    return Math.ceil(data / pageSize);
+  } catch (error) {
+    throw error;
+  }
+}
+export async function getPaginatedExpenses(
+  page: number,
+  pageSize: number,
+  query: string = ""
+): Promise<ExpenseWithColor[]> {
+  const session = await verifySession();
+
+  try {
+    const skip = (page - 1) * pageSize;
+
+    const data = await prisma.expense.findMany({
+      where: {
+        userId: session.userId,
+        item: { startsWith: query, mode: "insensitive" }
+      },
+      select: {
+        id: true,
+        item: true,
+        value: true,
+        category: {
+          select: {
+            color: true
+          }
         },
-        select: {
-          id: true,
-          item: true,
-          value: true,
-          category: {
-            select: {
-              color: true
-            }
-          },
-          createdAt: true
-        },
-        orderBy: { createdAt: "desc" },
-        skip,
-        take: pageSize
-      }),
-      prisma.expense.count({
-        where: {
-          userId: session.userId,
-          item: { startsWith }
-        }
-      })
-    ]);
+        createdAt: true
+      },
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: pageSize
+    });
 
-    const totalPages = Math.ceil(totalCount / pageSize);
-
-    return {
-      expenses: data,
-      totalPages,
-      currentPage: validPage,
-      hasNextPage: validPage < totalPages,
-      hasPreviousPage: validPage > 1
-    };
+    return data;
   } catch (error) {
     throw error;
   }
