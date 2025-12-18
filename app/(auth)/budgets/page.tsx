@@ -1,9 +1,7 @@
 import AddButton from "@/components/add-button";
 import { BudgetsContainer } from "@/components/budgets/container";
 import PageTitle from "@/components/page-title";
-import BudgetsSkeleton from "@/components/skeletons/budgets";
 import type { Metadata } from "next";
-import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Budgets"
@@ -16,9 +14,7 @@ export default async function BudgetsPage() {
         <PageTitle text="Budgets" />
         <AddButton text="Add budget" href="/budgets/new" />
       </div>
-      <Suspense fallback={<BudgetsSkeleton />}>
-        <BudgetsContainer />
-      </Suspense>
+      <BudgetsContainer />
     </>
   );
 }
