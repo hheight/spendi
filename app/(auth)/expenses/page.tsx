@@ -3,6 +3,10 @@ import { notFound } from "next/navigation";
 import PageTitle from "@/components/page-title";
 import AddButton from "@/components/add-button";
 import PaginatedExpensesList from "@/components/expenses/paginated-list";
+import { Suspense } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import SearchBar from "@/components/expenses/search-bar";
+import LoadingSpinner from "@/components/loading-spinner";
 
 export const metadata: Metadata = {
   title: "Expenses"
@@ -27,7 +31,16 @@ export default async function Page({
         <PageTitle text="Expenses" />
         <AddButton text="Add expense" href="/expenses/new" />
       </div>
-      <PaginatedExpensesList query={query} page={page} />
+      <Card>
+        <CardHeader>
+          <SearchBar />
+        </CardHeader>
+        <CardContent className="space-y-8">
+          <Suspense fallback={<LoadingSpinner />}>
+            <PaginatedExpensesList query={query} page={page} />
+          </Suspense>
+        </CardContent>
+      </Card>
     </>
   );
 }

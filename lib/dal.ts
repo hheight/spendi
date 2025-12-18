@@ -194,10 +194,7 @@ export async function getFirstExpense(): Promise<Expense | null> {
 
   try {
     const data = await prisma.expense.findFirst({
-      where: { userId: session.userId },
-      orderBy: {
-        createdAt: "asc"
-      }
+      where: { userId: session.userId }
     });
 
     return data;

@@ -26,10 +26,10 @@ export function buildChartData(
   return chartData;
 }
 
-export function buildMonthSelectOptions(date: Date) {
+export function buildMonthSelectOptions(date?: Date) {
   const now = new Date();
-  const startYear = getYear(date);
-  const startMonth = getMonth(date);
+  const startYear = getYear(date || now);
+  const startMonth = getMonth(date || now);
   const endYear = getYear(now);
   const endMonth = getMonth(now);
 

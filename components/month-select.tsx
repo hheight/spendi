@@ -8,38 +8,22 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { useEffect, useState } from "react";
-import { buildMonthSelectOptions } from "@/lib/utils";
-import { format } from "date-fns";
 
-const now = new Date();
-const defaultOptions = [
-  {
-    label: format(now, "MMM yyyy"),
-    value: format(now, "yyyy-MM")
-  }
-];
+type Props = {
+  options: {
+    value: string;
+    label: string;
+  }[];
+};
 
-export default function MonthSelect({ startDate }: { startDate?: Date }) {
-  const [options, setOptions] =
-    useState<Array<{ value: string; label: string }>>(defaultOptions);
+export default function MonthSelect({ options }: Props) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const selectedMonth = searchParams.get("month");
 
-  useEffect(() => {
-    if (!startDate) {
-      return;
-    }
-    const monthOptions = buildMonthSelectOptions(startDate);
-    setOptions(monthOptions);
-  }, [startDate]);
-
   const handleChange = (value: string) => {
     const params = new URLSearchParams();
-    if (value !== defaultOptions[0].value) {
-      params.set("month", value);
-    }
+    params.set("month", value);
     router.push(`?${params.toString()}`);
   };
 
