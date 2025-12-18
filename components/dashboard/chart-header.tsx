@@ -1,6 +1,6 @@
 import FormattedAmount from "@/components/formatted-amount";
 import { format } from "date-fns";
-import MonthSelect from "@/components/month-select";
+import MonthSelect from "@/components/dashboard/month-select";
 
 type Props = {
   totalSpent: number;

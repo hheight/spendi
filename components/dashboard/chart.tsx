@@ -17,7 +17,7 @@ function formatToK(num: number) {
   return num.toString();
 }
 
-export default function DailyBarChart({ chartData }: Props) {
+export default function Chart({ chartData }: Props) {
   const searchParams = useSearchParams();
   const router = useRouter();
 

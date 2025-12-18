@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import ExpensesList from "@/components/expenses/list";
-import DailyBarChart from "@/components/daily-bar-chart";
+import Chart from "@/components/dashboard/chart";
 import type { Metadata } from "next";
 import EmptyList from "@/components/empty-list";
 import PageTitle from "@/components/page-title";
@@ -40,7 +40,7 @@ export default async function Page({
           />
         </CardHeader>
         <CardContent className="space-y-8">
-          <DailyBarChart chartData={chartData} />
+          <Chart chartData={chartData} />
         </CardContent>
       </Card>
       <Card>
