@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import EmptyList from "@/components/empty-list";
 import ExpensesList from "@/components/expenses/list";
 import PaginationControls from "@/components/pagination-controls";
-import SearchInput from "@/components/expenses/search-input";
+import SearchBar from "@/components/expenses/search-bar";
 
 export default async function PaginatedExpensesList({
   query,
@@ -25,7 +25,7 @@ export default async function PaginatedExpensesList({
   return (
     <Card>
       <CardHeader>
-        <SearchInput />
+        <SearchBar />
       </CardHeader>
       <CardContent className="space-y-8">
         {expenses.length === 0 ? <EmptyList /> : <ExpensesList expenses={expenses} />}

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SearchInput() {
+export default function SearchBar() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const query = searchParams.get("query");
