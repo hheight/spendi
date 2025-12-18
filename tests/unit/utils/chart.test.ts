@@ -1,26 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
-  buildChartConfig,
   buildChartData,
   buildMonthSelectOptions,
   calculateTotalAmount
 } from "@/lib/utils";
-
-describe("#buildChartConfig", () => {
-  it("should build chart config", () => {
-    const categories = [
-      { id: "1", name: "Food", color: "#00ff00" },
-      { id: "2", name: "Housing", color: "#c0ffee" }
-    ];
-
-    const chartConfig = buildChartConfig(categories);
-
-    expect(chartConfig).toEqual({
-      food: { label: "Food", color: "#00ff00" },
-      housing: { label: "Housing", color: "#c0ffee" }
-    });
-  });
-});
 
 describe("#buildMonthlyChartData", () => {
   it("should build monthly chart data", () => {

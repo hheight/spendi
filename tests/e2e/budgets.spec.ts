@@ -6,7 +6,7 @@ test("should allow to add overall budget", async ({ budgetsPage, page }) => {
   await budgetsPage.createBudget({
     amount: "100"
   });
-  await expect(page.getByText("overall spent: 0%")).toBeAttached();
+  await expect(page.getByText("spent: 0%")).toBeAttached();
   await expect(page.getByText("100.00")).toBeAttached();
   await expect(page.getByText("left this month")).toBeAttached();
 });

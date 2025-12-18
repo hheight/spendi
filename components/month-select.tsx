@@ -33,7 +33,7 @@ export default function MonthSelect({ startDate }: { startDate?: Date }) {
     }
     const monthOptions = buildMonthSelectOptions(startDate);
     setOptions(monthOptions);
-  }, []);
+  }, [startDate]);
 
   const handleChange = (value: string) => {
     const params = new URLSearchParams();

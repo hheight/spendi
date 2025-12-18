@@ -1,10 +1,4 @@
-import {
-  Empty,
-  EmptyContent,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle
-} from "@/components/ui/empty";
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import { Inbox } from "lucide-react";
 
 export default function EmptyList() {
@@ -16,7 +10,6 @@ export default function EmptyList() {
         </EmptyMedia>
         <EmptyTitle>No entries found.</EmptyTitle>
       </EmptyHeader>
-      <EmptyContent></EmptyContent>
     </Empty>
   );
 }

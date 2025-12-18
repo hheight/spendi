@@ -32,7 +32,7 @@ export default function BudgetsList({ budgets, expenses }: Props) {
 
         return (
           <li key={budget.id}>
-            <Link className="group" href={`/budgets/edit/${budget.id}`}>
+            <Link prefetch={false} className="group" href={`/budgets/edit/${budget.id}`}>
               {budget.type === BudgetType.OVERALL ? (
                 <OverallBudget budgetValue={budget.value} spent={overallSpent} />
               ) : (

@@ -4,8 +4,9 @@ import FormattedAmount from "@/components/formatted-amount";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
-type Props = {
+type Props = React.ComponentProps<"li"> & {
   title: string;
   subtitle: string;
   id: string;
@@ -20,7 +21,8 @@ export default function ExpensesListItem({
   amount,
   color,
   subtitle,
-  dateSeparator
+  dateSeparator,
+  className
 }: Props) {
   const pathname = usePathname();
 
@@ -35,8 +37,9 @@ export default function ExpensesListItem({
         </div>
       )}
       <Link
+        prefetch={false}
         href={`/expenses/edit/${id}?redirectTo=${encodeURIComponent(pathname)}`}
-        className="group block"
+        className={cn("group block", className)}
       >
         <div className="flex items-center gap-3">
           <div style={{ backgroundColor: color }} className="h-9 w-9 rounded-md"></div>

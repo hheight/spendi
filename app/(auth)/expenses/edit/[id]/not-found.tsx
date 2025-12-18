@@ -7,7 +7,6 @@ import {
   EmptyTitle
 } from "@/components/ui/empty";
 import { BanknoteX } from "lucide-react";
-import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function NotFound() {
@@ -25,12 +24,12 @@ export default function NotFound() {
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
-            <Link
+            <a
               href="/expenses"
               className="text-sm font-medium underline underline-offset-4"
             >
               Back to expenses
-            </Link>
+            </a>
           </EmptyContent>
         </Empty>
       </CardContent>
