@@ -1,9 +1,9 @@
 import { vi, describe, expect, it } from "vitest";
 import { NextRequest } from "next/server";
-import middleware from "@/middleware";
+import proxy from "@/proxy";
 import { encrypt } from "@/lib/auth/session";
 
-describe("Middleware", () => {
+describe("Proxy", () => {
   describe("Protected routes", () => {
     const protectedRoutes = [
       { path: "/dashboard", name: "Dashboard" },
@@ -20,7 +20,7 @@ describe("Middleware", () => {
             }
           });
 
-          const response = await middleware(request);
+          const response = await proxy(request);
 
           expect(response).toBeDefined();
           expect(response.status).toBe(307);
@@ -46,7 +46,7 @@ describe("Middleware", () => {
           const date = new Date(Date.now() + 8 * 24 * 60 * 60 * 1000);
           vi.setSystemTime(date);
 
-          const response = await middleware(request);
+          const response = await proxy(request);
 
           expect(response).toBeDefined();
           expect(response.status).toBe(307);
@@ -73,7 +73,7 @@ describe("Middleware", () => {
             }
           });
 
-          const response = await middleware(request);
+          const response = await proxy(request);
 
           expect(response).toBeDefined();
           expect(response.status).toBe(200);
@@ -93,7 +93,7 @@ describe("Middleware", () => {
       it(`should allow unauthenticated access to ${name}`, async () => {
         const request = new NextRequest(new URL(path, "http://localhost:3000"));
 
-        const response = await middleware(request);
+        const response = await proxy(request);
 
         expect(response).toBeDefined();
         expect(response.status).toBe(200);
@@ -113,7 +113,7 @@ describe("Middleware", () => {
           }
         });
 
-        const response = await middleware(request);
+        const response = await proxy(request);
 
         expect(response).toBeDefined();
         expect(response.status).toBe(307);
@@ -128,7 +128,7 @@ describe("Middleware", () => {
         new URL("/dashboard?tab=overview", "http://localhost:3000")
       );
 
-      const response = await middleware(request);
+      const response = await proxy(request);
 
       expect(response?.status).toBe(307);
       expect(response?.headers.get("location")).toContain("/login");
@@ -139,7 +139,7 @@ describe("Middleware", () => {
         new URL("/dashboard/protected", "http://localhost:3000")
       );
 
-      const response = await middleware(request);
+      const response = await proxy(request);
 
       expect(response).toBeDefined();
       expect(response.status).toBe(307);
