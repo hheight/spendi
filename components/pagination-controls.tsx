@@ -11,22 +11,17 @@ import {
   PaginationPrevious
 } from "@/components/ui/pagination";
 
-type PaginationControlsProps = {
-  currentPage: number;
+type Props = {
   totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
 };
 
-export default function PaginationControls({
-  currentPage,
-  totalPages,
-  hasNextPage,
-  hasPreviousPage
-}: PaginationControlsProps) {
+export default function PaginationControls({ totalPages }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const currentPage = Number(searchParams.get("page")) || 1;
+  const hasNextPage = currentPage < totalPages;
+  const hasPreviousPage = currentPage > 1;
 
   const createPageURL = (page: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -78,12 +73,10 @@ export default function PaginationControls({
           <PaginationPrevious
             href={createPageURL(currentPage - 1)}
             onClick={e => {
-              if (!hasPreviousPage) {
-                e.preventDefault();
-                return;
-              }
               e.preventDefault();
-              navigateToPage(currentPage - 1);
+              if (hasPreviousPage) {
+                navigateToPage(currentPage - 1);
+              }
             }}
             aria-disabled={!hasPreviousPage}
             className={!hasPreviousPage ? "pointer-events-none opacity-50" : ""}
@@ -113,12 +106,10 @@ export default function PaginationControls({
           <PaginationNext
             href={createPageURL(currentPage + 1)}
             onClick={e => {
-              if (!hasNextPage) {
-                e.preventDefault();
-                return;
-              }
               e.preventDefault();
-              navigateToPage(currentPage + 1);
+              if (hasNextPage) {
+                navigateToPage(currentPage + 1);
+              }
             }}
             aria-disabled={!hasNextPage}
             className={!hasNextPage ? "pointer-events-none opacity-50" : ""}
