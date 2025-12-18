@@ -11,7 +11,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <SidebarInset>
           <Header withLogo={false} actions={<AccountMenu />} />
           <div className="flex grow flex-col p-6">
-            <div className="w-full max-w-[82ch] space-y-6">{children}</div>
+            <div className="mx-auto w-full max-w-[92ch] space-y-6">{children}</div>
           </div>
         </SidebarInset>
       </SidebarProvider>
