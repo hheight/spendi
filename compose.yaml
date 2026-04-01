@@ -3,6 +3,8 @@ name: spendi-tests
 services:
   db:
     image: postgres:14.19
+    volumes:
+      - db:/var/lib/postgresql/data
     restart: always
     environment:
       POSTGRES_USER: prisma
@@ -10,3 +12,7 @@ services:
       POSTGRES_DB: tests
     ports:
       - "5433:5432"
+
+volumes:
+  db:
+    driver: local
