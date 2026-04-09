@@ -1,7 +1,7 @@
 import { vi, describe, expect, it, beforeEach } from "vitest";
 import prisma from "@/tests/helpers/prisma";
 import { signup, login } from "@/app/actions/auth";
-import bcrypt from "bcryptjs";
+import { hashPassword } from "@/lib/auth/hash";
 
 vi.mock("@/lib/auth/session", () => ({
   createSession: vi.fn()
@@ -26,7 +26,7 @@ describe("Auth actions", () => {
     });
 
     it("should return an error if user already exists", async () => {
-      const hashedPassword = await bcrypt.hash("Password123", 10);
+      const hashedPassword = await hashPassword("Password123");
 
       await prisma.user.create({
         data: {
@@ -62,7 +62,7 @@ describe("Auth actions", () => {
 
   describe("#signin", () => {
     beforeEach(async () => {
-      const hashedPassword = await bcrypt.hash("Password123", 10);
+      const hashedPassword = await hashPassword("Password123");
       await prisma.user.create({
         data: {
           email: "test@example.com",

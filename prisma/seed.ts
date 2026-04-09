@@ -1,5 +1,5 @@
 import { PrismaClient } from "../app/generated/prisma";
-import bcrypt from "bcryptjs";
+import { hashPassword } from "../lib/auth/password";
 
 const prisma = new PrismaClient();
 
@@ -8,7 +8,7 @@ async function seed() {
 
   await prisma.user.delete({ where: { email } }).catch(() => {});
 
-  const hashedPassword = await bcrypt.hash("test1234", 10);
+  const hashedPassword = await hashPassword("test1234");
 
   const user = await prisma.user.create({
     data: {

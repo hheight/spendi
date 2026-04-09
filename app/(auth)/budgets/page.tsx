@@ -4,12 +4,20 @@ import PageTitle from "@/components/page-title";
 import BudgetsSkeleton from "@/components/skeletons/budgets";
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { verifySession } from "@/lib/dal";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Budgets"
 };
 
 export default async function BudgetsPage() {
+  const session = await verifySession();
+
+  if (!session.isAuth) {
+    redirect("/login");
+  }
+
   return (
     <>
       <div className="flex items-center justify-between">

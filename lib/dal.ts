@@ -2,8 +2,7 @@ import "server-only";
 
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
-import { decrypt } from "@/lib/auth/session";
-import { redirect } from "next/navigation";
+import { validateJWT } from "@/lib/auth/session";
 import { cache } from "react";
 import type {
   CategoryPreview,
@@ -13,17 +12,25 @@ import type {
   Budget,
   ExpenseByCategory
 } from "@/types";
+import { config } from "@/lib/auth/config";
 
-export const verifySession = cache(async () => {
-  const cookie = (await cookies()).get("session")?.value;
-  const session = await decrypt(cookie);
+export const verifySession = cache(
+  async (): Promise<{ isAuth: boolean; userId?: string }> => {
+    const cookie = (await cookies()).get("session")?.value;
 
-  if (!session?.userId) {
-    redirect("/login");
+    if (!cookie) {
+      return { isAuth: false };
+    }
+
+    const userId = validateJWT(cookie, config.jwt.secret);
+
+    if (!userId) {
+      return { isAuth: false };
+    }
+
+    return { isAuth: true, userId };
   }
-
-  return { isAuth: true, userId: session.userId };
-});
+);
 
 export async function getCategories(): Promise<CategoryPreview[]> {
   const session = await verifySession();
@@ -41,7 +48,8 @@ export async function getCategories(): Promise<CategoryPreview[]> {
 
     return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get categories");
   }
 }
 
@@ -77,7 +85,8 @@ export async function getExpensesByDateRange(
 
     return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get expenses");
   }
 }
 
@@ -121,7 +130,8 @@ export async function getExpensesPages(query: string, pageSize: number): Promise
 
     return Math.ceil(data / pageSize);
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get expenses pages");
   }
 }
 export async function getPaginatedExpenses(
@@ -157,7 +167,8 @@ export async function getPaginatedExpenses(
 
     return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get paginated expenses");
   }
 }
 
@@ -178,7 +189,8 @@ export async function getExpenseById(id: Expense["id"]): Promise<Expense | null>
 
     return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get expense");
   }
 }
 
@@ -195,7 +207,8 @@ export async function getFirstExpense(): Promise<Expense | null> {
 
     return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get first expense");
   }
 }
 
@@ -227,7 +240,8 @@ export async function getBudgets(): Promise<Budget[]> {
 
     return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get budgets");
   }
 }
 
@@ -257,6 +271,7 @@ export async function getBudgetById(id: Budget["id"]): Promise<Budget | null> {
 
     return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get budget");
   }
 }
