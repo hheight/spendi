@@ -8,8 +8,6 @@ type JWTConfig = {
   issuer: string;
 };
 
-process.loadEnvFile();
-
 function envOrThrow(key: string) {
   const value = process.env[key];
   if (!value) {
