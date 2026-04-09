@@ -1,16 +1,12 @@
-import { vi, describe, expect, it } from "vitest";
+import { vi, describe, expect, it, beforeEach } from "vitest";
 
-import { verifySession } from "@/lib/dal";
-import { redirect } from "next/navigation";
-import { encrypt } from "@/lib/auth/session";
+import { makeJWT } from "@/lib/auth/session";
+
+vi.stubEnv("SESSION_SECRET", "test-secret");
+
+const { verifySession } = await import("@/lib/dal");
 
 const mockGet = vi.fn();
-
-vi.mock("next/navigation", () => ({
-  redirect: vi.fn(() => {
-    throw new Error("NEXT_REDIRECT");
-  })
-}));
 
 vi.mock("next/headers", () => ({
   cookies: vi.fn(() =>
@@ -21,32 +17,36 @@ vi.mock("next/headers", () => ({
 }));
 
 describe("#verifySession", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("returns userId when session is valid", async () => {
-    const token = await encrypt({
-      userId: "user-123",
-      expiresAt: new Date(Date.now() + 1000)
-    });
+    const userId = "user-123";
+    const token = makeJWT(userId, 3600, "test-secret");
+
     mockGet.mockReturnValue({ value: token });
 
     const result = await verifySession();
 
-    expect(result).toEqual({ isAuth: true, userId: "user-123" });
-    expect(redirect).not.toHaveBeenCalled();
+    expect(result).toEqual({ isAuth: true, userId });
   });
 
-  it("redirects to /login when no session", async () => {
+  it("returns falsed authentication when no session", async () => {
     mockGet.mockReturnValue(undefined);
 
-    await expect(verifySession()).rejects.toThrow();
+    const result = await verifySession();
 
-    expect(redirect).toHaveBeenCalledWith("/login");
+    expect(result).toEqual({ isAuth: false });
   });
 
-  it("redirects to /login when session is invalid", async () => {
+  it("returns falsed authentication when session is invalid", async () => {
     mockGet.mockReturnValue({ value: "invalid-token" });
 
-    await expect(verifySession()).rejects.toThrow();
+    const result = await verifySession();
 
-    expect(redirect).toHaveBeenCalledWith("/login");
+    expect(result).toEqual({ isAuth: false });
   });
 });
+
+vi.unstubAllEnvs();

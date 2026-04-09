@@ -75,18 +75,22 @@ describe("Session management", () => {
     });
 
     describe("when session cookie is empty", () => {
-      it("should throw an error", async () => {
+      it("should return null", async () => {
         mockGet.mockReturnValue({ value: "" });
 
-        await expect(updateSession(expiresIn, secret)).rejects.toThrow(Error);
+        const result = await updateSession(expiresIn, secret);
+
+        expect(result).toBeNull();
       });
     });
 
     describe("when session cookie is invalid token", () => {
-      it("should throw an error", async () => {
+      it("should return null", async () => {
         mockGet.mockReturnValue({ value: "invalid-token" });
 
-        await expect(updateSession(expiresIn, secret)).rejects.toThrow(Error);
+        const result = await updateSession(expiresIn, secret);
+
+        expect(result).toBeNull();
       });
     });
   });
@@ -115,11 +119,13 @@ describe("JWT Functions", () => {
     expect(result).toBe(userID);
   });
 
-  it("should throw an error for an invalid token string", () => {
-    expect(() => validateJWT("invalid.token.string", secret)).toThrow(Error);
+  it("should return null for an invalid token string", () => {
+    const result = validateJWT("invalid.token.string", secret);
+    expect(result).toBeNull();
   });
 
-  it("should throw an error when the token is signed with a wrong secret", async () => {
-    expect(() => validateJWT(validToken, wrongSecret)).toThrow(Error);
+  it("should return null when the token is signed with a wrong secret", async () => {
+    const result = validateJWT(validToken, wrongSecret);
+    expect(result).toBeNull();
   });
 });

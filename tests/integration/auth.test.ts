@@ -1,7 +1,7 @@
 import { vi, describe, expect, it, beforeEach } from "vitest";
 import prisma from "@/tests/helpers/prisma";
 import { signup, login } from "@/app/actions/auth";
-import { hashPassword } from "@/lib/auth/hash";
+import { hashPassword } from "@/lib/auth/password";
 
 vi.mock("@/lib/auth/session", () => ({
   createSession: vi.fn()
