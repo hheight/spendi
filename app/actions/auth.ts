@@ -6,12 +6,11 @@ import {
   type SignupInput,
   type SigninInput
 } from "@/lib/auth/schemas";
-import { createSession, deleteSession } from "@/lib/auth/session";
+import { deleteSession, createSession } from "@/lib/auth/session";
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import type { ActionResponse } from "@/types";
 import { checkPasswordHash, hashPassword } from "@/lib/auth/password";
-import { config } from "@/lib/auth/config";
 
 export async function signup(data: SignupInput): Promise<ActionResponse> {
   const validatedFields = signupSchema.safeParse(data);
@@ -49,7 +48,7 @@ export async function signup(data: SignupInput): Promise<ActionResponse> {
       }
     });
 
-    await createSession(user.id, config.jwt.defaultDuration, config.jwt.secret);
+    await createSession(user.id);
   } catch (error) {
     console.error("Signup error:", error);
     return {
@@ -92,7 +91,7 @@ export async function login(data: SigninInput): Promise<ActionResponse> {
       };
     }
 
-    await createSession(user.id, config.jwt.defaultDuration, config.jwt.secret);
+    await createSession(user.id);
   } catch (error) {
     console.error(error);
     return { success: false, message: "An error occured during login" };

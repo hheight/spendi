@@ -13,24 +13,20 @@ import type {
   ExpenseByCategory
 } from "@/types";
 import { config } from "@/lib/auth/config";
+import type { User } from "@/app/generated/prisma/client";
 
-export const verifySession = cache(
-  async (): Promise<{ isAuth: boolean; userId?: string }> => {
-    const cookie = (await cookies()).get("session")?.value;
+export const verifySession = cache(async () => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
 
-    if (!cookie) {
-      return { isAuth: false };
-    }
+  if (!accessToken) return { isAuth: false };
 
-    const userId = validateJWT(cookie, config.jwt.secret);
+  const userId = validateJWT(accessToken, config.jwt.secret);
 
-    if (!userId) {
-      return { isAuth: false };
-    }
+  if (!userId) return { isAuth: false };
 
-    return { isAuth: true, userId };
-  }
-);
+  return { isAuth: true, userId };
+});
 
 export async function getCategories(): Promise<CategoryPreview[]> {
   const session = await verifySession();
@@ -273,5 +269,45 @@ export async function getBudgetById(id: Budget["id"]): Promise<Budget | null> {
   } catch (error) {
     console.error(error);
     throw new Error("Can't get budget");
+  }
+}
+
+export async function saveRefreshToken(
+  userId: User["id"],
+  token: string,
+  expiresAt: Date
+): Promise<void> {
+  try {
+    await prisma.refreshToken.create({
+      data: {
+        userId,
+        token,
+        expiresAt,
+        revokedAt: null
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    throw new Error("Can't save refresh token");
+  }
+}
+
+export async function getUserByRefreshToken(token: string): Promise<User | null> {
+  try {
+    const data = await prisma.user.findFirst({
+      where: {
+        refreshTokens: {
+          some: {
+            token,
+            revokedAt: null
+          }
+        }
+      }
+    });
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Can't get user by refresh token");
   }
 }
