@@ -2,7 +2,7 @@ import "server-only";
 
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
-import { validateJWT } from "@/lib/auth/session";
+import { refreshAccessToken, validateJWT } from "@/lib/auth/session";
 import { cache } from "react";
 import type {
   CategoryPreview,
@@ -14,16 +14,24 @@ import type {
 } from "@/types";
 import { config } from "@/lib/auth/config";
 import type { User } from "@/app/generated/prisma/client";
+import { redirect } from "next/navigation";
 
 export const verifySession = cache(async () => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
 
-  if (!accessToken) return { isAuth: false };
+  if (accessToken) {
+    const validUserId = validateJWT(accessToken, config.jwt.secret);
 
-  const userId = validateJWT(accessToken, config.jwt.secret);
+    if (validUserId) return { isAuth: true, userId: validUserId };
+  }
 
-  if (!userId) return { isAuth: false };
+  const refreshToken = cookieStore.get("refresh_token")?.value;
+  const userId = await refreshAccessToken(refreshToken);
+
+  if (!userId) {
+    redirect("/login");
+  }
 
   return { isAuth: true, userId };
 });
