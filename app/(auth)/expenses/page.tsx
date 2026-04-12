@@ -8,8 +8,6 @@ import SearchBar from "@/components/expenses/search-bar";
 import { getExpensesPages } from "@/lib/dal";
 import PaginationControls from "@/components/pagination-controls";
 import ExpensesSkeleton from "@/components/skeletons/expenses";
-import { verifySession } from "@/lib/dal";
-import { redirect } from "next/navigation";
 
 const PAGE_SIZE = 15;
 
@@ -22,11 +20,6 @@ export default async function Page({
 }: {
   searchParams: Promise<{ page?: string; query?: string }>;
 }) {
-  const session = await verifySession();
-
-  if (!session.isAuth) {
-    redirect("/login");
-  }
   const params = await searchParams;
   const page = Number(params.page) || 1;
   const query = params.query || "";

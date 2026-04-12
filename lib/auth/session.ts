@@ -127,10 +127,7 @@ export function makeRefreshToken() {
   return crypto.randomBytes(32).toString("hex");
 }
 
-export async function refreshAccessToken() {
-  const cookieStore = await cookies();
-
-  const refreshToken = cookieStore.get("refresh_token")?.value;
+export async function refreshAccessToken(refreshToken?: string) {
   if (!refreshToken) {
     return null;
   }
