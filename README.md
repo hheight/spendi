@@ -1,6 +1,7 @@
 # Spendi
 
-Expense tracker application built for fun with [Next.js 15](https://nextjs.org/docs/15/app/getting-started) and [Prisma Postgres](https://www.prisma.io/docs/postgres) database.
+Expense tracker application built for fun using [Next.js 16](https://nextjs.org/docs), [Prisma Postgres](https://www.prisma.io/docs/postgres) database and [Vitest](https://vitest.dev), [Playwright](https://playwright.dev) testing frameworks. 
+The goal is to explore full-stack application development with mentioned technologies.
 
 Demo: https://spendi-two.vercel.app/
 
@@ -11,32 +12,25 @@ email: test@spendi.com
 password: test1234
 ```
 
-## Local development
+## Local development with Docker
 
-Node.js v20 or later is required for local Prisma Postgres.
+Create a Docker Volume and run a container with postgres image. For instance:
+```
+docker volume create spendi-dev_db
+docker run --name=spendi-dev-pg -d -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5434:5432 -v spendi-dev_db:/var/lib/postgresql/data postgres:14.19
+```
 
-Create `.env` file with `DATABASE_URL` and `SESSION_SECRET` variables:
+Create `.env` file with `DATABASE_URL` (depending on the previous `docker run` command) and `SESSION_SECRET` variables:
 
 ```
-DATABASE_URL="dev"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5434/dev?schema=public"
 SESSION_SECRET="super_secret"
 ```
 
-Start the local Prisma Postgres server using the following command:
+Run the commands to generate Prisma Client and run the migrations:
 
 ```
-npx prisma dev
-```
-
-Hit `h` on your keyboard, copy the `DATABASE_URL` and store it in your `.env` file. This will be used to connect to the local Prisma Postgres server:
-
-```
-DATABASE_URL="prisma+postgres://localhost:51213/?api_key=__API_KEY__"
-```
-
-Then, in a separate terminal tab, run the command to create the database and run the migrations:
-
-```
+npx prisma generate
 npx prisma migrate dev
 ```
 
