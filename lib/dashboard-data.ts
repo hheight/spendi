@@ -1,4 +1,4 @@
-import { getExpensesByDateRange, getFirstExpense } from "@/lib/dal";
+import { getExpensesByDateRange, getFirstExpense } from "@/lib/data";
 import {
   parseSelectedMonth,
   parseSelectedDay,

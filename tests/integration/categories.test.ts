@@ -1,6 +1,6 @@
 import { vi, describe, expect, it, beforeEach } from "vitest";
 import prisma from "@/tests/helpers/prisma";
-import { getCategories } from "@/lib/dal";
+import { getCategories } from "@/lib/data";
 import { encrypt } from "@/lib/auth/session";
 
 const mockGet = vi.fn();

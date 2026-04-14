@@ -2,16 +2,38 @@ import "server-only";
 
 import crypto from "crypto";
 import jwt, { JsonWebTokenError, type JwtPayload } from "jsonwebtoken";
+import { cache } from "react";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import type { User } from "@/app/generated/prisma";
 import { config } from "@/lib/auth/config";
-import { getUserByRefreshToken, saveRefreshToken } from "../dal";
 import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { getUserByRefreshToken, saveRefreshToken } from "@/lib/data";
 
 const isProd =
   process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production";
 
 type Payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
+
+export const verifySession = cache(async () => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+
+  if (accessToken) {
+    const validUserId = validateJWT(accessToken, config.jwt.secret);
+
+    if (validUserId) return { isAuth: true, userId: validUserId };
+  }
+
+  const refreshToken = cookieStore.get("refresh_token")?.value;
+  const userId = await refreshAccessToken(refreshToken);
+
+  if (!userId) {
+    redirect("/login");
+  }
+
+  return { isAuth: true, userId };
+});
 
 export function makeJWT(userId: User["id"], expiresIn: number, secret: string): string {
   const issuedAt = Math.floor(Date.now() / 1000); // current date in seconds
@@ -54,16 +76,6 @@ export function validateJWT(tokenString: string, secret: string): string | null 
   }
 
   return decoded.sub;
-}
-
-export async function getSession(secret: string): Promise<string | null> {
-  const session = (await cookies()).get("session")?.value;
-  if (!session) {
-    console.error("Invalid session");
-    return null;
-  }
-
-  return validateJWT(session, secret);
 }
 
 export async function createSession(userId: User["id"]) {

@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { verifySession } from "@/lib/dal";
+import { verifySession } from "@/lib/auth/session";
 import { type ExpenseInput, expenseSchema } from "@/lib/expense/schemas";
 import type { ActionResponse, Expense } from "@/types";
 

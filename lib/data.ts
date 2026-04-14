@@ -1,9 +1,8 @@
 import "server-only";
 
 import prisma from "@/lib/prisma";
-import { cookies } from "next/headers";
-import { refreshAccessToken, validateJWT } from "@/lib/auth/session";
-import { cache } from "react";
+import type { User } from "@/app/generated/prisma";
+import { verifySession } from "@/lib/auth/session";
 import type {
   CategoryPreview,
   ExpenseWithColor,
@@ -12,29 +11,6 @@ import type {
   Budget,
   ExpenseByCategory
 } from "@/types";
-import { config } from "@/lib/auth/config";
-import type { User } from "@/app/generated/prisma/client";
-import { redirect } from "next/navigation";
-
-export const verifySession = cache(async () => {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("access_token")?.value;
-
-  if (accessToken) {
-    const validUserId = validateJWT(accessToken, config.jwt.secret);
-
-    if (validUserId) return { isAuth: true, userId: validUserId };
-  }
-
-  const refreshToken = cookieStore.get("refresh_token")?.value;
-  const userId = await refreshAccessToken(refreshToken);
-
-  if (!userId) {
-    redirect("/login");
-  }
-
-  return { isAuth: true, userId };
-});
 
 export async function getCategories(): Promise<CategoryPreview[]> {
   const session = await verifySession();

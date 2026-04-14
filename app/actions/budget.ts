@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { budgetSchema, type BudgetInput } from "@/lib/budget/schemas";
-import { verifySession } from "@/lib/dal";
+import { verifySession } from "@/lib/auth/session";
 import type { ActionResponse, Budget } from "@/types";
 import { BudgetType } from "@/app/generated/prisma";
 

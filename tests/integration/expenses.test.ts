@@ -6,7 +6,7 @@ import {
   getExpensesByDateRange,
   getExpensesByCategory,
   getExpensesPages
-} from "@/lib/dal";
+} from "@/lib/data";
 import { encrypt } from "@/lib/auth/session";
 
 const mockGet = vi.fn();

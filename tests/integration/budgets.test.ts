@@ -1,6 +1,6 @@
 import { vi, describe, expect, it, beforeEach } from "vitest";
 import prisma from "@/tests/helpers/prisma";
-import { getBudgets, getBudgetById } from "@/lib/dal";
+import { getBudgets, getBudgetById } from "@/lib/data";
 import { encrypt } from "@/lib/auth/session";
 import { BudgetType } from "@/app/generated/prisma";
 
