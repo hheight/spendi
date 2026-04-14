@@ -295,3 +295,15 @@ export async function getUserByRefreshToken(token: string): Promise<User | null>
     throw new Error("Can't get user by refresh token");
   }
 }
+
+export async function revokeRefreshToken(token: string): Promise<void> {
+  try {
+    await prisma.refreshToken.update({
+      where: { token },
+      data: { revokedAt: new Date() }
+    });
+  } catch (error) {
+    console.error(error);
+    throw new Error("Can't revoke refresh token");
+  }
+}

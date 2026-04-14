@@ -7,7 +7,6 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { User } from "@/app/generated/prisma";
 import { config } from "@/lib/auth/config";
-import type { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { getUserByRefreshToken, saveRefreshToken } from "@/lib/data";
 
 const isProd =
@@ -88,34 +87,19 @@ export async function createSession(userId: User["id"]) {
 
   const cookieStore = await cookies();
 
-  setAccessToken(cookieStore, jwt, expiresAtJWT);
-  setRefreshToken(cookieStore, refreshToken, expiresAtRefreshToken);
-}
-
-function setAccessToken(
-  cookieStore: ReadonlyRequestCookies,
-  token: string,
-  expiresAt: Date
-) {
-  cookieStore.set("access_token", token, {
+  cookieStore.set("access_token", jwt, {
     httpOnly: true,
     secure: isProd,
-    expires: expiresAt,
+    expires: expiresAtJWT,
     sameSite: "lax",
     path: "/"
   });
-}
 
-function setRefreshToken(
-  cookieStore: ReadonlyRequestCookies,
-  token: string,
-  expiresAt: Date
-) {
-  cookieStore.set("refresh_token", token, {
+  cookieStore.set("refresh_token", refreshToken, {
     httpOnly: true,
     secure: isProd,
-    expires: expiresAt,
-    sameSite: "strict",
+    expires: expiresAtRefreshToken,
+    sameSite: "lax",
     path: "/"
   });
 }
@@ -126,17 +110,19 @@ export async function updateAccessToken(userId: User["id"]) {
 
   const cookieStore = await cookies();
 
-  setAccessToken(cookieStore, jwt, expiresAt);
+  cookieStore.set("access_token", jwt, {
+    httpOnly: true,
+    secure: isProd,
+    expires: expiresAt,
+    sameSite: "lax",
+    path: "/"
+  });
 }
 
 export async function deleteSession() {
   const cookieStore = await cookies();
   cookieStore.delete("access_token");
   cookieStore.delete("refresh_token");
-}
-
-export function makeRefreshToken() {
-  return crypto.randomBytes(32).toString("hex");
 }
 
 export async function refreshAccessToken(refreshToken?: string) {
@@ -151,4 +137,8 @@ export async function refreshAccessToken(refreshToken?: string) {
 
   await updateAccessToken(user.id);
   return user.id;
+}
+
+function makeRefreshToken() {
+  return crypto.randomBytes(32).toString("hex");
 }

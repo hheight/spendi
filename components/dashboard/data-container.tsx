@@ -3,7 +3,7 @@ import ExpensesList from "@/components/expenses/list";
 import Chart from "@/components/dashboard/chart";
 import EmptyList from "@/components/empty-list";
 import ChartHeader from "@/components/dashboard/chart-header";
-import { getDashboardData } from "@/lib/dashboard-data";
+import { getDashboardData } from "@/lib/dashboard";
 
 export default async function DashboardDataContainer({
   params

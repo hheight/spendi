@@ -8,7 +8,9 @@ import {
 } from "@/lib/auth/schemas";
 import { deleteSession, createSession } from "@/lib/auth/session";
 import prisma from "@/lib/prisma";
+import { revokeRefreshToken } from "@/lib/data";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import type { ActionResponse } from "@/types";
 import { checkPasswordHash, hashPassword } from "@/lib/auth/password";
 
@@ -101,6 +103,13 @@ export async function login(data: SigninInput): Promise<ActionResponse> {
 }
 
 export async function logout() {
+  const cookieStore = await cookies();
+  const refreshToken = cookieStore.get("refresh_token")?.value;
+
+  if (refreshToken) {
+    await revokeRefreshToken(refreshToken);
+  }
+
   await deleteSession();
   redirect("/login");
 }
