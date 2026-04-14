@@ -9,7 +9,7 @@ export async function createExpense(data: ExpenseInput): Promise<ActionResponse>
   const session = await verifySession();
   const validatedFields = expenseSchema.safeParse(data);
 
-  if (!session || !validatedFields.success) {
+  if (!validatedFields.success) {
     return {
       success: false
     };
@@ -66,7 +66,7 @@ export async function updateExpense(
   const session = await verifySession();
   const validatedFields = expenseSchema.safeParse(data);
 
-  if (!session || !validatedFields.success) {
+  if (!validatedFields.success) {
     return {
       success: false
     };
@@ -120,12 +120,6 @@ export async function updateExpense(
 
 export async function deleteExpense(id: Expense["id"]): Promise<ActionResponse> {
   const session = await verifySession();
-
-  if (!session) {
-    return {
-      success: false
-    };
-  }
 
   try {
     await prisma.expense.delete({

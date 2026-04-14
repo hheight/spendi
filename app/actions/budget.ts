@@ -10,7 +10,7 @@ export async function createBudget(data: BudgetInput): Promise<ActionResponse> {
   const session = await verifySession();
   const validatedFields = budgetSchema.safeParse(data);
 
-  if (!session || !validatedFields.success) {
+  if (!validatedFields.success) {
     return {
       success: false
     };
@@ -76,7 +76,7 @@ export async function updateBudget(
   const session = await verifySession();
   const validatedFields = budgetSchema.safeParse(data);
 
-  if (!session || !validatedFields.success) {
+  if (!validatedFields.success) {
     return {
       success: false
     };
@@ -102,12 +102,6 @@ export async function updateBudget(
 
 export async function deleteBudget(id: Budget["id"]): Promise<ActionResponse> {
   const session = await verifySession();
-
-  if (!session) {
-    return {
-      success: false
-    };
-  }
 
   try {
     await prisma.budget.delete({

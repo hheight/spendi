@@ -104,12 +104,16 @@ export async function login(data: SigninInput): Promise<ActionResponse> {
 
 export async function logout() {
   const cookieStore = await cookies();
-  const refreshToken = cookieStore.get("refresh_token")?.value;
 
-  if (refreshToken) {
-    await revokeRefreshToken(refreshToken);
+  try {
+    const refreshToken = cookieStore.get("refresh_token")?.value;
+    if (refreshToken) {
+      await revokeRefreshToken(refreshToken);
+    }
+  } catch (error) {
+    console.error(error);
+  } finally {
+    await deleteSession();
+    redirect("/login");
   }
-
-  await deleteSession();
-  redirect("/login");
 }
