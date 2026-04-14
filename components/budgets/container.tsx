@@ -1,7 +1,7 @@
 import BudgetsList from "@/components/budgets/list";
 import EmptyList from "@/components/empty-list";
 import { Card, CardContent } from "@/components/ui/card";
-import { getBudgets, getExpensesByCategory } from "@/lib/dal";
+import { getBudgets, getExpensesByCategory } from "@/lib/data";
 import { getCurrentMonthRange } from "@/lib/utils";
 
 export async function BudgetsContainer() {

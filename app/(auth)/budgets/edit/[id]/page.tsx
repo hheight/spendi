@@ -1,5 +1,5 @@
 import BudgetForm from "@/components/budgets/form";
-import { getCategories, getBudgetById } from "@/lib/dal";
+import { getCategories, getBudgetById } from "@/lib/data";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 

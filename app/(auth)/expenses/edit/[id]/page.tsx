@@ -1,5 +1,5 @@
 import ExpenseForm from "@/components/expenses/form";
-import { getCategories, getExpenseById } from "@/lib/dal";
+import { getCategories, getExpenseById } from "@/lib/data";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 

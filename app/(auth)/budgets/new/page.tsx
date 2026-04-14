@@ -1,5 +1,5 @@
 import BudgetForm from "@/components/budgets/form";
-import { getCategories } from "@/lib/dal";
+import { getCategories } from "@/lib/data";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
