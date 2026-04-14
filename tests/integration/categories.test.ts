@@ -1,7 +1,8 @@
 import { vi, describe, expect, it, beforeEach } from "vitest";
 import prisma from "@/tests/helpers/prisma";
 import { getCategories } from "@/lib/data";
-import { encrypt } from "@/lib/auth/session";
+import { makeJWT } from "@/lib/auth/session";
+import { config } from "@/lib/auth/config";
 
 const mockGet = vi.fn();
 
@@ -12,6 +13,10 @@ vi.mock("next/headers", () => ({
     })
   )
 }));
+
+function createAccessToken(userId: string) {
+  return makeJWT(userId, config.jwt.defaultDuration, config.jwt.secret);
+}
 
 describe("#getCategories", () => {
   beforeEach(() => {
@@ -33,10 +38,7 @@ describe("#getCategories", () => {
       ]
     });
 
-    const token = await encrypt({
-      userId: user.id,
-      expiresAt: new Date(Date.now() + 1000000)
-    });
+    const token = createAccessToken(user.id);
 
     mockGet.mockReturnValue({ value: token });
 
@@ -68,10 +70,7 @@ describe("#getCategories", () => {
       data: { name: "User2 Category", color: "#00FF00", userId: user2.id }
     });
 
-    const token = await encrypt({
-      userId: user1.id,
-      expiresAt: new Date(Date.now() + 1000000)
-    });
+    const token = createAccessToken(user1.id);
     mockGet.mockReturnValue({ value: token });
 
     const result = await getCategories();
@@ -96,10 +95,7 @@ describe("#getCategories", () => {
       ]
     });
 
-    const token = await encrypt({
-      userId: user.id,
-      expiresAt: new Date(Date.now() + 1000000)
-    });
+    const token = createAccessToken(user.id);
     mockGet.mockReturnValue({ value: token });
 
     const result = await getCategories();

@@ -10,13 +10,18 @@ vi.mock("@/lib/auth/session", () => ({
 describe("Auth actions", () => {
   describe("#signup", () => {
     it("should create a new user with valid data", async () => {
-      const result = await signup({
-        email: "test@example.com",
-        password: "Password123",
-        confirm: "Password123"
-      });
+      let redirectThrown = false;
+      try {
+        await signup({
+          email: "test@example.com",
+          password: "Password123",
+          confirm: "Password123"
+        });
+      } catch (e) {
+        redirectThrown = true;
+      }
 
-      expect(result.success).toBe(true);
+      expect(redirectThrown).toBe(true);
 
       const user = await prisma.user.findUnique({
         where: { email: "test@example.com" }
@@ -75,13 +80,18 @@ describe("Auth actions", () => {
       });
     });
 
-    it("should login a user with valid credentials", async () => {
-      const result = await login({
-        email: "test@example.com",
-        password: "Password123"
-      });
+    it("should redirect a user with valid credentials", async () => {
+      let redirectThrown = false;
+      try {
+        await login({
+          email: "test@example.com",
+          password: "Password123"
+        });
+      } catch (e) {
+        redirectThrown = true;
+      }
 
-      expect(result.success).toBe(true);
+      expect(redirectThrown).toBe(true);
     });
 
     it("should return an error if email is invalid", async () => {

@@ -7,7 +7,8 @@ import {
   getExpensesByCategory,
   getExpensesPages
 } from "@/lib/data";
-import { encrypt } from "@/lib/auth/session";
+import { makeJWT } from "@/lib/auth/session";
+import { config } from "@/lib/auth/config";
 
 const mockGet = vi.fn();
 
@@ -18,6 +19,10 @@ vi.mock("next/headers", () => ({
     })
   )
 }));
+
+function createAccessToken(userId: string) {
+  return makeJWT(userId, config.jwt.defaultDuration, config.jwt.secret);
+}
 
 describe("expenses", () => {
   beforeEach(() => {
@@ -44,10 +49,7 @@ describe("expenses", () => {
         ]
       });
 
-      const token = await encrypt({
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getPaginatedExpenses(1, 5);
@@ -94,10 +96,7 @@ describe("expenses", () => {
         ]
       });
 
-      const token = await encrypt({
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getPaginatedExpenses(2, 5);
@@ -147,10 +146,7 @@ describe("expenses", () => {
         data: { value: 500, userId: user2.id, categoryId: category2.id, item: "Item2" }
       });
 
-      const token = await encrypt({
-        userId: user1.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user1.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getPaginatedExpenses(1, 5);
@@ -170,10 +166,7 @@ describe("expenses", () => {
         }
       });
 
-      const token = await encrypt({
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getPaginatedExpenses(1, 5);
@@ -214,10 +207,7 @@ describe("expenses", () => {
         ]
       });
 
-      const token = await encrypt({
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getExpensesPages("ite", 2);
@@ -233,10 +223,7 @@ describe("expenses", () => {
         }
       });
 
-      const token = await encrypt({
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getExpensesPages("", 5);
@@ -262,10 +249,7 @@ describe("expenses", () => {
         data: { value: 100, userId: user.id, categoryId: foodCategory.id, item: "Fruits" }
       });
 
-      const token = await encrypt({
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getExpenseById(expense.id);
@@ -286,10 +270,7 @@ describe("expenses", () => {
         }
       });
 
-      const token = await encrypt({
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getExpenseById("non-exist");
@@ -340,10 +321,7 @@ describe("expenses", () => {
         ]
       });
 
-      const token = await encrypt({
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getExpensesByDateRange(startDate, endDate);
@@ -407,10 +385,7 @@ describe("expenses", () => {
         ]
       });
 
-      const token = await encrypt({
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getExpensesByCategory(startDate, endDate);

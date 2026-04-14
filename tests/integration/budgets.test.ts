@@ -1,7 +1,8 @@
 import { vi, describe, expect, it, beforeEach } from "vitest";
 import prisma from "@/tests/helpers/prisma";
 import { getBudgets, getBudgetById } from "@/lib/data";
-import { encrypt } from "@/lib/auth/session";
+import { makeJWT } from "@/lib/auth/session";
+import { config } from "@/lib/auth/config";
 import { BudgetType } from "@/app/generated/prisma";
 
 const mockGet = vi.fn();
@@ -13,6 +14,10 @@ vi.mock("next/headers", () => ({
     })
   )
 }));
+
+function createAccessToken(userId: string) {
+  return makeJWT(userId, config.jwt.defaultDuration, config.jwt.secret);
+}
 
 describe("budgets", () => {
   beforeEach(() => {
@@ -44,10 +49,7 @@ describe("budgets", () => {
         ]
       });
 
-      const token = await encrypt({
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getBudgets();
@@ -92,10 +94,7 @@ describe("budgets", () => {
         }
       });
 
-      const token = await encrypt({
-        userId: user1.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user1.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getBudgets();
@@ -113,10 +112,7 @@ describe("budgets", () => {
         }
       });
 
-      const token = await encrypt({
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getBudgets();
@@ -147,10 +143,7 @@ describe("budgets", () => {
         }
       });
 
-      const token = await encrypt({
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getBudgetById(budget.id);
@@ -175,10 +168,7 @@ describe("budgets", () => {
         }
       });
 
-      const token = await encrypt({
-        userId: user.id,
-        expiresAt: new Date(Date.now() + 1000000)
-      });
+      const token = createAccessToken(user.id);
       mockGet.mockReturnValue({ value: token });
 
       const result = await getBudgetById("non-exist");
