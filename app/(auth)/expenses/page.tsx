@@ -5,7 +5,7 @@ import ExpensesListWrapper from "@/components/expenses/list-wrapper";
 import { Suspense } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import SearchBar from "@/components/expenses/search-bar";
-import { getExpensesPages } from "@/lib/dal";
+import { getExpensesPages } from "@/lib/data";
 import PaginationControls from "@/components/pagination-controls";
 import ExpensesSkeleton from "@/components/skeletons/expenses";
 

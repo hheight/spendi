@@ -1,4 +1,4 @@
-import { getPaginatedExpenses } from "@/lib/dal";
+import { getPaginatedExpenses } from "@/lib/data";
 import EmptyList from "@/components/empty-list";
 import ExpensesList from "@/components/expenses/list";
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { decrypt } from "@/lib/auth/session";
+import { refreshAccessToken, validateJWT } from "./lib/auth/session";
+import { config as authConfig } from "./lib/auth/config";
 
 const protectedRoutes = ["/dashboard", "/expenses", "/budgets"];
 const publicRoutes = ["/login", "/signup", "/"];
@@ -9,18 +10,28 @@ export default async function proxy(req: NextRequest) {
   const isProtectedRoute = protectedRoutes.some(route => path.startsWith(route));
   const isPublicRoute = publicRoutes.includes(path);
 
-  const cookie = req.cookies?.get("session")?.value;
-  const session = await decrypt(cookie);
+  const accessToken = req.cookies?.get("access_token")?.value;
+  const refreshToken = req.cookies?.get("refresh_token")?.value;
 
-  if (isProtectedRoute && !session?.userId) {
+  if (!refreshToken && !accessToken && isPublicRoute) {
+    return NextResponse.next();
+  }
+
+  if (accessToken) {
+    const isValid = validateJWT(accessToken, authConfig.jwt.secret);
+
+    if (isValid && isProtectedRoute) {
+      return NextResponse.next();
+    }
+  }
+
+  const userId = await refreshAccessToken(refreshToken);
+
+  if (isProtectedRoute && !userId) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
-  if (
-    isPublicRoute &&
-    session?.userId &&
-    !req.nextUrl.pathname.startsWith("/dashboard")
-  ) {
+  if (isPublicRoute && userId) {
     return NextResponse.redirect(new URL("/dashboard", req.nextUrl));
   }
 
@@ -28,5 +39,5 @@ export default async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|.*\\.png$).*)"]
+  matcher: ["/dashboard", "/expenses", "/budgets", "/login", "/signup", "/"]
 };

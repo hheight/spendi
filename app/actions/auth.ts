@@ -6,11 +6,13 @@ import {
   type SignupInput,
   type SigninInput
 } from "@/lib/auth/schemas";
-import { createSession, deleteSession } from "@/lib/auth/session";
+import { deleteSession, createSession } from "@/lib/auth/session";
 import prisma from "@/lib/prisma";
-import bcrypt from "bcryptjs";
+import { revokeRefreshToken } from "@/lib/data";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import type { ActionResponse } from "@/types";
+import { checkPasswordHash, hashPassword } from "@/lib/auth/password";
 
 export async function signup(data: SignupInput): Promise<ActionResponse> {
   const validatedFields = signupSchema.safeParse(data);
@@ -35,7 +37,7 @@ export async function signup(data: SignupInput): Promise<ActionResponse> {
       };
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hashPassword(password);
 
     const user = await prisma.user.create({
       data: {
@@ -49,8 +51,6 @@ export async function signup(data: SignupInput): Promise<ActionResponse> {
     });
 
     await createSession(user.id);
-
-    return { success: true };
   } catch (error) {
     console.error("Signup error:", error);
     return {
@@ -58,6 +58,8 @@ export async function signup(data: SignupInput): Promise<ActionResponse> {
       message: "An error occurred while creating your account"
     };
   }
+
+  redirect("/dashboard");
 }
 
 export async function login(data: SigninInput): Promise<ActionResponse> {
@@ -82,7 +84,7 @@ export async function login(data: SigninInput): Promise<ActionResponse> {
       };
     }
 
-    const isMatch = await bcrypt.compare(password, user.password.hash);
+    const isMatch = await checkPasswordHash(password, user.password.hash);
 
     if (!isMatch) {
       return {
@@ -92,15 +94,26 @@ export async function login(data: SigninInput): Promise<ActionResponse> {
     }
 
     await createSession(user.id);
-
-    return { success: true };
   } catch (error) {
     console.error(error);
     return { success: false, message: "An error occured during login" };
   }
+
+  redirect("/dashboard");
 }
 
 export async function logout() {
-  await deleteSession();
-  redirect("/login");
+  const cookieStore = await cookies();
+
+  try {
+    const refreshToken = cookieStore.get("refresh_token")?.value;
+    if (refreshToken) {
+      await revokeRefreshToken(refreshToken);
+    }
+  } catch (error) {
+    console.error(error);
+  } finally {
+    await deleteSession();
+    redirect("/login");
+  }
 }

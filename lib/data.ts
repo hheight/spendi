@@ -1,10 +1,8 @@
 import "server-only";
 
 import prisma from "@/lib/prisma";
-import { cookies } from "next/headers";
-import { decrypt } from "@/lib/auth/session";
-import { redirect } from "next/navigation";
-import { cache } from "react";
+import type { User } from "@/app/generated/prisma";
+import { verifySession } from "@/lib/auth/session";
 import type {
   CategoryPreview,
   ExpenseWithColor,
@@ -13,17 +11,6 @@ import type {
   Budget,
   ExpenseByCategory
 } from "@/types";
-
-export const verifySession = cache(async () => {
-  const cookie = (await cookies()).get("session")?.value;
-  const session = await decrypt(cookie);
-
-  if (!session?.userId) {
-    redirect("/login");
-  }
-
-  return { isAuth: true, userId: session.userId };
-});
 
 export async function getCategories(): Promise<CategoryPreview[]> {
   const session = await verifySession();
@@ -41,7 +28,8 @@ export async function getCategories(): Promise<CategoryPreview[]> {
 
     return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get categories");
   }
 }
 
@@ -77,7 +65,8 @@ export async function getExpensesByDateRange(
 
     return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get expenses");
   }
 }
 
@@ -121,7 +110,8 @@ export async function getExpensesPages(query: string, pageSize: number): Promise
 
     return Math.ceil(data / pageSize);
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get expenses pages");
   }
 }
 export async function getPaginatedExpenses(
@@ -157,7 +147,8 @@ export async function getPaginatedExpenses(
 
     return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get paginated expenses");
   }
 }
 
@@ -178,7 +169,8 @@ export async function getExpenseById(id: Expense["id"]): Promise<Expense | null>
 
     return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get expense");
   }
 }
 
@@ -195,7 +187,8 @@ export async function getFirstExpense(): Promise<Expense | null> {
 
     return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get first expense");
   }
 }
 
@@ -227,7 +220,8 @@ export async function getBudgets(): Promise<Budget[]> {
 
     return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get budgets");
   }
 }
 
@@ -257,6 +251,59 @@ export async function getBudgetById(id: Budget["id"]): Promise<Budget | null> {
 
     return data;
   } catch (error) {
-    throw error;
+    console.error(error);
+    throw new Error("Can't get budget");
+  }
+}
+
+export async function saveRefreshToken(
+  userId: User["id"],
+  token: string,
+  expiresAt: Date
+): Promise<void> {
+  try {
+    await prisma.refreshToken.create({
+      data: {
+        userId,
+        token,
+        expiresAt,
+        revokedAt: null
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    throw new Error("Can't save refresh token");
+  }
+}
+
+export async function getUserByRefreshToken(token: string): Promise<User | null> {
+  try {
+    const data = await prisma.user.findFirst({
+      where: {
+        refreshTokens: {
+          some: {
+            token,
+            revokedAt: null
+          }
+        }
+      }
+    });
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Can't get user by refresh token");
+  }
+}
+
+export async function revokeRefreshToken(token: string): Promise<void> {
+  try {
+    await prisma.refreshToken.update({
+      where: { token },
+      data: { revokedAt: new Date() }
+    });
+  } catch (error) {
+    console.error(error);
+    throw new Error("Can't revoke refresh token");
   }
 }

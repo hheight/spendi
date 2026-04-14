@@ -1,73 +1,116 @@
 import "server-only";
-import { type JWTPayload, SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
-import type { User } from "@/app/generated/prisma";
 
-const secretKey = process.env.SESSION_SECRET;
+import crypto from "crypto";
+import jwt, { JsonWebTokenError, type JwtPayload } from "jsonwebtoken";
+import { cache } from "react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import type { User } from "@/app/generated/prisma";
+import { config } from "@/lib/auth/config";
+import { getUserByRefreshToken, saveRefreshToken } from "@/lib/data";
+
 const isProd =
   process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production";
-const encodedKey = new TextEncoder().encode(secretKey);
 
-interface SessionPayload extends JWTPayload {
-  userId: User["id"];
+type Payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
+
+export const verifySession = cache(async () => {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+
+  if (accessToken) {
+    const validUserId = validateJWT(accessToken, config.jwt.secret);
+
+    if (validUserId) return { isAuth: true, userId: validUserId };
+  }
+
+  const refreshToken = cookieStore.get("refresh_token")?.value;
+  const userId = await refreshAccessToken(refreshToken);
+
+  if (!userId) {
+    redirect("/login");
+  }
+
+  return { isAuth: true, userId };
+});
+
+export function makeJWT(userId: User["id"], expiresIn: number, secret: string): string {
+  const issuedAt = Math.floor(Date.now() / 1000); // current date in seconds
+  const expiresAt = issuedAt + expiresIn;
+
+  const token = jwt.sign(
+    {
+      iss: config.jwt.issuer,
+      sub: userId,
+      iat: issuedAt,
+      exp: expiresAt
+    } satisfies Payload,
+    secret,
+    { algorithm: "HS256" }
+  );
+
+  return token;
 }
 
-export async function encrypt(payload: SessionPayload) {
-  return new SignJWT(payload)
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime("7d")
-    .sign(encodedKey);
-}
+export function validateJWT(tokenString: string, secret: string): string | null {
+  let decoded: Payload;
 
-export async function decrypt(
-  session: string | undefined = ""
-): Promise<SessionPayload | null> {
   try {
-    const { payload } = await jwtVerify(session, encodedKey, {
-      algorithms: ["HS256"]
-    });
-
-    return payload as SessionPayload;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
+    decoded = jwt.verify(tokenString, secret) as JwtPayload;
+  } catch (e) {
+    if (e instanceof JsonWebTokenError) {
+      console.error("JWT Error:", e.message);
+    }
     return null;
   }
-}
 
-export async function getSession() {
-  const cookie = (await cookies()).get("session")?.value;
-  const session = await decrypt(cookie);
+  if (decoded.iss !== config.jwt.issuer) {
+    console.error("JWT Error: Invalid issuer");
+    return null;
+  }
 
-  return session;
+  if (!decoded.sub) {
+    console.error("JWT Error: No user ID in token");
+    return null;
+  }
+
+  return decoded.sub;
 }
 
 export async function createSession(userId: User["id"]) {
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-  const session = await encrypt({ userId, expiresAt });
+  const jwt = makeJWT(userId, config.jwt.defaultDuration, config.jwt.secret);
+  const expiresAtJWT = new Date(Date.now() + config.jwt.defaultDuration * 1000);
+
+  const refreshToken = makeRefreshToken();
+  const expiresAtRefreshToken = new Date(Date.now() + config.jwt.refreshDuration);
+  await saveRefreshToken(userId, refreshToken, expiresAtRefreshToken);
+
   const cookieStore = await cookies();
 
-  cookieStore.set("session", session, {
+  cookieStore.set("access_token", jwt, {
     httpOnly: true,
     secure: isProd,
-    expires: expiresAt,
+    expires: expiresAtJWT,
+    sameSite: "lax",
+    path: "/"
+  });
+
+  cookieStore.set("refresh_token", refreshToken, {
+    httpOnly: true,
+    secure: isProd,
+    expires: expiresAtRefreshToken,
     sameSite: "lax",
     path: "/"
   });
 }
 
-export async function updateSession() {
-  const session = (await cookies()).get("session")?.value;
-  const payload = await decrypt(session);
-
-  if (!session || !payload) {
-    return null;
-  }
-
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+export async function updateAccessToken(userId: User["id"]) {
+  const jwt = makeJWT(userId, config.jwt.defaultDuration, config.jwt.secret);
+  const expiresAt = new Date(Date.now() + config.jwt.defaultDuration * 1000);
 
   const cookieStore = await cookies();
-  cookieStore.set("session", session, {
+
+  cookieStore.set("access_token", jwt, {
     httpOnly: true,
     secure: isProd,
     expires: expiresAt,
@@ -78,5 +121,24 @@ export async function updateSession() {
 
 export async function deleteSession() {
   const cookieStore = await cookies();
-  cookieStore.delete("session");
+  cookieStore.delete("access_token");
+  cookieStore.delete("refresh_token");
+}
+
+export async function refreshAccessToken(refreshToken?: string) {
+  if (!refreshToken) {
+    return null;
+  }
+
+  const user = await getUserByRefreshToken(refreshToken);
+  if (!user) {
+    return null;
+  }
+
+  await updateAccessToken(user.id);
+  return user.id;
+}
+
+function makeRefreshToken() {
+  return crypto.randomBytes(32).toString("hex");
 }
