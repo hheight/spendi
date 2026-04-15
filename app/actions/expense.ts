@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { verifySession } from "@/lib/auth/session";
 import { type ExpenseInput, expenseSchema } from "@/lib/expense/schemas";
 import type { ActionResponse, Expense } from "@/types";
+import { getUserMessage, logPrismaError } from "@/lib/prisma-error";
 
 export async function createExpense(data: ExpenseInput): Promise<ActionResponse> {
   const session = await verifySession();
@@ -33,29 +34,31 @@ export async function createExpense(data: ExpenseInput): Promise<ActionResponse>
     if (data.type === "new") {
       const { description, amount, categoryColor, categoryName, date } = data;
 
-      const newCategory = await prisma.category.create({
-        data: {
-          name: categoryName,
-          color: categoryColor,
-          userId: session.userId
-        }
-      });
+      await prisma.$transaction(async tx => {
+        const newCategory = await tx.category.create({
+          data: {
+            name: categoryName,
+            color: categoryColor,
+            userId: session.userId
+          }
+        });
 
-      await prisma.expense.create({
-        data: {
-          item: description,
-          value: Number(amount),
-          userId: session.userId,
-          categoryId: newCategory.id,
-          createdAt: date
-        }
+        await tx.expense.create({
+          data: {
+            item: description,
+            value: Number(amount),
+            userId: session.userId,
+            categoryId: newCategory.id,
+            createdAt: date
+          }
+        });
       });
     }
 
     return { success: true };
   } catch (error) {
-    console.error("Failed to create expense:", error);
-    return { success: false, message: "An error occured while creating expense" };
+    logPrismaError(error, "createExpense");
+    return { success: false, message: getUserMessage(error) };
   }
 }
 
@@ -91,30 +94,32 @@ export async function updateExpense(
     if (data.type === "new") {
       const { description, amount, categoryColor, categoryName, date } = data;
 
-      const newCategory = await prisma.category.create({
-        data: {
-          name: categoryName,
-          color: categoryColor,
-          userId: session.userId
-        }
-      });
+      await prisma.$transaction(async tx => {
+        const newCategory = await tx.category.create({
+          data: {
+            name: categoryName,
+            color: categoryColor,
+            userId: session.userId
+          }
+        });
 
-      await prisma.expense.update({
-        where: { id },
-        data: {
-          item: description,
-          value: Number(amount),
-          userId: session.userId,
-          categoryId: newCategory.id,
-          createdAt: date
-        }
+        await tx.expense.update({
+          where: { id },
+          data: {
+            item: description,
+            value: Number(amount),
+            userId: session.userId,
+            categoryId: newCategory.id,
+            createdAt: date
+          }
+        });
       });
     }
 
     return { success: true };
   } catch (error) {
-    console.error("Failed to edit expense:", error);
-    return { success: false, message: "An error occured while editing expense" };
+    logPrismaError(error, "updateExpense");
+    return { success: false, message: getUserMessage(error) };
   }
 }
 
@@ -128,7 +133,7 @@ export async function deleteExpense(id: Expense["id"]): Promise<ActionResponse> 
 
     return { success: true };
   } catch (error) {
-    console.error("Failed to delete expense:", error);
-    return { success: false, message: "An error occured while deleting expense" };
+    logPrismaError(error, "deleteExpense");
+    return { success: false, message: getUserMessage(error) };
   }
 }

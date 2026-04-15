@@ -13,6 +13,7 @@ import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import type { ActionResponse } from "@/types";
 import { checkPasswordHash, hashPassword } from "@/lib/auth/password";
+import { getUserMessage, logPrismaError } from "@/lib/prisma-error";
 
 export async function signup(data: SignupInput): Promise<ActionResponse> {
   const validatedFields = signupSchema.safeParse(data);
@@ -52,10 +53,10 @@ export async function signup(data: SignupInput): Promise<ActionResponse> {
 
     await createSession(user.id);
   } catch (error) {
-    console.error("Signup error:", error);
+    logPrismaError(error, "signup");
     return {
       success: false,
-      message: "An error occurred while creating your account"
+      message: getUserMessage(error)
     };
   }
 
@@ -95,8 +96,8 @@ export async function login(data: SigninInput): Promise<ActionResponse> {
 
     await createSession(user.id);
   } catch (error) {
-    console.error(error);
-    return { success: false, message: "An error occured during login" };
+    logPrismaError(error, "login");
+    return { success: false, message: getUserMessage(error) };
   }
 
   redirect("/dashboard");

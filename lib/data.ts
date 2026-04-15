@@ -3,6 +3,7 @@ import "server-only";
 import prisma from "@/lib/prisma";
 import type { User } from "@/app/generated/prisma";
 import { verifySession } from "@/lib/auth/session";
+import { logPrismaError } from "@/lib/prisma-error";
 import type {
   CategoryPreview,
   ExpenseWithColor,
@@ -28,7 +29,7 @@ export async function getCategories(): Promise<CategoryPreview[]> {
 
     return data;
   } catch (error) {
-    console.error(error);
+    logPrismaError(error, "getCategories");
     throw new Error("Can't get categories");
   }
 }
@@ -65,7 +66,7 @@ export async function getExpensesByDateRange(
 
     return data;
   } catch (error) {
-    console.error(error);
+    logPrismaError(error, "getExpensesByDateRange");
     throw new Error("Can't get expenses");
   }
 }
@@ -93,6 +94,7 @@ export async function getExpensesByCategory(
 
     return result;
   } catch (error) {
+    logPrismaError(error, "getExpensesByCategory");
     throw error;
   }
 }
@@ -110,7 +112,7 @@ export async function getExpensesPages(query: string, pageSize: number): Promise
 
     return Math.ceil(data / pageSize);
   } catch (error) {
-    console.error(error);
+    logPrismaError(error, "getExpensesPages");
     throw new Error("Can't get expenses pages");
   }
 }
@@ -147,7 +149,7 @@ export async function getPaginatedExpenses(
 
     return data;
   } catch (error) {
-    console.error(error);
+    logPrismaError(error, "getPaginatedExpenses");
     throw new Error("Can't get paginated expenses");
   }
 }
@@ -169,7 +171,7 @@ export async function getExpenseById(id: Expense["id"]): Promise<Expense | null>
 
     return data;
   } catch (error) {
-    console.error(error);
+    logPrismaError(error, "getExpenseById");
     throw new Error("Can't get expense");
   }
 }
@@ -187,7 +189,7 @@ export async function getFirstExpense(): Promise<Expense | null> {
 
     return data;
   } catch (error) {
-    console.error(error);
+    logPrismaError(error, "getFirstExpense");
     throw new Error("Can't get first expense");
   }
 }
@@ -220,7 +222,7 @@ export async function getBudgets(): Promise<Budget[]> {
 
     return data;
   } catch (error) {
-    console.error(error);
+    logPrismaError(error, "getBudgets");
     throw new Error("Can't get budgets");
   }
 }
@@ -251,7 +253,7 @@ export async function getBudgetById(id: Budget["id"]): Promise<Budget | null> {
 
     return data;
   } catch (error) {
-    console.error(error);
+    logPrismaError(error, "getBudgetById");
     throw new Error("Can't get budget");
   }
 }
@@ -271,7 +273,7 @@ export async function saveRefreshToken(
       }
     });
   } catch (error) {
-    console.error(error);
+    logPrismaError(error, "saveRefreshToken");
     throw new Error("Can't save refresh token");
   }
 }
@@ -291,7 +293,7 @@ export async function getUserByRefreshToken(token: string): Promise<User | null>
 
     return data;
   } catch (error) {
-    console.error(error);
+    logPrismaError(error, "getUserByRefreshToken");
     throw new Error("Can't get user by refresh token");
   }
 }
@@ -303,7 +305,7 @@ export async function revokeRefreshToken(token: string): Promise<void> {
       data: { revokedAt: new Date() }
     });
   } catch (error) {
-    console.error(error);
+    logPrismaError(error, "revokeRefreshToken");
     throw new Error("Can't revoke refresh token");
   }
 }

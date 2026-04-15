@@ -5,6 +5,7 @@ import { budgetSchema, type BudgetInput } from "@/lib/budget/schemas";
 import { verifySession } from "@/lib/auth/session";
 import type { ActionResponse, Budget } from "@/types";
 import { BudgetType } from "@/app/generated/prisma";
+import { getUserMessage, logPrismaError } from "@/lib/prisma-error";
 
 export async function createBudget(data: BudgetInput): Promise<ActionResponse> {
   const session = await verifySession();
@@ -64,8 +65,8 @@ export async function createBudget(data: BudgetInput): Promise<ActionResponse> {
 
     return { success: true };
   } catch (error) {
-    console.error("Failed to create budget:", error);
-    return { success: false, message: "An error occured while creating budget" };
+    logPrismaError(error, "createBudget");
+    return { success: false, message: getUserMessage(error) };
   }
 }
 
@@ -95,8 +96,8 @@ export async function updateBudget(
 
     return { success: true };
   } catch (error) {
-    console.error("Failed to update budget:", error);
-    return { success: false, message: "An error occured while updating budget" };
+    logPrismaError(error, "updateBudget");
+    return { success: false, message: getUserMessage(error) };
   }
 }
 
@@ -110,7 +111,7 @@ export async function deleteBudget(id: Budget["id"]): Promise<ActionResponse> {
 
     return { success: true };
   } catch (error) {
-    console.error("Failed to delete budget:", error);
-    return { success: false, message: "An error occured while deleting budget" };
+    logPrismaError(error, "deleteBudget");
+    return { success: false, message: getUserMessage(error) };
   }
 }
