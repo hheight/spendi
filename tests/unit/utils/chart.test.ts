@@ -35,14 +35,17 @@ describe("#buildMonthlyChartData", () => {
     expect(chartData).toEqual([
       { day: 1, value: 16 },
       { day: 2, value: 1200 },
-      { day: 3 }
+      { day: 3, value: 0 }
     ]);
   });
 
   it("should handle empty expenses array", () => {
     const chartData = buildChartData([], 2);
 
-    expect(chartData).toEqual([{ day: 1 }, { day: 2 }]);
+    expect(chartData).toEqual([
+      { day: 1, value: 0 },
+      { day: 2, value: 0 }
+    ]);
   });
 });
 
