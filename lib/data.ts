@@ -95,7 +95,7 @@ export async function getExpensesByCategory(
     return result;
   } catch (error) {
     logPrismaError(error, "getExpensesByCategory");
-    throw error;
+    throw new Error("Can't get expenses");
   }
 }
 

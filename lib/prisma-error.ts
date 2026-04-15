@@ -1,11 +1,11 @@
 import { Prisma } from "@/app/generated/prisma";
 
-export type ErrorCategory = "user" | "system";
+type ErrorCategory = "user" | "system";
 
-interface ParsedError {
+type ParsedError = {
   message: string;
   category: ErrorCategory;
-}
+};
 
 export function parsePrismaError(error: unknown): ParsedError {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
