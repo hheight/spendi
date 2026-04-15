@@ -44,10 +44,6 @@ vi.mock("next/navigation", () => ({
   })
 }));
 
-vi.mock("react", () => ({
-  cache: vi.fn(fn => fn)
-}));
-
 describe("JWT Functions", () => {
   const secret = "test-secret";
   const wrongSecret = "wrong_secret";

@@ -10,7 +10,8 @@ export function buildChartData(
 
     if (foundItems.length === 0) {
       return {
-        day: i + 1
+        day: i + 1,
+        value: 0
       };
     }
 

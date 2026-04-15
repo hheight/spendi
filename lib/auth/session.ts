@@ -2,7 +2,6 @@ import "server-only";
 
 import crypto from "crypto";
 import jwt, { JsonWebTokenError, type JwtPayload } from "jsonwebtoken";
-import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { User } from "@/app/generated/prisma";
@@ -14,7 +13,7 @@ const isProd =
 
 type Payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
 
-export const verifySession = cache(async () => {
+export const verifySession = async () => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
 
@@ -32,7 +31,7 @@ export const verifySession = cache(async () => {
   }
 
   return { isAuth: true, userId };
-});
+};
 
 export function makeJWT(userId: User["id"], expiresIn: number, secret: string): string {
   const issuedAt = Math.floor(Date.now() / 1000); // current date in seconds
